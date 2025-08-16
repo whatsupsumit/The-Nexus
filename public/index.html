@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#000000" />
   <meta
     name="description"
-    content="Web site created using create-react-app"
+    content="NEXUS - Advanced streaming entertainment platform"
   />
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
   <!-- Google Fonts: JetBrains Mono -->
@@ -26,7 +26,107 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>NEXUS - Entertainment Matrix</title>
+    
+    <!-- NEXUS Error Suppression System -->
+    <script>
+      (function() {
+        'use strict';
+        
+        // Comprehensive error suppression for video player
+        const NEXUS_SUPPRESSED_PATTERNS = [
+          'ReferenceError: iwpzn8',
+          'ReferenceError: cqwo4j',
+          'ReferenceError: n7fhfw',
+          'ReferenceError: aclib',
+          'ReferenceError: fabuak',
+          'ReferenceError: hioszq',
+          'ReferenceError: ebflxe',
+          'aclib is not defined',
+          'jwplayer',
+          'abort-current-inline-script',
+          'autoPlay=true&poster=false',
+          'VM[0-9]+:',
+          'at get (<anonymous>',
+          'Math.get (<anonymous>'
+        ];
+        
+        // Store original functions
+        window._nexusOriginalError = console.error;
+        window._nexusOriginalWarn = console.warn;
+        
+        // Enhanced console.error override
+        console.error = function(...args) {
+          const message = args.join(' ');
+          
+          // Check if should suppress
+          const shouldSuppress = NEXUS_SUPPRESSED_PATTERNS.some(pattern => {
+            if (pattern.includes('[0-9]+')) {
+              const regex = new RegExp(pattern.replace('[0-9]+', '\\d+'));
+              return regex.test(message);
+            }
+            return message.includes(pattern);
+          });
+          
+          if (shouldSuppress) {
+            // Silent suppression for video player errors
+            return;
+          }
+          
+          window._nexusOriginalError.apply(console, args);
+        };
+        
+        // Enhanced console.warn override
+        console.warn = function(...args) {
+          const message = args.join(' ');
+          
+          const shouldSuppress = NEXUS_SUPPRESSED_PATTERNS.some(pattern => {
+            return message.includes(pattern);
+          });
+          
+          if (shouldSuppress) {
+            return;
+          }
+          
+          window._nexusOriginalWarn.apply(console, args);
+        };
+        
+        // Global error handler
+        window.addEventListener('error', function(event) {
+          const message = event.message || '';
+          const source = event.filename || '';
+          
+          const shouldSuppress = NEXUS_SUPPRESSED_PATTERNS.some(pattern => {
+            return message.includes(pattern) || source.includes('autoPlay=true');
+          });
+          
+          if (shouldSuppress) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+          }
+        });
+        
+        // Unhandled promise rejection handler
+        window.addEventListener('unhandledrejection', function(event) {
+          const message = event.reason?.toString() || '';
+          
+          const shouldSuppress = NEXUS_SUPPRESSED_PATTERNS.some(pattern => {
+            return message.includes(pattern);
+          });
+          
+          if (shouldSuppress) {
+            event.preventDefault();
+            return false;
+          }
+        });
+        
+        console.log('%c[NEXUS]%c Error suppression system initialized', 
+          'color: #ef4444; font-weight: bold; background: #1a1a1a; padding: 2px 6px; border-radius: 3px;', 
+          'color: #22c55e;'
+        );
+      })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
