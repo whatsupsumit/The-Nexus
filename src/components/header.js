@@ -70,13 +70,13 @@ const Header = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-4 z-50 bg-black/95 backdrop-blur-md border-b border-red-500/30">
+    <header className="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-4 z-50 bg-nexus-dark/95 backdrop-blur-md border-b border-nexus-red/30">
 
       {/* Simple Clean Logo */}
       <div
-        className="font-['JetBrains_Mono',monospace] text-3xl font-bold text-red-500 tracking-wider cursor-pointer hover:text-red-400 transition-colors duration-300 z-10"
+        className="font-['Arvo',serif] text-4xl font-bold text-nexus-red tracking-wider cursor-pointer hover:text-nexus-red-light transition-colors duration-300 z-10"
         style={{
-          textShadow: "0 0 8px rgba(239, 68, 68, 0.5)"
+          textShadow: "0 0 8px rgba(255, 20, 35, 0.5)"
         }}
         onClick={() => handleNavigation(user ? "/browse" : "/")}
       >
@@ -88,64 +88,64 @@ const Header = () => {
         <nav className="flex items-center space-x-8 z-10">
           <button
             onClick={() => handleNavigation("/browse")}
-            className={`relative font-['JetBrains_Mono',monospace] hover:text-red-400 transition-all duration-300 font-medium group ${
-              isActive("/browse") ? "text-red-400" : "text-white"
+            className={`relative font-['Arvo',serif] hover:text-nexus-red-light transition-all duration-300 font-medium group ${
+              isActive("/browse") ? "text-nexus-red-light" : "text-nexus-text"
             }`}
           >
             <span className="relative z-10">HOME</span>
-            <div className="absolute inset-0 bg-red-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            <div className="absolute inset-0 bg-nexus-red/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
             {isActive("/browse") && (
-              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-red-400 to-transparent animate-pulse" />
+              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-nexus-red-light to-transparent animate-pulse" />
             )}
-            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-red-400 group-hover:w-full transition-all duration-300"></div>
+            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-nexus-red group-hover:w-full transition-all duration-300"></div>
           </button>
           
           <button
             onClick={() => handleNavigation("/movies")}
-            className={`relative font-['JetBrains_Mono',monospace] hover:text-red-400 transition-all duration-300 font-medium group ${
-              isActive("/movies") ? "text-red-400" : "text-white"
+            className={`relative font-['Arvo',serif] hover:text-nexus-red-light transition-all duration-300 font-medium group ${
+              isActive("/movies") ? "text-nexus-red-light" : "text-nexus-text"
             }`}
           >
             <span className="relative z-10">MOVIES</span>
-            <div className="absolute inset-0 bg-red-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            <div className="absolute inset-0 bg-nexus-red/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
             {isActive("/movies") && (
-              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-red-400 to-transparent animate-pulse" />
+              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-nexus-red-light to-transparent animate-pulse" />
             )}
-            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-red-400 group-hover:w-full transition-all duration-300"></div>
+            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-nexus-red group-hover:w-full transition-all duration-300"></div>
           </button>
           
           <button
             onClick={() => handleNavigation("/tv-shows")}
-            className={`relative font-['JetBrains_Mono',monospace] hover:text-red-400 transition-all duration-300 font-medium group ${
-              isActive("/tv-shows") ? "text-red-400" : "text-white"
+            className={`relative font-['Arvo',serif] hover:text-nexus-red-light transition-all duration-300 font-medium group ${
+              isActive("/tv-shows") ? "text-nexus-red-light" : "text-nexus-text"
             }`}
           >
             <span className="relative z-10">SERIES</span>
-            <div className="absolute inset-0 bg-red-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            <div className="absolute inset-0 bg-nexus-red/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
             {isActive("/tv-shows") && (
-              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-red-400 to-transparent animate-pulse" />
+              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-nexus-red-light to-transparent animate-pulse" />
             )}
-            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-red-400 group-hover:w-full transition-all duration-300"></div>
+            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-nexus-red group-hover:w-full transition-all duration-300"></div>
           </button>
           
           <button
             onClick={() => handleNavigation("/vault")}
-            className={`relative font-['JetBrains_Mono',monospace] hover:text-red-400 transition-all duration-300 font-medium group ${
-              isActive("/vault") || isActive("/my-list") ? "text-red-400" : "text-white"
+            className={`relative font-['Arvo',serif] hover:text-nexus-red-light transition-all duration-300 font-medium group ${
+              isActive("/vault") || isActive("/my-list") ? "text-nexus-red-light" : "text-nexus-text"
             }`}
           >
             <span className="relative z-10">VAULT</span>
-            <div className="absolute inset-0 bg-red-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            <div className="absolute inset-0 bg-nexus-red/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
             {(isActive("/vault") || isActive("/my-list")) && (
-              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-red-400 to-transparent animate-pulse" />
+              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-nexus-red-light to-transparent animate-pulse" />
             )}
-            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-red-400 group-hover:w-full transition-all duration-300"></div>
+            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-nexus-red group-hover:w-full transition-all duration-300"></div>
           </button>
 
           {/* Enhanced AI Chat Tab */}
           <button
             onClick={() => handleNavigation("/neural-chat")}
-            className={`relative font-['JetBrains_Mono',monospace] hover:text-cyan-400 transition-all duration-300 font-medium flex items-center space-x-2 group ${
+            className={`relative font-['Arvo',serif] hover:text-cyan-400 transition-all duration-300 font-medium flex items-center space-x-2 group ${
               isActive("/neural-chat") ? "text-cyan-400" : "text-white"
             }`}
           >
@@ -171,7 +171,7 @@ const Header = () => {
           <div className="relative" ref={dropdownRef}>
             {/* Futuristic Profile Icon */}
             <button
-              className="relative w-12 h-12 rounded-full bg-gradient-to-br from-red-500 via-red-600 to-red-700 hover:from-red-400 hover:via-red-500 hover:to-red-600 transition-all duration-500 transform hover:scale-110 border-2 border-red-400/50 shadow-xl shadow-red-500/40 group overflow-hidden"
+              className="relative w-12 h-12 rounded-full bg-gradient-to-br from-nexus-red via-nexus-red-dark to-nexus-red-dark hover:from-nexus-red-light hover:via-nexus-red hover:to-nexus-red-dark transition-all duration-500 transform hover:scale-110 border-2 border-nexus-red/50 shadow-xl shadow-nexus-red/40 group overflow-hidden"
               onClick={() => setDropdownOpen((open) => !open)}
               aria-label="Profile"
             >
@@ -203,26 +203,26 @@ const Header = () => {
               </div>
               
               {/* Rotating Ring */}
-              <div className="absolute inset-0 rounded-full border border-red-300/30 group-hover:animate-spin transition-all duration-1000"></div>
+              <div className="absolute inset-0 rounded-full border border-nexus-red-light/30 group-hover:animate-spin transition-all duration-1000"></div>
               
               {/* Pulse indicators */}
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse border-2 border-black shadow-lg shadow-green-400/50"></div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse border-2 border-nexus-black shadow-lg shadow-green-400/50"></div>
               <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-blue-400 rounded-full animate-ping opacity-75"></div>
               
               {/* Scan Line */}
-              <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-nexus-text-light to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
             </button>
 
             {/* Enhanced Dropdown Menu */}
             {dropdownOpen && (
-              <div className="absolute right-0 mt-3 w-64 bg-black/95 backdrop-blur-xl rounded-xl shadow-2xl border border-red-500/40 animate-fade-in z-50 overflow-hidden">
+              <div className="absolute right-0 mt-3 w-64 bg-nexus-black/95 backdrop-blur-xl rounded-xl shadow-2xl border border-nexus-red/40 animate-fade-in z-50 overflow-hidden">
                 {/* Glowing Header */}
-                <div className="relative px-6 py-4 border-b border-red-500/30 bg-gradient-to-r from-red-900/20 to-purple-900/20">
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-transparent"></div>
-                  <p className="relative font-['JetBrains_Mono',monospace] text-white text-sm font-bold">
+                <div className="relative px-6 py-4 border-b border-nexus-red/30 bg-gradient-to-r from-nexus-red/20 to-purple-900/20">
+                  <div className="absolute inset-0 bg-gradient-to-r from-nexus-red/10 to-transparent"></div>
+                  <p className="relative font-['Arvo',serif] text-nexus-text-light text-sm font-bold">
                     {user.displayName || user.email || "Neural User"}
                   </p>
-                  <p className="relative font-['JetBrains_Mono',monospace] text-gray-400 text-xs mt-1">
+                  <p className="relative font-['Arvo',serif] text-nexus-text-dark text-xs mt-1">
                     {user.email}
                   </p>
                   <div className="absolute top-0 right-4 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -230,47 +230,47 @@ const Header = () => {
                 
                 <div className="py-2">
                   <button
-                    className="group relative block w-full text-left px-6 py-3 font-['JetBrains_Mono',monospace] text-gray-200 hover:bg-red-500/20 hover:text-red-400 transition-all duration-300 overflow-hidden"
+                    className="group relative block w-full text-left px-6 py-3 font-['Arvo',serif] text-nexus-text hover:bg-nexus-red/20 hover:text-nexus-red-light transition-all duration-300 overflow-hidden"
                     onClick={() => handleNavigation("/profile")}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-nexus-red/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="relative flex items-center space-x-3">
                       <svg className="w-4 h-4 group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                       <span>Profile Matrix</span>
-                      <div className="ml-auto w-1 h-1 bg-red-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="ml-auto w-1 h-1 bg-nexus-red rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                   </button>
                   
                   <button
-                    className="group relative block w-full text-left px-6 py-3 font-['JetBrains_Mono',monospace] text-gray-200 hover:bg-red-500/20 hover:text-red-400 transition-all duration-300 overflow-hidden"
+                    className="group relative block w-full text-left px-6 py-3 font-['Arvo',serif] text-nexus-text hover:bg-nexus-red/20 hover:text-nexus-red-light transition-all duration-300 overflow-hidden"
                     onClick={() => handleNavigation("/account")}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-nexus-red/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="relative flex items-center space-x-3">
                       <svg className="w-4 h-4 group-hover:animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                       <span>System Settings</span>
-                      <div className="ml-auto w-1 h-1 bg-red-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="ml-auto w-1 h-1 bg-nexus-red rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                   </button>
                 </div>
                 
-                <div className="border-t border-red-500/30 bg-gradient-to-r from-red-900/10 to-transparent">
+                <div className="border-t border-nexus-red/30 bg-gradient-to-r from-nexus-red/10 to-transparent">
                   <button
                     onClick={handleSignOut}
-                    className="group relative block w-full text-left px-6 py-3 font-['JetBrains_Mono',monospace] text-gray-200 hover:bg-red-500/30 hover:text-red-300 transition-all duration-300 overflow-hidden"
+                    className="group relative block w-full text-left px-6 py-3 font-['Arvo',serif] text-nexus-text hover:bg-nexus-red/30 hover:text-nexus-red-light transition-all duration-300 overflow-hidden"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-nexus-red/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="relative flex items-center space-x-3">
                       <svg className="w-4 h-4 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
                       <span>Disconnect Neural Link</span>
-                      <div className="ml-auto w-1 h-1 bg-red-400 rounded-full animate-pulse"></div>
+                      <div className="ml-auto w-1 h-1 bg-nexus-red rounded-full animate-pulse"></div>
                     </div>
                   </button>
                 </div>
@@ -281,9 +281,9 @@ const Header = () => {
           location.pathname !== "/" && (
             <button
               onClick={() => handleNavigation("/")}
-              className="relative font-['JetBrains_Mono',monospace] text-white hover:text-red-400 transition-all duration-500 font-medium px-6 py-2 border border-red-500/40 rounded-lg hover:border-red-400 hover:shadow-lg hover:shadow-red-500/25 group overflow-hidden"
+              className="relative font-['Arvo',serif] text-nexus-text hover:text-nexus-red-light transition-all duration-500 font-medium px-6 py-2 border border-nexus-red/40 rounded-lg hover:border-nexus-red hover:shadow-lg hover:shadow-nexus-red/25 group overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-nexus-red/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <span className="relative z-10">Neural Access</span>
             </button>
           )

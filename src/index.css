@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&display=swap');
 
 /* Lenis Smooth Scrolling Styles */
 html.lenis {
@@ -17,20 +17,21 @@ html.lenis {
 }
 
 body {
-  font-family: 'JetBrains Mono', monospace !important;
+  font-family: 'Arvo', serif !important;
   overflow-x: hidden;
-  background-color: #000000 !important;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%) !important;
   min-height: 100vh;
+  color: #e5e5e5;
 }
 
 /* Enhanced scroll experience */
 html, body {
   scroll-behavior: auto !important;
-  background-color: #000000 !important;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%) !important;
 }
 
 #root {
-  background-color: #000000 !important;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%) !important;
   min-height: 100vh;
 }
 
@@ -243,11 +244,11 @@ html, body {
 
 @keyframes neuralPulse {
   0%, 100% { 
-    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+    box-shadow: 0 0 5px rgba(255, 20, 35, 0.5);
     transform: scale(1);
   }
   50% { 
-    box-shadow: 0 0 25px rgba(239, 68, 68, 0.8), 0 0 50px rgba(239, 68, 68, 0.6);
+    box-shadow: 0 0 25px rgba(255, 20, 35, 0.8), 0 0 50px rgba(255, 20, 35, 0.6);
     transform: scale(1.05);
   }
 }
@@ -292,16 +293,16 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #000;
+  background: #1a1a1a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ef1a0f;
+  background: #ff1423;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ff2a1f;
+  background: #ff2a35;
 }
 
 /* Hide scrollbar for specific elements */
@@ -316,16 +317,16 @@ html, body {
 
 /* NEXUS Glow Effect */
 .nexus-glow {
-  box-shadow: 0 0 20px rgba(239, 26, 15, 0.3);
+  box-shadow: 0 0 20px rgba(255, 20, 35, 0.3);
 }
 
 .nexus-glow:hover {
-  box-shadow: 0 0 30px rgba(239, 26, 15, 0.5);
+  box-shadow: 0 0 30px rgba(255, 20, 35, 0.5);
 }
 
 /* Text Selection */
 ::selection {
-  background-color: rgba(239, 26, 15, 0.3);
+  background-color: rgba(255, 20, 35, 0.3);
   color: white;
 }
 
@@ -337,10 +338,10 @@ html, body {
 /* Cyberpunk Border Animation */
 @keyframes border-glow {
   0%, 100% {
-    border-color: rgba(239, 26, 15, 0.3);
+    border-color: rgba(255, 20, 35, 0.3);
   }
   50% {
-    border-color: rgba(239, 26, 15, 0.6);
+    border-color: rgba(255, 20, 35, 0.6);
   }
 }
 
@@ -445,7 +446,32 @@ html, body {
 .movie-card:hover,
 .content-item:hover {
   transform: translateZ(0) scale(1.03);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.25);
+  box-shadow: 0 8px 25px rgba(255, 20, 35, 0.25);
+}
+
+/* Line clamp utility for text truncation */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom scrollbar styling for recommendations */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* Disable hover effects during scrolling for better performance */

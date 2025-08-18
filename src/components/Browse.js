@@ -144,15 +144,15 @@ const Browse = () => {
   }
 
   return (
-    <div className="relative min-h-screen text-white overflow-hidden">
+    <div className="relative min-h-screen text-nexus-text overflow-hidden bg-nexus-gradient">
       {/* Simplified Quantum Grid Effect */}
       <div className="fixed inset-0 z-10 opacity-20">
         <div 
-          className="absolute inset-0 bg-gradient-to-br from-red-900/10 via-black to-black"
+          className="absolute inset-0 bg-gradient-to-br from-nexus-red/10 via-nexus-black to-nexus-black"
           style={{
             backgroundImage: `
-              linear-gradient(rgba(139, 69, 19, 0.05) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(139, 69, 19, 0.05) 1px, transparent 1px)
+              linear-gradient(rgba(255, 20, 35, 0.05) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255, 20, 35, 0.05) 1px, transparent 1px)
             `,
             backgroundSize: '80px 80px',
             animation: 'gridMove 30s linear infinite'
@@ -167,7 +167,7 @@ const Browse = () => {
             key={`orb-${i}`}
             className="absolute w-24 h-24 rounded-full opacity-10"
             style={{
-              background: `radial-gradient(circle, rgba(139, 69, 19, 0.2) 0%, rgba(139, 69, 19, 0.05) 50%, transparent 70%)`,
+              background: `radial-gradient(circle, rgba(255, 20, 35, 0.2) 0%, rgba(255, 20, 35, 0.05) 50%, transparent 70%)`,
               left: `${25 + i * 25}%`,
               top: `${20 + i * 20}%`,
               animation: `float ${12 + Math.random() * 6}s ease-in-out infinite`,
@@ -179,16 +179,16 @@ const Browse = () => {
       </div>
 
       {/* Dark Gradient Overlay for readability */}
-      <div className="fixed inset-0 z-30 bg-gradient-to-t from-black via-black/85 to-black/95" />
+      <div className="fixed inset-0 z-30 bg-gradient-to-t from-nexus-black via-nexus-black/85 to-nexus-black/95" />
 
       {/* Main Content */}
       <div className={`relative z-40 pt-32 px-8 transition-all duration-1000 ${showAnimation ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
         {/* Hero Section with Search Bar */}
         <div className="text-center mb-16">
-          <h1 className="font-['JetBrains_Mono',monospace] text-3xl md:text-4xl font-bold mb-6 text-white">
-            <span className="text-red-400">{'>'}</span> NEURAL ENTERTAINMENT XPERIENCE UNIFIED SYSTEM
+          <h1 className="font-['Arvo',serif] text-3xl md:text-4xl font-bold mb-6 text-nexus-text-light">
+            <span className="text-nexus-red">{'>'}</span> NEURAL ENTERTAINMENT XPERIENCE UNIFIED SYSTEM
           </h1>
-          <p className="font-['JetBrains_Mono',monospace] text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+          <p className="font-['Arvo',serif] text-lg text-nexus-text-dark mb-8 max-w-2xl mx-auto">
             Connected to the entertainment matrix. Your personalized reality awaits.
           </p>
           
@@ -202,20 +202,20 @@ const Browse = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setIsSearchFocused(false)}
-                className={`w-full bg-black/70 backdrop-blur-sm border-2 rounded-lg px-6 py-4 text-white font-['JetBrains_Mono',monospace] placeholder-gray-400 focus:outline-none transition-all duration-300 ${
-                  isSearchFocused ? 'border-red-500/60 bg-black/80' : 'border-red-800/30'
+                className={`w-full bg-nexus-black/70 backdrop-blur-sm border-2 rounded-lg px-6 py-4 text-nexus-text-light font-['Arvo',serif] placeholder-nexus-text-dark focus:outline-none transition-all duration-300 ${
+                  isSearchFocused ? 'border-nexus-red/60 bg-nexus-black/80' : 'border-nexus-red/30'
                 }`}
                 style={{
-                  boxShadow: isSearchFocused ? "0 0 30px rgba(239, 26, 15, 0.2)" : "0 0 20px rgba(239, 26, 15, 0.1)"
+                  boxShadow: isSearchFocused ? "0 0 30px rgba(255, 20, 35, 0.2)" : "0 0 20px rgba(255, 20, 35, 0.1)"
                 }}
               />
               <button 
                 type="submit"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-red-600 hover:bg-red-500 text-white p-2 rounded-lg transition-colors duration-200"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-nexus-red hover:bg-nexus-red-light text-nexus-text-light p-2 rounded-lg transition-colors duration-200"
                 disabled={isSearching}
               >
                 {isSearching ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-5 h-5 border-2 border-nexus-text-light border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -226,7 +226,7 @@ const Browse = () => {
                 <button
                   type="button"
                   onClick={clearSearch}
-                  className="absolute right-14 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  className="absolute right-14 top-1/2 transform -translate-y-1/2 text-nexus-text-dark hover:text-nexus-text-light transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -234,13 +234,13 @@ const Browse = () => {
                 </button>
               )}
             </form>
-            <div className="mt-2 font-['JetBrains_Mono',monospace] text-xs text-gray-500 flex items-center justify-center space-x-2">
+            <div className="mt-2 font-['Arvo',serif] text-xs text-nexus-text-dark flex items-center justify-center space-x-2">
               <span className="w-1 h-1 bg-green-400 rounded-full animate-pulse" />
               <span>AI-POWERED SEARCH ENGINE ACTIVE</span>
               {searchQuery && (
                 <>
                   <span>|</span>
-                  <span className="text-red-400">QUERY: "{searchQuery}"</span>
+                  <span className="text-nexus-red">QUERY: "{searchQuery}"</span>
                 </>
               )}
             </div>
@@ -336,16 +336,16 @@ const Browse = () => {
 
         {/* Footer with system status */}
         <div className="relative z-40 mt-20 text-center pb-16 px-8">
-          <div className="font-['JetBrains_Mono',monospace] text-sm text-gray-500 space-y-2">
+          <div className="font-['Arvo',serif] text-sm text-nexus-text-dark space-y-2">
             <div className="flex justify-center items-center space-x-4">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
               <span>SYSTEM STATUS: ONLINE</span>
               <span className="text-green-400">●</span>
               <span>NEURAL LINK: STABLE</span>
-              <span className="text-red-400">●</span>
+              <span className="text-nexus-red">●</span>
               <span>MATRIX: SYNCHRONIZED</span>
             </div>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-nexus-grey">
               NEXUS v2.1.0 | Quantum Entertainment Protocol Active | VidSrc Integration Enabled
             </div>
           </div>
