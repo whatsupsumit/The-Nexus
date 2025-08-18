@@ -4,7 +4,6 @@
 const VIDLINK_BASE = 'https://vidlink.pro';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
-const TMDB_ACCESS_TOKEN = process.env.REACT_APP_TMDB_ACCESS_TOKEN;
 
 // Validate that API keys are present
 if (!TMDB_API_KEY) {

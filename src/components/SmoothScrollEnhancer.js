@@ -6,6 +6,35 @@ const SmoothScrollEnhancer = () => {
   useEffect(() => {
     let animationFrameId = null;
     
+    // Inject CSS styles into the document head
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = `
+      .is-scrolling {
+        pointer-events: none;
+      }
+      
+      /* Optimized hover transitions for better performance */
+      .movie-card,
+      .content-item {
+        transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+        will-change: transform;
+      }
+      
+      .movie-card:hover,
+      .content-item:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+      }
+      
+      /* Prevent hover effects during scrolling for better performance */
+      .is-scrolling .movie-card:hover,
+      .is-scrolling .content-item:hover {
+        transform: none !important;
+        box-shadow: none !important;
+      }
+    `;
+    document.head.appendChild(styleElement);
+    
     const updateScrollProgress = () => {
       if (scrollProgressRef.current) {
         const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
@@ -44,6 +73,10 @@ const SmoothScrollEnhancer = () => {
       if (scrollTimeout) clearTimeout(scrollTimeout);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('scroll', handleScrollState);
+      // Clean up the style element
+      if (styleElement.parentNode) {
+        styleElement.parentNode.removeChild(styleElement);
+      }
     };
   }, []);
 
@@ -57,33 +90,6 @@ const SmoothScrollEnhancer = () => {
           style={{ width: '0%' }}
         />
       </div>
-
-      {/* Custom CSS for optimized scroll effects */}
-      <style jsx>{`
-        .is-scrolling {
-          pointer-events: none;
-        }
-        
-        /* Optimized hover transitions for better performance */
-        .movie-card,
-        .content-item {
-          transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
-          will-change: transform;
-        }
-        
-        .movie-card:hover,
-        .content-item:hover {
-          transform: scale(1.05);
-          box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
-        }
-        
-        /* Prevent hover effects during scrolling for better performance */
-        .is-scrolling .movie-card:hover,
-        .is-scrolling .content-item:hover {
-          transform: none;
-          box-shadow: none;
-        }
-      `}</style>
     </>
   );
 };
