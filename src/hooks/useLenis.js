@@ -3,39 +3,44 @@ import Lenis from '@studio-freight/lenis';
 
 const useLenis = () => {
   useEffect(() => {
-    // Initialize Lenis with enhanced settings for smooth scrolling
+    // Initialize Lenis with optimized settings for better performance
     const lenis = new Lenis({
-      duration: 1.8, // Smoother, more fluid
-      easing: (t) => 1 - Math.pow(1 - t, 3), // Cubic ease-out for smoother feel
+      duration: 0.8, // Faster, more responsive scrolling
+      easing: (t) => 1 - Math.pow(1 - t, 2), // Quadratic ease-out for snappier feel
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.8, // Slower, more controlled scrolling
-      touchMultiplier: 1.5,
+      wheelMultiplier: 1.2, // Faster, more responsive scrolling
+      touchMultiplier: 1.8,
       infinite: false,
-      syncTouch: true, // Better touch synchronization
-      syncTouchLerp: 0.075, // Smoother touch interpolation
-      normalizeWheel: true, // Better cross-platform scrolling
+      syncTouch: true,
+      syncTouchLerp: 0.1, // Faster touch response
+      normalizeWheel: true,
     });
 
     // Expose lenis instance globally for other components
     window.lenis = lenis;
 
-    // Add scroll event listener for custom animations
+    // Optimized scroll event listener - throttled for better performance
+    let scrollThrottle = null;
     lenis.on('scroll', ({ scroll, limit, velocity, direction, progress }) => {
-      // Custom scroll effects can be added here
-      // console.log({ scroll, limit, velocity, direction, progress });
+      // Throttle scroll effects to improve performance
+      if (scrollThrottle) return;
       
-      // Add scroll-triggered fade-in animations
-      const fadeElements = document.querySelectorAll('.scroll-fade-in');
-      fadeElements.forEach((el) => {
-        const rect = el.getBoundingClientRect();
-        const isVisible = rect.top < window.innerHeight * 0.8 && rect.bottom > 0;
+      scrollThrottle = setTimeout(() => {
+        // Add scroll-triggered fade-in animations (optimized)
+        const fadeElements = document.querySelectorAll('.scroll-fade-in:not(.in-view)');
+        fadeElements.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          const isVisible = rect.top < window.innerHeight * 0.9 && rect.bottom > 0;
+          
+          if (isVisible) {
+            el.classList.add('in-view');
+          }
+        });
         
-        if (isVisible) {
-          el.classList.add('in-view');
-        }
-      });
+        scrollThrottle = null;
+      }, 16); // ~60fps throttling for smooth performance
     });
 
     // RAF loop for Lenis
@@ -56,7 +61,7 @@ const useLenis = () => {
         if (element) {
           lenis.scrollTo(element, {
             offset: -100, // Account for fixed headers
-            duration: 2,
+            duration: 1.2, // Faster anchor scrolling
           });
         }
       }
@@ -66,6 +71,7 @@ const useLenis = () => {
 
     // Cleanup function
     return () => {
+      if (scrollThrottle) clearTimeout(scrollThrottle);
       lenis.destroy();
       window.lenis = null;
       document.removeEventListener('click', handleAnchorClick);

@@ -14,15 +14,15 @@ const MovieDetails = () => {
   const [loading, setLoading] = useState(!movie);
   const [showPlayer, setShowPlayer] = useState(false);
   const [isInVault, setIsInVault] = useState(false);
-  const [backgroundLoaded, setBackgroundLoaded] = useState(false);
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState('');
+  const [backgroundVisible, setBackgroundVisible] = useState(false);
 
   useEffect(() => {
     const loadMovieData = async () => {
       try {
         setLoading(true);
+        setBackgroundVisible(false); // Reset background on navigation
         
-        // Use more efficient loading strategy
+        // Use efficient loading strategy
         const promises = [];
         
         // Load movie details first if not available
@@ -45,34 +45,20 @@ const MovieDetails = () => {
           setVideos(videosData || []);
           setRecommendations(recommendationsData || []);
 
-          // Preload background image for smooth transition
-          if (movieData.backdrop_path) {
-            const imageUrl = `https://image.tmdb.org/t/p/original${movieData.backdrop_path}`;
-            setBackgroundImageUrl(imageUrl);
-            
-            const img = new Image();
-            img.onload = () => {
-              setTimeout(() => setBackgroundLoaded(true), 100); // Small delay for smooth transition
-            };
-            img.onerror = () => {
-              setBackgroundLoaded(true); // Still show the component even if image fails
-            };
-            img.src = imageUrl;
-          } else {
-            setBackgroundLoaded(true);
-          }
-
           // Check if movie is in vault
           const vault = JSON.parse(localStorage.getItem('nexus_vault') || '[]');
           setIsInVault(vault.some(item => item.id === parseInt(id)));
+
+          // Start background transition after a short delay
+          setTimeout(() => {
+            setBackgroundVisible(true);
+          }, 300);
         }
       } catch (error) {
         console.error('Error loading movie details:', error);
-        // Set empty data to prevent loading forever
         setCredits({ cast: [], crew: [] });
         setVideos([]);
         setRecommendations([]);
-        setBackgroundLoaded(true);
       } finally {
         setLoading(false);
       }
@@ -180,23 +166,20 @@ const MovieDetails = () => {
     <div className="min-h-screen bg-black text-white">
       {/* Hero Section */}
       <div className="relative h-screen overflow-hidden">
-        {/* Background Image with smooth transition */}
-        <div className="absolute inset-0">
-          {/* Default background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black" />
-          
-          {/* Movie background with fade-in transition */}
-          {backgroundImageUrl && (
-            <div 
-              className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ${
-                backgroundLoaded ? 'opacity-100' : 'opacity-0'
-              }`}
-              style={{
-                backgroundImage: `url(${backgroundImageUrl})`
-              }}
-            />
-          )}
-        </div>
+        {/* Always present dark background */}
+        <div className="absolute inset-0 bg-black" />
+        
+        {/* Movie background with smooth fade-in */}
+        {movie?.backdrop_path && (
+          <div 
+            className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-2000 ease-out ${
+              backgroundVisible ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{
+              backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`
+            }}
+          />
+        )}
         
         {/* Enhanced Overlay with gradient */}
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-black/60" />

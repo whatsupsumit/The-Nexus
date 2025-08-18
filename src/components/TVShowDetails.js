@@ -16,11 +16,13 @@ const TVShowDetails = () => {
   const [loading, setLoading] = useState(!tvShow);
   const [showPlayer, setShowPlayer] = useState(false);
   const [isInVault, setIsInVault] = useState(false);
+  const [backgroundVisible, setBackgroundVisible] = useState(false);
 
   useEffect(() => {
     const loadTVData = async () => {
       try {
         setLoading(true);
+        setBackgroundVisible(false); // Reset background on navigation
         
         const [tvData, creditsData] = await Promise.all([
           tvShow ? Promise.resolve(tvShow) : getTVDetails(id),
@@ -30,6 +32,11 @@ const TVShowDetails = () => {
         if (tvData) {
           setTVShow(tvData);
           setSeasons(tvData.seasons || []);
+
+          // Start background transition after a short delay
+          setTimeout(() => {
+            setBackgroundVisible(true);
+          }, 300);
         }
         setCredits(creditsData);
 
@@ -152,18 +159,23 @@ const TVShowDetails = () => {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Hero Section */}
-      <div className="relative h-screen">
-        {/* Background Image */}
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: tvShow.backdrop_path 
-              ? `url(https://image.tmdb.org/t/p/original${tvShow.backdrop_path})`
-              : 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)'
-          }}
-        />
+      <div className="relative h-screen overflow-hidden">
+        {/* Always present dark background */}
+        <div className="absolute inset-0 bg-black" />
         
-        {/* Overlay */}
+        {/* TV Show background with smooth fade-in */}
+        {tvShow?.backdrop_path && (
+          <div 
+            className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-2000 ease-out ${
+              backgroundVisible ? 'opacity-100' : 'opacity-0'
+            }`}
+            style={{
+              backgroundImage: `url(https://image.tmdb.org/t/p/original${tvShow.backdrop_path})`
+            }}
+          />
+        )}
+        
+        {/* Enhanced Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
         
         {/* Content */}

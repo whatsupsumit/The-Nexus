@@ -384,19 +384,75 @@ src/
 
 ### **Installation**
 ```bash
+# Clone the repository
+git clone https://github.com/whatsupsumit/The-Nexus.git
+cd The-Nexus
+
+# Install dependencies
 npm install
 ```
 
-### **Environment Variables**
-```
-REACT_APP_FIREBASE_API_KEY=your_firebase_api_key
-REACT_APP_TMDB_API_KEY=your_tmdb_api_key
-```
+### **Environment Variables Setup**
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Fill in your API keys in the `.env` file:
+   ```env
+   # Firebase Configuration (get from Firebase Console)
+   REACT_APP_FIREBASE_API_KEY=your_firebase_api_key_here
+   REACT_APP_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+   REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+   REACT_APP_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+   REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+   REACT_APP_FIREBASE_APP_ID=your_app_id
+   REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
+
+   # TMDB API Configuration (get from TMDB website)
+   REACT_APP_TMDB_API_KEY=your_tmdb_api_key_here
+   REACT_APP_TMDB_ACCESS_TOKEN=your_tmdb_access_token_here
+   ```
+
+3. **Important Security Notes**:
+   - ⚠️ **Never commit the `.env` file to version control**
+   - ✅ The `.env` file is already in `.gitignore`
+   - ✅ Use `.env.example` as a template for other developers
+   - 🔐 Keep your API keys secure and private
+
+### **Getting API Keys**
+
+#### TMDB API Key
+1. Visit [The Movie Database (TMDB)](https://www.themoviedb.org/)
+2. Create an account and verify your email
+3. Go to Settings > API
+4. Request an API key (choose "Developer" option)
+5. Copy both the API Key and Access Token
+
+#### Firebase Configuration
+1. Visit [Firebase Console](https://console.firebase.google.com/)
+2. Create a new project or use existing one
+3. Go to Project Settings > General
+4. Scroll down to "Your apps" and add a web app
+5. Copy the configuration values
 
 ### **Running the Application**
 ```bash
+# Start development server
 npm start
+
+# Build for production
+npm run build
+
+# Run tests
+npm test
 ```
+
+### **Environment File Security**
+- The `.env` file contains sensitive information and is excluded from git
+- Always use environment variables for API keys and secrets
+- Use the `.env.example` file to share the required variable structure
+- Never hardcode API keys in your source code
 
 ## 🌟 Future Enhancements
 

@@ -36,13 +36,10 @@ const addToWatchHistory = (movie, isTV = false) => {
 const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, onContentSelect }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [showBackButton, setShowBackButton] = useState(true);
-  const [showControls, setShowControls] = useState(true);
   const [currentEmbedUrl, setCurrentEmbedUrl] = useState('');
   const [watchProgress, setWatchProgress] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [recommendations, setRecommendations] = useState([]);
-  const [trendingContent, setTrendingContent] = useState([]);
   const [loadingRecommendations, setLoadingRecommendations] = useState(true);
   const iframeRef = useRef(null);
 
@@ -80,7 +77,6 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
             .filter(item => item.id !== movie.id)
             .slice(0, 15);
           
-          setTrendingContent(allTrending);
           recommendedContent = [...recommendedContent, ...allTrending].slice(0, 15);
         }
         
@@ -162,14 +158,13 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
     return () => cleanup && cleanup();
   }, [movie, isTV]);
 
-  // Handle mouse movement for controls
+  // Handle mouse movement for controls (simplified)
   useEffect(() => {
     let hideControlsTimer;
     
     const handleMouseMove = () => {
-      setShowControls(true);
+      // Controls handling removed for simplicity
       clearTimeout(hideControlsTimer);
-      hideControlsTimer = setTimeout(() => setShowControls(false), 3000);
     };
     
     document.addEventListener('mousemove', handleMouseMove);

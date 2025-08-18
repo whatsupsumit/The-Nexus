@@ -3,7 +3,13 @@
 // Base URLs for different APIs
 const VIDLINK_BASE = 'https://vidlink.pro';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
-const TMDB_API_KEY = '8265bd1679663a7ea12ac168da84d2e8'; // Free TMDB API key for demo
+const TMDB_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
+const TMDB_ACCESS_TOKEN = process.env.REACT_APP_TMDB_ACCESS_TOKEN;
+
+// Validate that API keys are present
+if (!TMDB_API_KEY) {
+  console.error('TMDB API key is missing. Please add REACT_APP_TMDB_API_KEY to your .env file');
+}
 
 // Simple cache for TMDB API responses
 const tmdbCache = new Map();

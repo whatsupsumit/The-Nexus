@@ -61,7 +61,7 @@ const Movies = () => {
   };
 
   const handleMovieClick = (movie) => {
-    navigate(`/movie/${movie.id}`);
+    navigate(`/movie/${movie.id}`, { state: { movie: movie } });
   };
 
   const closePlayer = () => {

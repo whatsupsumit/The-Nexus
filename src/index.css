@@ -395,3 +395,100 @@ html, body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Background Loading Optimizations */
+.bg-preload {
+  will-change: opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.bg-smooth-transition {
+  transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prevent layout shift during background loading */
+.hero-background-container {
+  contain: layout style paint;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Optimize background image rendering */
+.bg-image-optimized {
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Force GPU acceleration for smooth transitions */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Performance Optimizations for Hover Effects */
+.movie-card,
+.content-item {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, box-shadow;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.movie-card:hover,
+.content-item:hover {
+  transform: translateZ(0) scale(1.03);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.25);
+}
+
+/* Disable hover effects during scrolling for better performance */
+.is-scrolling .movie-card,
+.is-scrolling .content-item {
+  pointer-events: none;
+}
+
+.is-scrolling .movie-card:hover,
+.is-scrolling .content-item:hover {
+  transform: translateZ(0) scale(1) !important;
+  box-shadow: none !important;
+}
+
+/* Optimize overlay animations */
+.movie-overlay {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: opacity;
+  transition: opacity 0.2s ease-out;
+}
+
+/* Smooth scroll optimizations */
+.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .movie-card,
+  .content-item {
+    transition: none !important;
+    transform: none !important;
+  }
+  
+  .movie-card:hover,
+  .content-item:hover {
+    transform: none !important;
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

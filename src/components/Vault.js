@@ -6,7 +6,7 @@ const Vault = () => {
   const navigate = useNavigate();
   const [vaultItems, setVaultItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
-  const [filter, setFilter] = useState('all'); // all, movies, tv, anime
+  const [filter, setFilter] = useState('all'); // all, movies, tv
   const [sortBy, setSortBy] = useState('dateAdded'); // dateAdded, title, rating
 
   const loadVaultItems = () => {
@@ -27,7 +27,6 @@ const Vault = () => {
         filtered = filtered.filter(item => {
           if (filter === 'movies') return item.type === 'movie';
           if (filter === 'tv') return item.type === 'tv';
-          if (filter === 'anime') return item.media_type === 'anime';
           return true;
         });
       }
@@ -68,9 +67,7 @@ const Vault = () => {
   };
 
   const handleItemClick = (item) => {
-    if (item.media_type === 'anime') {
-      navigate(`/anime/${item.id}`, { state: { anime: item } });
-    } else if (item.type === 'movie') {
+    if (item.type === 'movie') {
       navigate(`/movie/${item.id}`, { state: { movie: item } });
     } else if (item.type === 'tv') {
       navigate(`/tv/${item.id}`, { state: { tvShow: item } });
@@ -110,7 +107,7 @@ const Vault = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-gray-900/50 border border-red-800/30 rounded-lg p-4 text-center">
             <div className="text-2xl font-bold text-red-400">{vaultItems.length}</div>
             <div className="text-sm text-gray-400 font-['JetBrains_Mono',monospace]">TOTAL ITEMS</div>
@@ -127,12 +124,6 @@ const Vault = () => {
             </div>
             <div className="text-sm text-gray-400 font-['JetBrains_Mono',monospace]">TV SHOWS</div>
           </div>
-          <div className="bg-gray-900/50 border border-red-800/30 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-purple-400">
-              {vaultItems.filter(item => item.media_type === 'anime').length}
-            </div>
-            <div className="text-sm text-gray-400 font-['JetBrains_Mono',monospace]">ANIME</div>
-          </div>
         </div>
 
         {/* Filters and Sort */}
@@ -143,8 +134,7 @@ const Vault = () => {
               {[
                 { key: 'all', label: 'ALL' },
                 { key: 'movies', label: 'MOVIES' },
-                { key: 'tv', label: 'SERIES' },
-                { key: 'anime', label: 'ANIME' }
+                { key: 'tv', label: 'SERIES' }
               ].map(filterOption => (
                 <button
                   key={filterOption.key}
@@ -193,7 +183,6 @@ const Vault = () => {
                       onClick={handleItemClick}
                       isTV={item.type === 'tv'}
                       customBadge={
-                        item.media_type === 'anime' ? 'ANIME' : 
                         item.type === 'tv' ? 'TV' : 'MOVIE'
                       }
                     />
@@ -243,7 +232,7 @@ const Vault = () => {
               <div className="text-8xl mb-6">🔒</div>
               <h3 className="font-['JetBrains_Mono',monospace] text-2xl text-red-400 mb-4">VAULT EMPTY</h3>
               <p className="font-['JetBrains_Mono',monospace] text-gray-400 text-lg mb-8 max-w-md">
-                Start building your personal collection by adding movies, TV shows, and anime to your vault
+                Start building your personal collection by adding movies and TV shows to your vault
               </p>
               
               <div className="flex flex-wrap gap-4 justify-center">
@@ -258,12 +247,6 @@ const Vault = () => {
                   className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold transition-colors duration-200"
                 >
                   BROWSE TV SHOWS
-                </button>
-                <button
-                  onClick={() => navigate('/anime')}
-                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold transition-colors duration-200"
-                >
-                  BROWSE ANIME
                 </button>
               </div>
               

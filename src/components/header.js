@@ -7,11 +7,35 @@ import { removeUser } from "../utils/userSlice";
 
 const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const user = useSelector(store => store.user.name);
+
+  // Load profile image from localStorage
+  useEffect(() => {
+    const savedImage = localStorage.getItem('nexus_profile_image');
+    if (savedImage) {
+      setProfileImage(savedImage);
+    }
+  }, []);
+
+  // Listen for profile image changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedImage = localStorage.getItem('nexus_profile_image');
+      setProfileImage(savedImage);
+    };
+
+    // Check for image updates when location changes
+    const savedImage = localStorage.getItem('nexus_profile_image');
+    setProfileImage(savedImage);
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [location.pathname]);
 
   const handleSignOut = () => {
     signOut(auth)
@@ -163,11 +187,19 @@ const Header = () => {
                 }}
               ></div>
               
-              {/* User Icon */}
-              <div className="relative z-20 flex items-center justify-center w-full h-full">
-                <svg className="w-6 h-6 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
+              {/* User Icon or Profile Image */}
+              <div className="relative z-20 flex items-center justify-center w-full h-full overflow-hidden">
+                {profileImage ? (
+                  <img 
+                    src={profileImage} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <svg className="w-6 h-6 text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                )}
               </div>
               
               {/* Rotating Ring */}

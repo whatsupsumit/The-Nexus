@@ -63,7 +63,7 @@ const TVShows = () => {
   };
 
   const handleShowClick = (show) => {
-    navigate(`/tv/${show.id}`);
+    navigate(`/tv/${show.id}`, { state: { tvShow: show } });
   };
 
   const closePlayer = () => {
