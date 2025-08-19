@@ -299,6 +299,10 @@ export const getWatchProgress = () => {
 
 export const saveWatchProgress = (mediaData) => {
   try {
+    if (!mediaData || !mediaData.id || !mediaData.title) {
+      return; // Don't save if essential data is missing
+    }
+    
     const currentProgress = getWatchProgress();
     currentProgress[mediaData.id] = {
       ...currentProgress[mediaData.id],
@@ -306,7 +310,6 @@ export const saveWatchProgress = (mediaData) => {
       last_updated: Date.now()
     };
     localStorage.setItem('nexusWatchProgress', JSON.stringify(currentProgress));
-    console.log('NEXUS: Watch progress saved for', mediaData.title);
   } catch (error) {
     console.error('Error saving watch progress:', error);
   }

@@ -27,6 +27,7 @@ const Login = () => {
     const password = passwordRef.current.value;
     const name = !isSignInForm && nameRef.current ? nameRef.current.value : "";
 
+
     console.log("Email:", email);
     console.log("Password:", password);
 
@@ -59,53 +60,33 @@ const Login = () => {
           displayName: name,
         }));
         setErrorMessage(null);
-        // Redirect to sign in page after successful signup
-        setIsSignInForm(true);
-        // Clear form fields
-        if (nameRef.current) nameRef.current.value = "";
-        emailRef.current.value = "";
-        passwordRef.current.value = "";
-        // Show success message
-        setErrorMessage("Account created successfully! Please sign in.");
-      } catch (error) {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error("Sign up error:", errorCode, errorMessage);
-        if (errorCode === 'auth/email-already-in-use') {
-          setErrorMessage("Email already exists. Please sign in instead.");
-        } else if (errorCode === 'auth/weak-password') {
-          setErrorMessage("Password is too weak. Please choose a stronger password.");
-        } else {
-          setErrorMessage(`Sign Up Failed: ${errorMessage}`);
-        }
-      }
-    } else {
-      // Sign in logic
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        // Update Redux user state
-        dispatch(addUser({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-        }));
-        setErrorMessage(null);
         navigate("/browse");
       } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.error("Sign In error:", errorCode, errorMessage);
-        if (errorCode === 'auth/user-not-found') {
-          setErrorMessage("No account found with this email. Please sign up first.");
-        } else if (errorCode === 'auth/wrong-password') {
-          setErrorMessage("Incorrect password. Please try again.");
-        } else if (errorCode === 'auth/invalid-email') {
-          setErrorMessage("Invalid email address format.");
-        } else {
-          setErrorMessage(`Sign In Failed: ${errorMessage}`);
-        }
+        console.error("Sign up error:", errorCode, errorMessage);
+        setErrorMessage(`Sign Up Failed: ${errorMessage} (${errorCode})`);
       }
+    } else {
+      // Sign in logic
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          // Update Redux user state
+          dispatch(addUser({
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+          }));
+          setErrorMessage(null);
+          navigate("/browse");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.error("Sign In error:", errorCode, errorMessage);
+          setErrorMessage(`Sign In Failed: ${errorMessage} (${errorCode})`);
+        });
     }
   };
 

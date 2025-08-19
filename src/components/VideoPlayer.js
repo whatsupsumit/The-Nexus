@@ -128,7 +128,6 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
       : getMovieEmbedUrl(movie.id, embedOptions);
     
     setCurrentEmbedUrl(url);
-    console.log('NEXUS: Loading optimized embed URL:', url);
   }, [movie.id, isTV, season, episode, watchProgress]);
 
   // Handle player events
@@ -229,47 +228,43 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
   };
 
   const handleBackToHome = () => {
-    console.log('NEXUS: Back to home clicked');
     if (onClose) {
       onClose();
     }
   };
-  // Debug the embed URL
-  console.log('NEXUS: Loading movie/show:', movie);
-  console.log('NEXUS: Embed URL:', currentEmbedUrl);
   
   return (
-    <div className="fixed inset-0 z-50 bg-black flex">
-      {/* Main Video Player Area (Left Side) */}
-      <div className="flex-1 flex flex-col">
+    <div className="fixed inset-0 z-50 bg-black flex flex-col lg:flex-row">
+      {/* Main Video Player Area */}
+      <div className="flex-1 flex flex-col order-1 lg:order-1">
         {/* Header with Controls */}
-        <div className="flex items-center justify-between p-4 bg-black/90 border-b border-red-900/20">
-          <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-between p-2 sm:p-4 bg-black/90 border-b border-red-900/20">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <button
               onClick={handleBackToHome}
-              className="flex items-center justify-center w-10 h-10 bg-red-600/20 backdrop-blur-sm border border-red-500/30 hover:border-red-400/60 rounded-full text-white hover:text-red-400 transition-all duration-300"
+              className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-red-600/20 backdrop-blur-sm border border-red-500/30 hover:border-red-400/60 rounded-full text-white hover:text-red-400 transition-all duration-300"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <div className="font-['JetBrains_Mono',monospace] text-2xl font-bold text-red-400 tracking-wider">
+            <div className="font-['JetBrains_Mono',monospace] text-lg sm:text-2xl font-bold text-red-400 tracking-wider">
               NEXUS
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Add to Vault Button */}
             <button
               onClick={toggleVault}
-              className={`flex items-center justify-center w-10 h-10 backdrop-blur-sm border rounded-full transition-all duration-300 ${
+              className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 backdrop-blur-sm border rounded-full transition-all duration-300 ${
                 isInVault 
                   ? 'bg-green-600/20 border-green-500/30 text-green-400 hover:border-green-400/60' 
                   : 'bg-red-600/20 border-red-500/30 text-white hover:border-red-400/60 hover:text-red-400'
               }`}
               title={isInVault ? "Remove from Vault" : "Add to Vault"}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
                   d={isInVault ? "M5 13l4 4L19 7" : "M12 6v6m0 0v6m0-6h6m-6 0H6"} 
                 />
@@ -289,13 +284,13 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
         </div>
 
         {/* Video Player Container */}
-        <div className="flex-1 bg-black relative">
+        <div className="flex-1 bg-black relative min-h-[250px] sm:min-h-[400px] lg:min-h-[500px]">
           {/* Loading Indicator */}
           {isLoading && !hasError && (
             <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
               <div className="text-center">
-                <div className="inline-block w-12 h-12 border-4 border-red-400 border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p className="font-['JetBrains_Mono',monospace] text-white text-lg mb-2">
+                <div className="inline-block w-8 h-8 sm:w-12 sm:h-12 border-4 border-red-400 border-t-transparent rounded-full animate-spin mb-4"></div>
+                <p className="font-['JetBrains_Mono',monospace] text-white text-sm sm:text-lg mb-2">
                   Initializing NEXUS Stream...
                 </p>
               </div>
@@ -348,34 +343,34 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
         </div>
 
         {/* Video Info Section */}
-        <div className="p-6 bg-black/90 border-t border-red-900/20">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h1 className="font-['JetBrains_Mono',monospace] text-white text-2xl font-bold mb-2">
+        <div className="p-3 sm:p-6 bg-black/90 border-t border-red-900/20">
+          <div className="flex flex-col sm:flex-row items-start justify-between">
+            <div className="flex-1 mb-4 sm:mb-0">
+              <h1 className="font-['JetBrains_Mono',monospace] text-white text-xl sm:text-2xl font-bold mb-2">
                 {title}
               </h1>
               {isTV && (
-                <p className="font-['JetBrains_Mono',monospace] text-gray-400 text-lg mb-3">
+                <p className="font-['JetBrains_Mono',monospace] text-gray-400 text-base sm:text-lg mb-3">
                   Season {season} • Episode {episode}
                 </p>
               )}
-              <div className="flex items-center mt-3 space-x-6">
+              <div className="flex flex-wrap items-center mt-3 gap-3 sm:gap-6">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                  <span className="font-['JetBrains_Mono',monospace] text-red-400 text-sm">NEXUS STREAM</span>
+                  <span className="font-['JetBrains_Mono',monospace] text-red-400 text-xs sm:text-sm">NEXUS STREAM</span>
                 </div>
                 {movie.vote_average && (
                   <div className="flex items-center space-x-1">
                     <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
-                    <span className="font-['JetBrains_Mono',monospace] text-gray-300 text-sm">
+                    <span className="font-['JetBrains_Mono',monospace] text-gray-300 text-xs sm:text-sm">
                       {movie.vote_average?.toFixed(1)}
                     </span>
                   </div>
                 )}
                 {movie.release_date && (
-                  <span className="font-['JetBrains_Mono',monospace] text-gray-400 text-sm">
+                  <span className="font-['JetBrains_Mono',monospace] text-gray-400 text-xs sm:text-sm">
                     {new Date(movie.release_date).getFullYear()}
                   </span>
                 )}
@@ -383,31 +378,32 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
             </div>
             
             {/* Action Buttons */}
-            <div className="flex items-center space-x-3 ml-6">
+            <div className="flex items-center space-x-2 sm:space-x-3 sm:ml-6">
               <button
                 onClick={toggleVault}
-                className={`px-6 py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center transition-all duration-300 transform hover:scale-105 ${
+                className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm ${
                   isInVault 
                     ? 'border-2 border-green-500 text-green-400 bg-green-500/10'
                     : 'border-2 border-gray-500 text-gray-300 hover:border-red-500 hover:text-red-400'
                 }`}
               >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
                     d={isInVault ? "M5 13l4 4L19 7" : "M12 6v6m0 0v6m0-6h6m-6 0H6"} 
                   />
                 </svg>
-                {isInVault ? 'IN VAULT' : 'ADD TO VAULT'}
+                <span className="hidden sm:inline">{isInVault ? 'IN VAULT' : 'ADD TO VAULT'}</span>
+                <span className="sm:hidden">{isInVault ? 'SAVED' : 'SAVE'}</span>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Recommendations Sidebar (Right Side) */}
-      <div className="w-96 bg-black/95 border-l border-red-900/20 flex flex-col overflow-hidden">
-        <div className="p-4 border-b border-red-900/20">
-          <h2 className="font-['JetBrains_Mono',monospace] text-red-400 text-lg font-bold">
+      {/* Recommendations Sidebar */}
+      <div className="w-full lg:w-96 bg-black/95 border-t lg:border-t-0 lg:border-l border-red-900/20 flex flex-col overflow-hidden order-2 lg:order-2 max-h-96 lg:max-h-none">
+        <div className="p-2 sm:p-4 border-b border-red-900/20">
+          <h2 className="font-['JetBrains_Mono',monospace] text-red-400 text-base sm:text-lg font-bold">
             RECOMMENDED FOR YOU
           </h2>
           <p className="font-['JetBrains_Mono',monospace] text-gray-500 text-xs mt-1">
@@ -417,27 +413,27 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
         
         <div className="flex-1 overflow-y-auto scrollbar-hide">
           {loadingRecommendations ? (
-            <div className="p-4">
+            <div className="p-2 sm:p-4">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="flex space-x-3 mb-4">
-                  <div className="w-28 h-20 bg-gray-800 rounded animate-pulse"></div>
+                <div key={i} className="flex space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+                  <div className="w-20 h-14 sm:w-28 sm:h-20 bg-gray-800 rounded animate-pulse"></div>
                   <div className="flex-1">
-                    <div className="h-4 bg-gray-800 rounded mb-2 animate-pulse"></div>
-                    <div className="h-3 bg-gray-800 rounded w-2/3 animate-pulse"></div>
-                    <div className="h-3 bg-gray-800 rounded w-1/2 mt-1 animate-pulse"></div>
+                    <div className="h-3 sm:h-4 bg-gray-800 rounded mb-2 animate-pulse"></div>
+                    <div className="h-2 sm:h-3 bg-gray-800 rounded w-2/3 animate-pulse"></div>
+                    <div className="h-2 sm:h-3 bg-gray-800 rounded w-1/2 mt-1 animate-pulse"></div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="p-4 space-y-4">
+            <div className="p-2 sm:p-4 space-y-2 sm:space-y-4">
               {recommendations.slice(0, 15).map((content, index) => (
                 <div
                   key={`${content.id}-${index}`}
                   onClick={() => handleRecommendationClick(content)}
-                  className="flex space-x-3 cursor-pointer hover:bg-red-900/10 rounded-lg p-3 transition-colors duration-200 group border border-transparent hover:border-red-900/30"
+                  className="flex space-x-2 sm:space-x-3 cursor-pointer hover:bg-red-900/10 rounded-lg p-2 sm:p-3 transition-colors duration-200 group border border-transparent hover:border-red-900/30"
                 >
-                  <div className="w-28 h-20 rounded overflow-hidden flex-shrink-0">
+                  <div className="w-20 h-14 sm:w-28 sm:h-20 rounded overflow-hidden flex-shrink-0">
                     <img
                       src={
                         content.backdrop_path
@@ -451,11 +447,11 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-['JetBrains_Mono',monospace] text-white text-sm font-semibold truncate mb-1 group-hover:text-red-400 transition-colors">
+                    <h3 className="font-['JetBrains_Mono',monospace] text-white text-xs sm:text-sm font-semibold truncate mb-1 group-hover:text-red-400 transition-colors">
                       {content.title || content.name}
                     </h3>
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className={`font-['JetBrains_Mono',monospace] text-xs px-2 py-0.5 rounded ${
+                    <div className="flex items-center space-x-1 sm:space-x-2 mb-1 sm:mb-2">
+                      <span className={`font-['JetBrains_Mono',monospace] text-xs px-1 sm:px-2 py-0.5 rounded ${
                         content.media_type === 'tv' || content.first_air_date 
                           ? 'bg-purple-900/30 text-purple-400 border border-purple-800/30' 
                           : 'bg-blue-900/30 text-blue-400 border border-blue-800/30'

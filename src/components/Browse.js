@@ -70,6 +70,16 @@ const Browse = memo(() => {
         setPopularTV(popularTVData);
         setTopRatedMovies(topRatedMoviesData);
         setTopRatedTV(topRatedTVData);
+        
+        // Debug logging for mobile
+        console.log('NEXUS: Content loaded successfully', {
+          trendingMovies: trendingMoviesData.length,
+          trendingTV: trendingTVData.length,
+          popularMovies: popularMoviesData.length,
+          popularTV: popularTVData.length,
+          topRatedMovies: topRatedMoviesData.length,
+          topRatedTV: topRatedTVData.length
+        });
       } catch (error) {
         console.error('Error loading content:', error);
       } finally {

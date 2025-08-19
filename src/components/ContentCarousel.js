@@ -23,7 +23,7 @@ const ContentCarousel = memo(({ title, content = [], onItemClick, isTV = false, 
         </div>
         <div className="flex space-x-2 sm:space-x-4 overflow-hidden">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-32 sm:w-40 md:w-48 aspect-[2/3] bg-gray-800 rounded-lg"></div>
+            <div key={i} className="flex-shrink-0 w-36 xs:w-40 sm:w-44 md:w-48 lg:w-52 aspect-[2/3] bg-gray-800 rounded-lg animate-pulse"></div>
           ))}
         </div>
       </div>
@@ -90,7 +90,7 @@ const ContentCarousel = memo(({ title, content = [], onItemClick, isTV = false, 
             {content.map((item, index) => (
               <div 
                 key={item.id || index} 
-                className="flex-shrink-0 w-28 xs:w-32 sm:w-40 md:w-48"
+                className="flex-shrink-0 w-36 xs:w-40 sm:w-44 md:w-48 lg:w-52"
                 style={{ transform: 'translateZ(0)' }}
               >
                 <MovieCard

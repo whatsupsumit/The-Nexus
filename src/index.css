@@ -3,15 +3,13 @@
 @tailwind utilities;
 @import url('https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&display=swap');
 
-/* Lenis Smooth Scrolling Styles - Disabled for performance */
+/* Lenis Smooth Scrolling Styles */
 html.lenis {
   height: auto;
-  /* Disable smooth scrolling library effects */
-  scroll-behavior: auto !important;
 }
 
 .lenis.lenis-smooth {
-  scroll-behavior: auto !important;
+  scroll-behavior: auto;
 }
 
 .lenis.lenis-smooth [data-lenis-prevent] {
@@ -21,115 +19,20 @@ html.lenis {
 body {
   font-family: 'Arvo', serif !important;
   overflow-x: hidden;
-  background: #0a0a0a !important;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%) !important;
   min-height: 100vh;
   color: #e5e5e5;
-  /* Aggressive performance optimizations */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeSpeed;
-  will-change: scroll-position;
-  /* GPU acceleration */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
 }
 
 /* Enhanced scroll experience */
 html, body {
   scroll-behavior: auto !important;
-  background: #0a0a0a !important;
-  /* Remove expensive gradients */
-}
-
-/* Aggressive performance optimizations for scrolling */
-* {
-  /* Force GPU acceleration for all elements */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
-}
-
-/* Ultra-optimized scrolling */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  scroll-behavior: auto; /* Change to auto for better performance */
-  -webkit-overflow-scrolling: touch;
-  /* Force hardware acceleration */
-  transform: translateZ(0);
-  will-change: scroll-position;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Optimize animations and transitions for 60fps */
-.movie-card,
-.content-carousel,
-[class*="animate-"],
-[class*="transition-"] {
-  backface-visibility: hidden;
-  perspective: 1000px;
-  will-change: transform, opacity;
-  /* Force composition layer */
-  transform: translateZ(0);
-  /* Add containment for better performance */
-  contain: layout style paint;
-}
-
-/* Ultra performance mode */
-.movie-card img {
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-}
-
-/* Optimize scroll containers */
-.scrollbar-hide {
-  contain: layout style paint;
-  isolation: isolate;
-  /* Prevent layout shifts */
-  content-visibility: auto;
-  contain-intrinsic-size: 0 200px;
-}
-
-/* Disable expensive effects during scroll */
-@media (hover: none) {
-  .group:hover * {
-    transform: none !important;
-    scale: none !important;
-    opacity: 1 !important;
-  }
-}
-
-/* Reduce motion for performance */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%) !important;
 }
 
 #root {
-  background: #0a0a0a !important;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%) !important;
   min-height: 100vh;
-  /* Force hardware acceleration */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-
-/* Smooth scrolling optimization */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
 }
 
 /* Enhanced Navigation Animations */

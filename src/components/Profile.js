@@ -149,10 +149,10 @@ const Profile = () => {
                 </div>
                 
                 <h3 className="font-['Arvo',serif] text-red-400 text-lg sm:text-xl font-bold mb-1">
-                  {user?.displayName || 'User'}
+                  {user?.displayName || user?.name || 'User'}
                 </h3>
                 <p className="font-['Arvo',serif] text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 truncate">
-                  {user?.email || 'user@nexus.com'}
+                  {user?.email || 'No email available'}
                 </p>
                 
                 {/* User Status */}
