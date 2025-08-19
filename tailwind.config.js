@@ -6,7 +6,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'arvo': ['Arvo', 'serif'],
+        'sans': ['JetBrains Mono', 'monospace'],
+        'mono': ['JetBrains Mono', 'monospace'],
+        'serif': ['JetBrains Mono', 'monospace'],
+        'arvo': ['JetBrains Mono', 'monospace'],
+        'inter': ['JetBrains Mono', 'monospace'],
+        'instrument': ['JetBrains Mono', 'monospace'],
+        'jetbrains': ['JetBrains Mono', 'monospace'],
       },
       colors: {
         // Greyish Black Theme

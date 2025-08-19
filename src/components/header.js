@@ -132,6 +132,20 @@ const Header = () => {
           </button>
           
           <button
+            onClick={() => handleNavigation("/anime")}
+            className={`relative font-['Arvo',serif] hover:text-nexus-red-light transition-all duration-300 font-medium group text-sm lg:text-base ${
+              isActive("/anime") ? "text-nexus-red-light" : "text-nexus-text"
+            }`}
+          >
+            <span className="relative z-10">ANIME</span>
+            <div className="absolute inset-0 bg-nexus-red/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            {isActive("/anime") && (
+              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-red-400" />
+            )}
+            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-nexus-red group-hover:w-full transition-all duration-300"></div>
+          </button>
+          
+          <button
             onClick={() => handleNavigation("/vault")}
             className={`relative font-['Arvo',serif] hover:text-nexus-red-light transition-all duration-300 font-medium group text-sm lg:text-base ${
               isActive("/vault") || isActive("/my-list") ? "text-nexus-red-light" : "text-nexus-text"
@@ -352,6 +366,18 @@ const Header = () => {
               }`}
             >
               SERIES
+            </button>
+            
+            <button
+              onClick={() => {
+                handleNavigation("/anime");
+                setMobileMenuOpen(false);
+              }}
+              className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 ${
+                isActive("/anime") ? "text-nexus-red-light bg-nexus-red/10" : "text-nexus-text hover:text-nexus-red-light hover:bg-nexus-red/5"
+              }`}
+            >
+              ANIME
             </button>
             
             <button

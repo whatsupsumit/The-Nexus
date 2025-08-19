@@ -121,6 +121,19 @@ const Browse = memo(() => {
     console.log('NEXUS: Navigating to details for:', content.title || content.name, contentIsTV ? 'TV' : 'Movie');
   };
 
+  // Add quick search functionality with Ctrl+G
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.key === 'g') {
+        e.preventDefault();
+        document.querySelector('input[type="text"]')?.focus();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const closePlayer = () => {
     setShowPlayer(false);
     setSelectedContent(null);
@@ -188,7 +201,7 @@ const Browse = memo(() => {
             <form onSubmit={handleSearchSubmit} className="relative">
               <input
                 type="text"
-                placeholder="Search movies, series..."
+                placeholder="Search movies, series... (Ctrl+G)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}

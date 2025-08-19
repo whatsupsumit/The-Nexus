@@ -1,7 +1,7 @@
-// VidLink API utilities for streaming content with TMDB integration
+// VidSrc.xyz API utilities for streaming content with TMDB integration
 
 // Base URLs for different APIs
-const VIDLINK_BASE = 'https://vidlink.pro';
+const VIDSRC_BASE = 'https://vidsrc.xyz/embed';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
 
@@ -39,107 +39,22 @@ const fetchWithCache = async (url) => {
   return data;
 };
 
-// VidLink embed URLs with customization parameters
+// VidSrc.xyz embed URLs - much simpler than VidLink
 export const getMovieEmbedUrl = (tmdbId, options = {}) => {
-  const {
-    primaryColor = 'ef4444', // Red theme for NEXUS
-    secondaryColor = '991b1b',
-    iconColor = 'ef4444',
-    icons = 'vid',
-    title = true,
-    poster = true,
-    autoplay = true,
-    player = 'default', // 'jw' for JWPlayer or 'default'
-    startAt = null,
-    sub_file = null,
-    sub_label = 'English'
-  } = options;
-
-  const params = new URLSearchParams();
-  
-  // Add customization parameters
-  params.append('primaryColor', primaryColor);
-  params.append('secondaryColor', secondaryColor);
-  params.append('iconColor', iconColor);
-  params.append('icons', icons);
-  params.append('title', title);
-  params.append('poster', poster);
-  params.append('autoplay', autoplay);
-  
-  if (player !== 'default') params.append('player', player);
-  if (startAt) params.append('startAt', startAt);
-  if (sub_file) {
-    params.append('sub_file', sub_file);
-    params.append('sub_label', sub_label);
-  }
-
-  return `${VIDLINK_BASE}/movie/${tmdbId}?${params.toString()}`;
+  // VidSrc.xyz uses a much simpler URL structure
+  return `${VIDSRC_BASE}/movie?tmdb=${tmdbId}`;
 };
 
 export const getTVEmbedUrl = (tmdbId, season, episode, options = {}) => {
-  const {
-    primaryColor = 'ef4444', // Red theme for NEXUS
-    secondaryColor = '991b1b',
-    iconColor = 'ef4444',
-    icons = 'vid',
-    title = true,
-    poster = true,
-    autoplay = true,
-    nextbutton = true, // Show next episode button
-    player = 'default',
-    startAt = null,
-    sub_file = null,
-    sub_label = 'English'
-  } = options;
-
-  const params = new URLSearchParams();
-  
-  // Add customization parameters
-  params.append('primaryColor', primaryColor);
-  params.append('secondaryColor', secondaryColor);
-  params.append('iconColor', iconColor);
-  params.append('icons', icons);
-  params.append('title', title);
-  params.append('poster', poster);
-  params.append('autoplay', autoplay);
-  params.append('nextbutton', nextbutton);
-  
-  if (player !== 'default') params.append('player', player);
-  if (startAt) params.append('startAt', startAt);
-  if (sub_file) {
-    params.append('sub_file', sub_file);
-    params.append('sub_label', sub_label);
-  }
-
-  return `${VIDLINK_BASE}/tv/${tmdbId}/${season}/${episode}?${params.toString()}`;
+  // VidSrc.xyz format for TV shows
+  return `${VIDSRC_BASE}/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`;
 };
 
 export const getAnimeEmbedUrl = (malId, episode, type = 'sub', options = {}) => {
-  const {
-    fallback = true,
-    primaryColor = 'ef4444',
-    secondaryColor = '991b1b',
-    iconColor = 'ef4444',
-    icons = 'vid',
-    title = true,
-    poster = true,
-    autoplay = true
-  } = options;
-
-  const params = new URLSearchParams();
-  
-  // Add customization parameters
-  params.append('primaryColor', primaryColor);
-  params.append('secondaryColor', secondaryColor);
-  params.append('iconColor', iconColor);
-  params.append('icons', icons);
-  params.append('title', title);
-  params.append('poster', poster);
-  params.append('autoplay', autoplay);
-  
-  if (fallback) params.append('fallback', fallback);
-
-  return `${VIDLINK_BASE}/anime/${malId}/${episode}/${type}?${params.toString()}`;
+  // VidSrc.xyz doesn't have specific anime endpoints in the documentation provided
+  // For now, we'll keep this function but return null as it's not supported
+  console.warn('Anime embedding not available with VidSrc.xyz API');
+  return null;
 };
 
 // TMDB API functions for getting movie/TV data
@@ -318,10 +233,10 @@ export const saveWatchProgress = (mediaData) => {
 // Enhanced Player Event Listener for VidLink
 export const setupPlayerEventListener = (callback) => {
   const eventHandler = (event) => {
-    // Only accept messages from VidLink
-    if (event.origin !== 'https://vidlink.pro') return;
+    // Accept messages from VidSrc.xyz
+    if (event.origin !== 'https://vidsrc.xyz') return;
     
-    // Handle media data (watch progress)
+    // Handle media data (watch progress) - VidSrc.xyz may have different event structure
     if (event.data?.type === 'MEDIA_DATA') {
       const mediaData = event.data.data;
       saveWatchProgress(mediaData);
@@ -337,7 +252,7 @@ export const setupPlayerEventListener = (callback) => {
       }
     }
     
-    // Handle player events
+    // Handle player events - may need adjustment for VidSrc.xyz
     if (event.data?.type === 'PLAYER_EVENT') {
       const playerData = event.data.data;
       const { event: eventType, currentTime, duration, tmdbId, mediaType, season, episode } = playerData;

@@ -1,66 +1,227 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { getTVDetails, getTVCredits, getTVSeasonDetails } from '../utils/vidsrcApi';
-import VideoPlayer from './VideoPlayer';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Play, Info, ThumbsUp, Plus, Download, Star, Calendar, Clock, Tv, ExternalLink, ArrowLeft } from 'lucide-react';
+import {
+  getTVEmbedUrl,
+  getImageUrl,
+  getBackdropUrl,
+  getTVSeasonDetails,
+  getTVDetails
+} from '../utils/vidsrcApi.js';
+
+// Enhanced Spotlight Section Component
+const SpotlightSection = ({ 
+  show, 
+  isLoading, 
+  onWatchClick, 
+  onInfoClick, 
+  onWatchlistToggle, 
+  onDownloadClick, 
+  inWatchlist 
+}) => {
+  if (isLoading || !show) {
+    return (
+      <div className="relative w-full h-[80vh] bg-gray-800 animate-pulse flex items-end">
+        <div className="relative z-10 p-8 w-full">
+          <div className="h-16 bg-gray-700 rounded mb-4 w-1/2"></div>
+          <div className="space-y-2 mb-6">
+            <div className="h-4 bg-gray-700 rounded w-1/3"></div>
+            <div className="h-4 bg-gray-700 rounded w-1/4"></div>
+          </div>
+          <div className="space-y-2 mb-8">
+            <div className="h-4 bg-gray-700 rounded"></div>
+            <div className="h-4 bg-gray-700 rounded w-5/6"></div>
+            <div className="h-4 bg-gray-700 rounded w-4/6"></div>
+          </div>
+          <div className="flex space-x-4">
+            <div className="h-12 bg-gray-700 rounded w-32"></div>
+            <div className="h-12 bg-gray-700 rounded w-12"></div>
+            <div className="h-12 bg-gray-700 rounded w-12"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const backdropUrl = getBackdropUrl(show.backdrop_path, 'original');
+  const logoImage = show.images?.logos?.find(logo => logo.iso_639_1 === 'en');
+  
+  return (
+    <div 
+      className="relative w-full h-[80vh] bg-cover bg-center bg-no-repeat flex items-end animate-fade-in"
+      style={{ 
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.8)), url('${backdropUrl}')`
+      }}
+    >
+      {/* Content */}
+      <div className="relative z-10 p-8 w-full max-w-6xl">
+        {/* Title/Logo */}
+        {logoImage ? (
+          <img 
+            src={getImageUrl(logoImage.file_path, 'w500')} 
+            alt={show.name}
+            className="max-h-32 mb-6 animate-fade-in-delayed"
+          />
+        ) : (
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-fade-in-delayed">
+            {show.name}
+          </h1>
+        )}
+
+        {/* Info Row */}
+        <div className="flex flex-wrap items-center gap-4 mb-6 text-sm animate-fade-in-delayed-2">
+          <div className="flex items-center gap-2">
+            <Star className="w-4 h-4 text-yellow-400" />
+            <span className="text-white font-medium">{show.vote_average?.toFixed(1)}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-gray-300" />
+            <span className="text-gray-300">{new Date(show.first_air_date).getFullYear()}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Tv className="w-4 h-4 text-gray-300" />
+            <span className="text-gray-300">{show.number_of_seasons} Season{show.number_of_seasons !== 1 ? 's' : ''}</span>
+          </div>
+          {show.episode_run_time && show.episode_run_time[0] && (
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-gray-300" />
+              <span className="text-gray-300">{show.episode_run_time[0]} min</span>
+            </div>
+          )}
+          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs font-medium">
+            {show.status}
+          </span>
+        </div>
+
+        {/* Overview */}
+        <p className="text-lg text-gray-300 max-w-2xl mb-8 leading-relaxed animate-fade-in-delayed-3">
+          {show.overview}
+        </p>
+
+        {/* Genres */}
+        <div className="flex flex-wrap gap-2 mb-8 animate-fade-in-delayed-4">
+          {show.genres?.slice(0, 4).map(genre => (
+            <span 
+              key={genre.id}
+              className="px-3 py-1 bg-white/10 text-white rounded-full text-sm backdrop-blur-sm"
+            >
+              {genre.name}
+            </span>
+          ))}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center gap-4 animate-fade-in-delayed-5">
+          <button 
+            onClick={onWatchClick}
+            className="flex items-center gap-3 bg-white text-black px-8 py-3 rounded-lg font-semibold text-lg hover:bg-gray-200 transition-all duration-200 shadow-lg"
+          >
+            <Play className="w-6 h-6" fill="currentColor" />
+            Watch Now
+          </button>
+          
+          <button 
+            onClick={onInfoClick}
+            className="flex items-center gap-2 bg-white/20 text-white px-6 py-3 rounded-lg font-medium hover:bg-white/30 transition-all duration-200 backdrop-blur-sm"
+          >
+            <Info className="w-5 h-5" />
+            More Info
+          </button>
+          
+          <button 
+            onClick={() => {}}
+            className="flex items-center gap-2 bg-white/20 text-white px-6 py-3 rounded-lg font-medium hover:bg-white/30 transition-all duration-200 backdrop-blur-sm"
+          >
+            <ThumbsUp className="w-5 h-5" />
+            Like
+          </button>
+          
+          <button 
+            onClick={onWatchlistToggle}
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 backdrop-blur-sm ${
+              inWatchlist 
+                ? 'bg-red-600 text-white hover:bg-red-700' 
+                : 'bg-white/20 text-white hover:bg-white/30'
+            }`}
+          >
+            <Plus className="w-5 h-5" />
+            {inWatchlist ? 'Remove' : 'My List'}
+          </button>
+
+          <button 
+            onClick={onDownloadClick}
+            className="flex items-center gap-2 bg-white/20 text-white px-6 py-3 rounded-lg font-medium hover:bg-white/30 transition-all duration-200 backdrop-blur-sm"
+          >
+            <Download className="w-5 h-5" />
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const TVShowDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [tvShow, setTVShow] = useState(location.state?.tvShow || null);
-  const [credits, setCredits] = useState({ cast: [], crew: [] });
+  
+  const [show, setShow] = useState(null);
   const [seasons, setSeasons] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [selectedEpisode, setSelectedEpisode] = useState(1);
   const [seasonDetails, setSeasonDetails] = useState(null);
-  const [loading, setLoading] = useState(!tvShow);
+  const [isLoading, setIsLoading] = useState(true);
+  const [inWatchlist, setInWatchlist] = useState(false);
   const [showPlayer, setShowPlayer] = useState(false);
-  const [isInVault, setIsInVault] = useState(false);
-  const [backgroundVisible, setBackgroundVisible] = useState(false);
+  const [cast, setCast] = useState([]);
 
   useEffect(() => {
-    const loadTVData = async () => {
+    const loadShowData = async () => {
       try {
-        setLoading(true);
-        setBackgroundVisible(false); // Reset background on navigation
+        setIsLoading(true);
         
-        const [tvData, creditsData] = await Promise.all([
-          tvShow ? Promise.resolve(tvShow) : getTVDetails(id),
-          getTVCredits(id)
-        ]);
-
-        if (tvData) {
-          setTVShow(tvData);
-          setSeasons(tvData.seasons || []);
-
-          // Start background transition after a short delay
-          setTimeout(() => {
-            setBackgroundVisible(true);
-          }, 300);
+        // Fetch show details
+        const showData = await getTVDetails(id);
+        setShow(showData);
+        
+        if (showData?.seasons) {
+          const regularSeasons = showData.seasons.filter(season => season.season_number > 0);
+          setSeasons(regularSeasons);
+          
+          if (regularSeasons.length > 0) {
+            const firstSeason = regularSeasons[0].season_number;
+            setSelectedSeason(firstSeason);
+            
+            // Load first season details
+            const seasonData = await getTVSeasonDetails(id, firstSeason);
+            setSeasonDetails(seasonData);
+          }
         }
-        setCredits(creditsData);
 
-        // Check if show is in vault
-        const vault = JSON.parse(localStorage.getItem('nexus_vault') || '[]');
-        setIsInVault(vault.some(item => item.id === parseInt(id)));
+        // Extract cast and crew
+        if (showData?.credits) {
+          setCast(showData.credits.cast || []);
+        }
+
       } catch (error) {
-        console.error('Error loading TV data:', error);
+        console.error('Error loading show data:', error);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    loadTVData();
-  }, [id, tvShow]);
+    if (id) {
+      loadShowData();
+    }
+  }, [id]);
 
   // Load season details when season changes
   useEffect(() => {
     const loadSeasonDetails = async () => {
-      if (tvShow && selectedSeason) {
+      if (selectedSeason && id) {
         try {
-          const details = await getTVSeasonDetails(tvShow.id, selectedSeason);
-          setSeasonDetails(details);
-          // Reset episode selection when season changes
+          const seasonData = await getTVSeasonDetails(id, selectedSeason);
+          setSeasonDetails(seasonData);
           setSelectedEpisode(1);
         } catch (error) {
           console.error('Error loading season details:', error);
@@ -69,220 +230,171 @@ const TVShowDetails = () => {
     };
 
     loadSeasonDetails();
-  }, [tvShow, selectedSeason]);
+  }, [selectedSeason, id]);
 
-  const handlePlayEpisode = () => {
+  const handleWatchClick = () => {
     setShowPlayer(true);
   };
 
-  const closePlayer = () => {
-    setShowPlayer(false);
+  const handleInfoClick = () => {
+    console.log('More info clicked');
   };
 
-  const toggleVault = () => {
-    const vault = JSON.parse(localStorage.getItem('nexus_vault') || '[]');
-    const showIndex = vault.findIndex(item => item.id === tvShow.id);
-
-    if (showIndex >= 0) {
-      // Remove from vault
-      vault.splice(showIndex, 1);
-      setIsInVault(false);
-    } else {
-      // Add to vault
-      vault.push({
-        ...tvShow,
-        addedAt: new Date().toISOString(),
-        type: 'tv'
-      });
-      setIsInVault(true);
-    }
-
-    localStorage.setItem('nexus_vault', JSON.stringify(vault));
+  const handleWatchlistToggle = () => {
+    setInWatchlist(!inWatchlist);
   };
 
-  const formatAirDate = (dateString) => {
-    if (!dateString) return 'TBA';
-    return new Date(dateString).toLocaleDateString();
+  const handleDownloadClick = () => {
+    console.log('Download clicked');
   };
 
-  if (showPlayer && tvShow) {
+  const embedUrl = showPlayer ? getTVEmbedUrl(id, selectedSeason, selectedEpisode) : null;
+
+  if (isLoading && !show) {
     return (
-      <VideoPlayer
-        movie={tvShow}
-        isTV={true}
-        season={selectedSeason}
-        episode={selectedEpisode}
-        onClose={closePlayer}
-      />
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white pt-24">
-        <div className="container mx-auto px-8">
-          <div className="animate-pulse">
-            <div className="h-96 bg-gray-800 rounded-lg mb-8"></div>
-            <div className="h-8 bg-gray-700 rounded w-3/4 mb-4"></div>
-            <div className="h-4 bg-gray-700 rounded w-1/2 mb-8"></div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="md:col-span-2">
-                <div className="h-32 bg-gray-700 rounded mb-4"></div>
-              </div>
-              <div className="h-64 bg-gray-700 rounded"></div>
-            </div>
-          </div>
-        </div>
+      <div className="min-h-screen bg-[var(--nexus-bg)] text-white">
+        <SpotlightSection isLoading={true} />
       </div>
     );
   }
-
-  if (!tvShow) {
-    return (
-      <div className="min-h-screen bg-black text-white pt-24">
-        <div className="container mx-auto px-8 text-center">
-          <h1 className="text-4xl font-bold mb-4">TV Show Not Found</h1>
-          <button
-            onClick={() => navigate('/tv-shows')}
-            className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg"
-          >
-            Back to TV Shows
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const creator = tvShow.created_by?.[0];
-  const availableSeasons = seasons.filter(season => season.season_number > 0);
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Hero Section */}
-      <div className="relative h-screen overflow-hidden">
-        {/* Always present dark background */}
-        <div className="absolute inset-0 bg-black" />
-        
-        {/* TV Show background with smooth fade-in */}
-        {tvShow?.backdrop_path && (
-          <div 
-            className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-2000 ease-out ${
-              backgroundVisible ? 'opacity-100' : 'opacity-0'
-            }`}
-            style={{
-              backgroundImage: `url(https://image.tmdb.org/t/p/original${tvShow.backdrop_path})`
-            }}
-          />
-        )}
-        
-        {/* Enhanced Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
-        
-        {/* Content */}
-        <div className="relative z-10 container mx-auto px-8 pt-32 h-full flex items-center">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-            {/* Poster */}
-            <div className="flex justify-center md:justify-start">
-              <div className="relative group">
-                <img
-                  src={tvShow.poster_path 
-                    ? `https://image.tmdb.org/t/p/w500${tvShow.poster_path}`
-                    : '/placeholder-tv.jpg'
-                  }
-                  alt={tvShow.name}
-                  className="w-80 h-auto rounded-lg shadow-2xl transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
-              </div>
-            </div>
+    <div className="min-h-screen bg-[var(--nexus-bg)] text-white">
+      {/* Back Button */}
+      <button 
+        onClick={() => navigate(-1)}
+        className="fixed top-6 left-6 z-50 flex items-center gap-2 bg-black/50 text-white px-4 py-2 rounded-lg hover:bg-black/70 transition-all duration-200 backdrop-blur-sm"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        Back
+      </button>
 
-            {/* Details */}
-            <div className="md:col-span-2 space-y-6">
-              {/* Back Button */}
-              <button
-                onClick={() => navigate('/tv-shows')}
-                className="flex items-center text-gray-300 hover:text-white transition-colors duration-200 mb-4"
+      {/* Spotlight Section */}
+      <SpotlightSection 
+        show={show}
+        isLoading={isLoading}
+        onWatchClick={handleWatchClick}
+        onInfoClick={handleInfoClick}
+        onWatchlistToggle={handleWatchlistToggle}
+        onDownloadClick={handleDownloadClick}
+        inWatchlist={inWatchlist}
+      />
+
+      {/* Video Player Modal */}
+      {showPlayer && embedUrl && (
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-6xl bg-black rounded-lg overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b border-gray-700">
+              <h3 className="text-lg font-semibold">
+                {show?.name} - Season {selectedSeason}, Episode {selectedEpisode}
+              </h3>
+              <button 
+                onClick={() => setShowPlayer(false)}
+                className="text-gray-400 hover:text-white transition-colors"
               >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to TV Shows
+                ✕
               </button>
-
-              {/* Title and Rating */}
-              <div>
-                <h1 className="font-['JetBrains_Mono',monospace] text-4xl md:text-6xl font-bold text-white mb-2">
-                  {tvShow.name}
-                </h1>
-                {tvShow.tagline && (
-                  <p className="text-xl text-gray-300 italic mb-4">"{tvShow.tagline}"</p>
-                )}
-                <div className="flex items-center space-x-6 mb-4">
-                  <div className="flex items-center">
-                    <span className="text-yellow-400 text-2xl mr-2">⭐</span>
-                    <span className="text-xl font-bold">{tvShow.vote_average?.toFixed(1)}</span>
-                    <span className="text-gray-400 ml-2">({tvShow.vote_count} votes)</span>
-                  </div>
-                  <span className="text-gray-300">
-                    {tvShow.number_of_seasons} Season{tvShow.number_of_seasons !== 1 ? 's' : ''}
-                  </span>
-                  <span className="text-gray-300">
-                    {tvShow.number_of_episodes} Episodes
-                  </span>
-                </div>
-              </div>
-
-              {/* Genres */}
-              {tvShow.genres && tvShow.genres.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {tvShow.genres.map(genre => (
-                    <span
-                      key={genre.id}
-                      className="bg-red-600/20 border border-red-500/30 text-red-300 px-3 py-1 rounded-full text-sm font-['JetBrains_Mono',monospace]"
-                    >
-                      {genre.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* Overview */}
-              <div>
-                <h3 className="text-xl font-bold mb-3 text-red-400">SYNOPSIS</h3>
-                <p className="text-gray-300 text-lg leading-relaxed">
-                  {tvShow.overview}
-                </p>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap gap-4">
-                <button
-                  onClick={toggleVault}
-                  className={`border-2 px-8 py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center transition-all duration-300 transform hover:scale-105 ${
-                    isInVault 
-                      ? 'border-green-500 text-green-400 bg-green-500/10'
-                      : 'border-gray-500 text-gray-300 hover:border-red-500 hover:text-red-400'
-                  }`}
-                >
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
-                      d={isInVault ? "M5 13l4 4L19 7" : "M12 6v6m0 0v6m0-6h6m-6 0H6"} 
-                    />
-                  </svg>
-                  {isInVault ? 'IN VAULT' : 'ADD TO VAULT'}
-                </button>
-              </div>
+            </div>
+            <div className="aspect-video">
+              <iframe
+                src={embedUrl}
+                className="w-full h-full"
+                allowFullScreen
+                title={`${show?.name} S${selectedSeason}E${selectedEpisode}`}
+              />
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Season & Episode Selection */}
-      <div className="container mx-auto px-8 py-16">
+      {/* Main Content */}
+      <div className="px-8 py-12 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Show Details */}
+          <div className="lg:col-span-1">
+            <div className="bg-[var(--nexus-card)] rounded-lg p-6 space-y-6">
+              {/* Poster */}
+              <div className="aspect-[2/3] rounded-lg overflow-hidden">
+                <img
+                  src={getImageUrl(show?.poster_path, 'w500')}
+                  alt={show?.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Show Info */}
+              <div className="space-y-4">
+                <h2 className="text-2xl font-bold text-white">{show?.name}</h2>
+                
+                <div className="space-y-2 text-sm text-gray-300">
+                  <div className="flex justify-between">
+                    <span>Status:</span>
+                    <span className="text-white">{show?.status}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>First Air Date:</span>
+                    <span className="text-white">{show?.first_air_date}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Seasons:</span>
+                    <span className="text-white">{show?.number_of_seasons}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Episodes:</span>
+                    <span className="text-white">{show?.number_of_episodes}</span>
+                  </div>
+                  {show?.episode_run_time && show.episode_run_time[0] && (
+                    <div className="flex justify-between">
+                      <span>Runtime:</span>
+                      <span className="text-white">{show.episode_run_time[0]} min</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span>Rating:</span>
+                    <span className="text-white">{show?.vote_average?.toFixed(1)}/10</span>
+                  </div>
+                </div>
+
+                {/* Networks */}
+                {show?.networks && show.networks.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-400 mb-2">Networks</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {show.networks.map(network => (
+                        <span 
+                          key={network.id}
+                          className="px-2 py-1 bg-gray-700 text-white rounded text-xs"
+                        >
+                          {network.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* External Links */}
+                {show?.external_ids && (
+                  <div className="flex gap-3">
+                    {show.external_ids.imdb_id && (
+                      <a 
+                        href={`https://www.imdb.com/title/${show.external_ids.imdb_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-yellow-400 hover:text-yellow-300 transition-colors"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        IMDb
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Episode Selection */}
           <div className="lg:col-span-2">
-            <h2 className="font-['JetBrains_Mono',monospace] text-2xl font-bold text-red-400 mb-6">
+            <h2 className="text-2xl font-bold text-[var(--nexus-red)] mb-6">
               SELECT EPISODE
             </h2>
 
@@ -290,14 +402,14 @@ const TVShowDetails = () => {
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-white mb-3">Season</h3>
               <div className="flex flex-wrap gap-2">
-                {availableSeasons.map(season => (
+                {seasons.map(season => (
                   <button
                     key={season.id}
                     onClick={() => setSelectedSeason(season.season_number)}
-                    className={`px-4 py-2 rounded-lg font-['JetBrains_Mono',monospace] transition-all duration-300 ${
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                       selectedSeason === season.season_number
-                        ? 'bg-red-600 text-white'
-                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        ? 'bg-[var(--nexus-red)] text-white'
+                        : 'bg-[var(--nexus-card)] text-gray-300 hover:bg-[var(--nexus-card-hover)]'
                     }`}
                   >
                     Season {season.season_number}
@@ -319,115 +431,39 @@ const TVShowDetails = () => {
                       onClick={() => setSelectedEpisode(episode.episode_number)}
                       className={`cursor-pointer rounded-lg border-2 p-4 transition-all duration-300 ${
                         selectedEpisode === episode.episode_number
-                          ? 'border-red-500 bg-red-500/10'
-                          : 'border-gray-700 bg-gray-900/50 hover:border-gray-600'
+                          ? 'border-[var(--nexus-red)] bg-[var(--nexus-red)]/10'
+                          : 'border-gray-700 bg-[var(--nexus-card)] hover:border-gray-600'
                       }`}
                     >
                       <div className="flex items-start space-x-4">
-                        <div className="flex-shrink-0">
-                          <img
-                            src={episode.still_path 
-                              ? `https://image.tmdb.org/t/p/w300${episode.still_path}`
-                              : '/placeholder-episode.jpg'
-                            }
-                            alt={episode.name}
-                            className="w-24 h-14 object-cover rounded"
-                          />
+                        {/* Episode Thumbnail */}
+                        <div className="w-24 h-16 bg-gray-700 rounded flex-shrink-0 overflow-hidden">
+                          {episode.still_path ? (
+                            <img
+                              src={getImageUrl(episode.still_path, 'w300')}
+                              alt={`Episode ${episode.episode_number}`}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-500">
+                              <span className="text-xs">No Image</span>
+                            </div>
+                          )}
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-white mb-1">
+
+                        {/* Episode Info */}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-white text-sm mb-1 truncate">
                             {episode.episode_number}. {episode.name}
                           </h4>
-                          <p className="text-gray-400 text-sm mb-2">
-                            {episode.runtime} min • {formatAirDate(episode.air_date)}
+                          <p className="text-gray-400 text-xs mb-2 line-clamp-2">
+                            {episode.overview || 'No description available.'}
                           </p>
-                          <p className="text-gray-300 text-sm line-clamp-2">
-                            {episode.overview}
-                          </p>
-                          <div className="flex items-center mt-2">
-                            <span className="text-yellow-400 mr-1">⭐</span>
-                            <span className="text-sm">{episode.vote_average?.toFixed(1)}</span>
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <span>{episode.air_date}</span>
+                            {episode.runtime && <span>{episode.runtime} min</span>}
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Play Button */}
-                {selectedEpisode && (
-                  <div className="mt-8 text-center">
-                    <button
-                      onClick={handlePlayEpisode}
-                      className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-['JetBrains_Mono',monospace] font-bold text-lg flex items-center mx-auto transition-all duration-300 transform hover:scale-105"
-                    >
-                      <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                      </svg>
-                      PLAY S{selectedSeason}:E{selectedEpisode}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Show Info & Cast */}
-          <div>
-            <h2 className="font-['JetBrains_Mono',monospace] text-2xl font-bold text-red-400 mb-6">DETAILS</h2>
-            <div className="bg-gray-900/50 rounded-lg p-6 space-y-4 mb-8">
-              {creator && (
-                <div>
-                  <p className="text-gray-400 text-sm">CREATED BY</p>
-                  <p className="text-white">{creator.name}</p>
-                </div>
-              )}
-
-              <div>
-                <p className="text-gray-400 text-sm">FIRST AIRED</p>
-                <p className="text-white">{formatAirDate(tvShow.first_air_date)}</p>
-              </div>
-
-              <div>
-                <p className="text-gray-400 text-sm">STATUS</p>
-                <p className="text-white">{tvShow.status}</p>
-              </div>
-
-              {tvShow.networks && tvShow.networks.length > 0 && (
-                <div>
-                  <p className="text-gray-400 text-sm">NETWORK</p>
-                  <p className="text-white">{tvShow.networks[0].name}</p>
-                </div>
-              )}
-
-              {tvShow.production_companies && tvShow.production_companies.length > 0 && (
-                <div>
-                  <p className="text-gray-400 text-sm">PRODUCTION</p>
-                  <p className="text-white">
-                    {tvShow.production_companies.slice(0, 2).map(company => company.name).join(', ')}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Cast */}
-            {credits.cast.length > 0 && (
-              <div>
-                <h3 className="font-['JetBrains_Mono',monospace] text-xl font-bold text-red-400 mb-4">CAST</h3>
-                <div className="space-y-3">
-                  {credits.cast.slice(0, 8).map(actor => (
-                    <div key={actor.id} className="flex items-center space-x-3">
-                      <img
-                        src={actor.profile_path 
-                          ? `https://image.tmdb.org/t/p/w185${actor.profile_path}`
-                          : '/placeholder-person.jpg'
-                        }
-                        alt={actor.name}
-                        className="w-12 h-12 object-cover rounded-full"
-                      />
-                      <div>
-                        <p className="font-semibold text-white text-sm">{actor.name}</p>
-                        <p className="text-gray-400 text-xs">{actor.character}</p>
                       </div>
                     </div>
                   ))}
@@ -436,6 +472,31 @@ const TVShowDetails = () => {
             )}
           </div>
         </div>
+
+        {/* Cast Section */}
+        {cast.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold text-white mb-6">Cast</h2>
+            <div className="flex overflow-x-auto space-x-4 pb-4">
+              {cast.slice(0, 10).map(person => (
+                <div key={person.id} className="flex-shrink-0 w-32">
+                  <div className="aspect-[2/3] rounded-lg overflow-hidden mb-2">
+                    <img
+                      src={getImageUrl(person.profile_path, 'w185')}
+                      alt={person.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = '/api/placeholder/185/278';
+                      }}
+                    />
+                  </div>
+                  <h4 className="font-semibold text-white text-sm truncate">{person.name}</h4>
+                  <p className="text-gray-400 text-xs truncate">{person.character}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

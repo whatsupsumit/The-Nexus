@@ -44,6 +44,19 @@ const TVShows = () => {
     loadShows();
   }, [activeFilter]);
 
+  // Add keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.key === 'g') {
+        e.preventDefault();
+        document.querySelector('input[type="text"]')?.focus();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (!query.trim()) {
@@ -109,7 +122,7 @@ const TVShows = () => {
           <div className="relative">
             <input
               type="text"
-              placeholder="Search neural series database..."
+              placeholder="Search neural series database... (Ctrl+G)"
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
               className="w-full bg-black/70 backdrop-blur-sm border-2 border-red-800/30 rounded-lg px-6 py-3 text-white font-['JetBrains_Mono',monospace] placeholder-gray-400 focus:outline-none focus:border-red-500/60 transition-all duration-300"
@@ -200,12 +213,13 @@ const TVShows = () => {
         ) : filteredShows.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {filteredShows.map((show) => (
-              <MovieCard
-                key={show.id}
-                movie={show}
-                onClick={handleShowClick}
-                isTV={true}
-              />
+              <div key={show.id} className="transition-all duration-300 hover:scale-105">
+                <MovieCard
+                  movie={show}
+                  onClick={handleShowClick}
+                  isTV={true}
+                />
+              </div>
             ))}
           </div>
         ) : (
