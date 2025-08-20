@@ -9,9 +9,21 @@ import {
   fetchTopRatedTV,
   searchContent 
 } from '../utils/vidsrcApi';
+import { 
+  fetchTrendingAnime, 
+  fetchPopularAnime, 
+  fetchTopAnime 
+} from '../utils/animeApi';
+import { 
+  fetchTrendingManga, 
+  fetchPopularManga, 
+  fetchTopManga 
+} from '../utils/mangaApi';
 import ContentCarousel from './ContentCarousel';
 import VideoPlayer from './VideoPlayer';
 import ContinueWatching from './ContinueWatching';
+import TMDBStatus from './TMDBStatus';
+import SmartSuggestions from './SmartSuggestions';
 
 const Browse = memo(() => {
   const navigate = useNavigate();
@@ -28,6 +40,17 @@ const Browse = memo(() => {
   const [popularTV, setPopularTV] = useState([]);
   const [topRatedMovies, setTopRatedMovies] = useState([]);
   const [topRatedTV, setTopRatedTV] = useState([]);
+  
+  // Anime state
+  const [trendingAnime, setTrendingAnime] = useState([]);
+  const [popularAnime, setPopularAnime] = useState([]);
+  const [topRatedAnime, setTopRatedAnime] = useState([]);
+  
+  // Manga state
+  const [trendingManga, setTrendingManga] = useState([]);
+  const [popularManga, setPopularManga] = useState([]);
+  const [topRatedManga, setTopRatedManga] = useState([]);
+  
   const [loading, setLoading] = useState(true);
   
   // Player state
@@ -48,40 +71,85 @@ const Browse = memo(() => {
     const loadContent = async () => {
       setLoading(true);
       try {
-        const [
-          trendingMoviesData,
-          trendingTVData,
-          popularMoviesData,
-          popularTVData,
-          topRatedMoviesData,
-          topRatedTVData
-        ] = await Promise.all([
+        console.log('NEXUS: Loading content in batches to respect API rate limits...');
+        
+        // Batch 1: Movies and TV Shows (TMDB - separate from Jikan)
+        const batch1 = await Promise.allSettled([
           fetchTrendingMovies(),
           fetchTrendingTV(),
           fetchPopularMovies(),
           fetchPopularTV(),
           fetchTopRatedMovies(),
-          fetchTopRatedTV()
+          fetchTopRatedTV(),
         ]);
         
-        setTrendingMovies(trendingMoviesData);
-        setTrendingTV(trendingTVData);
-        setPopularMovies(popularMoviesData);
-        setPopularTV(popularTVData);
-        setTopRatedMovies(topRatedMoviesData);
-        setTopRatedTV(topRatedTVData);
+        // Small delay before anime/manga calls
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Debug logging for mobile
-        console.log('NEXUS: Content loaded successfully', {
-          trendingMovies: trendingMoviesData.length,
-          trendingTV: trendingTVData.length,
-          popularMovies: popularMoviesData.length,
-          popularTV: popularTVData.length,
-          topRatedMovies: topRatedMoviesData.length,
-          topRatedTV: topRatedTVData.length
+        // Batch 2: Anime (Jikan API - rate limited)
+        const batch2 = await Promise.allSettled([
+          fetchTrendingAnime(),
+          fetchPopularAnime(),
+          fetchTopAnime(),
+        ]);
+        
+        // Delay before manga calls to respect rate limits
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Batch 3: Manga (Jikan API - rate limited)  
+        const batch3 = await Promise.allSettled([
+          fetchTrendingManga(),
+          fetchPopularManga(),
+          fetchTopManga()
+        ]);
+        
+        // Extract results safely
+        const [
+          trendingMoviesResult,
+          trendingTVResult,
+          popularMoviesResult,
+          popularTVResult,
+          topRatedMoviesResult,
+          topRatedTVResult,
+        ] = batch1;
+        
+        const [
+          trendingAnimeResult,
+          popularAnimeResult,
+          topRatedAnimeResult,
+        ] = batch2;
+        
+        const [
+          trendingMangaResult,
+          popularMangaResult,
+          topRatedMangaResult
+        ] = batch3;
+        
+        // Set movie/TV data (handle failures gracefully)
+        setTrendingMovies(trendingMoviesResult.status === 'fulfilled' ? trendingMoviesResult.value : []);
+        setTrendingTV(trendingTVResult.status === 'fulfilled' ? trendingTVResult.value : []);
+        setPopularMovies(popularMoviesResult.status === 'fulfilled' ? popularMoviesResult.value : []);
+        setPopularTV(popularTVResult.status === 'fulfilled' ? popularTVResult.value : []);
+        setTopRatedMovies(topRatedMoviesResult.status === 'fulfilled' ? topRatedMoviesResult.value : []);
+        setTopRatedTV(topRatedTVResult.status === 'fulfilled' ? topRatedTVResult.value : []);
+        
+        // Set anime data (handle failures gracefully)
+        setTrendingAnime(trendingAnimeResult.status === 'fulfilled' ? trendingAnimeResult.value : []);
+        setPopularAnime(popularAnimeResult.status === 'fulfilled' ? popularAnimeResult.value : []);
+        setTopRatedAnime(topRatedAnimeResult.status === 'fulfilled' ? topRatedAnimeResult.value : []);
+        
+        // Set manga data (handle failures gracefully)
+        setTrendingManga(trendingMangaResult.status === 'fulfilled' ? trendingMangaResult.value : []);
+        setPopularManga(popularMangaResult.status === 'fulfilled' ? popularMangaResult.value : []);
+        setTopRatedManga(topRatedMangaResult.status === 'fulfilled' ? topRatedMangaResult.value : []);
+        
+        console.log('NEXUS: Content loaded successfully with rate limiting', {
+          movies: trendingMoviesResult.status === 'fulfilled' ? trendingMoviesResult.value.length : 0,
+          anime: trendingAnimeResult.status === 'fulfilled' ? trendingAnimeResult.value.length : 0,
+          manga: trendingMangaResult.status === 'fulfilled' ? trendingMangaResult.value.length : 0,
         });
       } catch (error) {
-        console.error('Error loading content:', error);
+        console.error('NEXUS: Error loading content:', error);
       } finally {
         setLoading(false);
       }
@@ -107,18 +175,29 @@ const Browse = memo(() => {
   };
 
   const handleContentClick = (content, isTV = null, season = 1, episode = 1) => {
-    // Navigate to details page instead of directly to player
-    const contentIsTV = isTV !== null ? isTV : (content.media_type === 'tv' || content.first_air_date !== undefined);
-    
-    if (contentIsTV) {
-      // For TV shows, navigate to TV details page
-      navigate(`/tv/${content.id}`, { state: { movie: content } });
+    // Handle different content types
+    if (content.media_type === 'anime') {
+      // For anime, navigate to anime details page
+      navigate(`/anime/${content.id}`, { state: { anime: content } });
+      console.log('NEXUS: Navigating to anime details for:', content.title || content.name);
+    } else if (content.media_type === 'manga') {
+      // For manga, navigate to manga reader page
+      navigate(`/manga/${content.id}`, { state: { manga: content } });
+      console.log('NEXUS: Navigating to manga reader for:', content.title || content.name);
     } else {
-      // For movies, navigate to movie details page
-      navigate(`/movie/${content.id}`, { state: { movie: content } });
+      // For movies/TV shows, navigate to their respective details pages
+      const contentIsTV = isTV !== null ? isTV : (content.media_type === 'tv' || content.first_air_date !== undefined);
+      
+      if (contentIsTV) {
+        // For TV shows, navigate to TV details page
+        navigate(`/tv/${content.id}`, { state: { movie: content } });
+      } else {
+        // For movies, navigate to movie details page
+        navigate(`/movie/${content.id}`, { state: { movie: content } });
+      }
+      
+      console.log('NEXUS: Navigating to details for:', content.title || content.name, contentIsTV ? 'TV' : 'Movie');
     }
-    
-    console.log('NEXUS: Navigating to details for:', content.title || content.name, contentIsTV ? 'TV' : 'Movie');
   };
 
   // Add quick search functionality with Ctrl+G
@@ -168,6 +247,9 @@ const Browse = memo(() => {
 
   return (
     <div className="relative min-h-screen text-nexus-text overflow-hidden bg-nexus-gradient">
+      {/* TMDB API Status Indicator */}
+      <TMDBStatus />
+      
       {/* Simplified Quantum Grid Effect */}
       <div className="fixed inset-0 z-10 opacity-20">
         <div 
@@ -334,6 +416,88 @@ const Browse = memo(() => {
               onItemClick={handleContentClick}
               isTV={true}
               loading={loading}
+            />
+          </div>
+
+          {/* ANIME SECTION */}
+          {/* Trending Anime */}
+          <div>
+            <ContentCarousel
+              title="🎌 TRENDING ANIME"
+              content={trendingAnime}
+              onItemClick={handleContentClick}
+              isTV={false}
+              loading={loading}
+              isAnime={true}
+            />
+          </div>
+
+          {/* Popular Anime */}
+          <div>
+            <ContentCarousel
+              title="🎌 POPULAR ANIME"
+              content={popularAnime}
+              onItemClick={handleContentClick}
+              isTV={false}
+              loading={loading}
+              isAnime={true}
+            />
+          </div>
+
+          {/* Top Rated Anime */}
+          <div>
+            <ContentCarousel
+              title="🎌 TOP RATED ANIME"
+              content={topRatedAnime}
+              onItemClick={handleContentClick}
+              isTV={false}
+              loading={loading}
+              isAnime={true}
+            />
+          </div>
+
+          {/* MANGA SECTION */}
+          {/* Trending Manga */}
+          <div>
+            <ContentCarousel
+              title="📚 TRENDING MANGA"
+              content={trendingManga}
+              onItemClick={handleContentClick}
+              isTV={false}
+              loading={loading}
+              isManga={true}
+            />
+          </div>
+
+          {/* Popular Manga */}
+          <div>
+            <ContentCarousel
+              title="📚 POPULAR MANGA"
+              content={popularManga}
+              onItemClick={handleContentClick}
+              isTV={false}
+              loading={loading}
+              isManga={true}
+            />
+          </div>
+
+          {/* Top Rated Manga */}
+          <div>
+            <ContentCarousel
+              title="📚 TOP RATED MANGA"
+              content={topRatedManga}
+              onItemClick={handleContentClick}
+              isTV={false}
+              loading={loading}
+              isManga={true}
+            />
+          </div>
+
+          {/* Smart Suggestions Section */}
+          <div className="mt-12 px-4 sm:px-6 md:px-8">
+            <SmartSuggestions 
+              currentPage="browse"
+              onContentSelect={handleContentClick}
             />
           </div>
         </div>

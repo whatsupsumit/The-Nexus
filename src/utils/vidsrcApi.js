@@ -2,6 +2,7 @@
 
 // Base URLs for different APIs
 const VIDSRC_BASE = 'https://vidsrc.xyz/embed';
+const VIDSRC_ICU_BASE = 'https://vidsrc.icu/embed'; // New anime/manga streaming service
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
 
@@ -9,6 +10,28 @@ const TMDB_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
 if (!TMDB_API_KEY) {
   console.error('TMDB API key is missing. Please add REACT_APP_TMDB_API_KEY to your .env file');
 }
+
+// Test TMDB API connectivity
+export const testTMDBConnectivity = async () => {
+  try {
+    const testUrl = `${TMDB_BASE}/configuration?api_key=${TMDB_API_KEY}`;
+    const response = await fetch(testUrl);
+    
+    if (response.ok) {
+      console.log('🌐 TMDB API is online and working!');
+      return true;
+    } else {
+      console.log('⚠️ TMDB API returned error:', response.status);
+      return false;
+    }
+  } catch (error) {
+    console.log('❌ TMDB API connectivity test failed:', error.message);
+    return false;
+  }
+};
+
+// Auto-test connectivity on import
+testTMDBConnectivity();
 
 // Simple cache for TMDB API responses
 const tmdbCache = new Map();
@@ -32,8 +55,8 @@ const getMockData = (url) => {
     {
       id: 1,
       title: "The Matrix",
-      poster_path: "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
-      backdrop_path: "/fNG7i7RqMErkcqhohV2a6cV1Ehy.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=The+Matrix",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=The+Matrix",
       overview: "A computer hacker learns from mysterious rebels about the true nature of his reality.",
       release_date: "1999-03-30",
       vote_average: 8.7,
@@ -43,8 +66,8 @@ const getMockData = (url) => {
     {
       id: 2,
       title: "Blade Runner 2049",
-      poster_path: "/gajva2L0rPYkEWjzgFlBXCAVBE5.jpg",
-      backdrop_path: "/ilKBGlhTgLGmVs5Lqv8CWGbLxIp.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=Blade+Runner+2049",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=Blade+Runner+2049",
       overview: "A young blade runner's discovery of a long-buried secret leads him to track down former blade runner Rick Deckard.",
       release_date: "2017-10-04",
       vote_average: 8.0,
@@ -54,8 +77,8 @@ const getMockData = (url) => {
     {
       id: 3,
       title: "Interstellar",
-      poster_path: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
-      backdrop_path: "/nCbkOyOMTEwlEV0LtCOvCnwEONA.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=Interstellar",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=Interstellar",
       overview: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
       release_date: "2014-11-07",
       vote_average: 8.6,
@@ -65,8 +88,8 @@ const getMockData = (url) => {
     {
       id: 4,
       title: "Inception",
-      poster_path: "/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
-      backdrop_path: "/s3TBrRGB1iav7gFOCNx3H31MoES.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=Inception",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=Inception",
       overview: "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea.",
       release_date: "2010-07-16",
       vote_average: 8.8,
@@ -76,8 +99,8 @@ const getMockData = (url) => {
     {
       id: 5,
       title: "Dune",
-      poster_path: "/d5NXSklXo0qyIYkgV94XAgMIckC.jpg",
-      backdrop_path: "/iopYFB1b6Bh7FWZh3onQhph1sih.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=Dune",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=Dune",
       overview: "Paul Atreides leads nomadic tribes in a revolt against the galactic emperor and his father's evil nemesis.",
       release_date: "2021-10-22",
       vote_average: 8.0,
@@ -87,8 +110,8 @@ const getMockData = (url) => {
     {
       id: 6,
       title: "The Dark Knight",
-      poster_path: "/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
-      backdrop_path: "/dqK9Hag1054tghRQSqLSfrkvQnA.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=The+Dark+Knight",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=The+Dark+Knight",
       overview: "Batman faces the Joker, a criminal mastermind who wants to plunge Gotham City into anarchy.",
       release_date: "2008-07-18",
       vote_average: 9.0,
@@ -98,8 +121,8 @@ const getMockData = (url) => {
     {
       id: 7,
       title: "Avatar",
-      poster_path: "/jRXYjXNq0Cs2TcJjLkki24MLp7u.jpg",
-      backdrop_path: "/Yc9q6QuWrMp9nuDm5R8ExNqbEWU.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=Avatar",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=Avatar",
       overview: "A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders.",
       release_date: "2009-12-18",
       vote_average: 7.9,
@@ -109,8 +132,8 @@ const getMockData = (url) => {
     {
       id: 8,
       title: "Spider-Man: No Way Home",
-      poster_path: "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
-      backdrop_path: "/14QbnygCuTO0vl7CAFmPf1fgZfV.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=Spider+Man",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=Spider+Man",
       overview: "Spider-Man's identity is revealed, so he asks Doctor Strange for help, but things go wrong.",
       release_date: "2021-12-17",
       vote_average: 8.4,
@@ -123,8 +146,8 @@ const getMockData = (url) => {
     {
       id: 1399,
       name: "Game of Thrones",
-      poster_path: "/7WUHnWGx5OO145IRxPDUkQSh4C7.jpg",
-      backdrop_path: "/suopoADq0k8YZr4dQXcU6pToj6s.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=Game+of+Thrones",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=Game+of+Thrones",
       overview: "Seven noble families fight for control of the mythical land of Westeros.",
       first_air_date: "2011-04-17",
       vote_average: 8.3,
@@ -134,8 +157,8 @@ const getMockData = (url) => {
     {
       id: 1396,
       name: "Breaking Bad",
-      poster_path: "/3xnWaLQjelJDDF7LT1WBo6f4BRe.jpg",
-      backdrop_path: "/tsRy63Mu5cu8etL1X7ZLyf7UP1M.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=Breaking+Bad",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=Breaking+Bad",
       overview: "A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing drugs.",
       first_air_date: "2008-01-20",
       vote_average: 9.5,
@@ -145,8 +168,8 @@ const getMockData = (url) => {
     {
       id: 94605,
       name: "Arcane",
-      poster_path: "/fqldf2t8ztc9aiwn3k6mlX3tvRT.jpg",
-      backdrop_path: "/aBgtOVvuP4jVCu9GCYfHdqNyK8h.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=Arcane",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=Arcane",
       overview: "Set in utopian Piltover and the oppressed underground of Zaun, the story follows sisters Vi and Jinx.",
       first_air_date: "2021-11-06",
       vote_average: 9.0,
@@ -156,8 +179,8 @@ const getMockData = (url) => {
     {
       id: 85271,
       name: "Wednesday",
-      poster_path: "/9PFonBhy4cQy7Jz20NpMygczOkv.jpg",
-      backdrop_path: "/iHSwvRVsRyxpX7FE7GbviaDvgGZ.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=Wednesday",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=Wednesday",
       overview: "Follow Wednesday Addams' years as a student at Nevermore Academy.",
       first_air_date: "2022-11-23",
       vote_average: 8.6,
@@ -167,8 +190,8 @@ const getMockData = (url) => {
     {
       id: 71712,
       name: "The Boys",
-      poster_path: "/stTEycfG9928HYGEISBFaG1ngjM.jpg",
-      backdrop_path: "/mGVrXeIjyecj6TKmwPVpHlscEmw.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=The+Boys",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=The+Boys",
       overview: "A group of vigilantes set out to take down corrupt superheroes who abuse their superpowers.",
       first_air_date: "2019-07-26",
       vote_average: 8.7,
@@ -178,8 +201,8 @@ const getMockData = (url) => {
     {
       id: 103768,
       name: "The Bear",
-      poster_path: "/sHFlbKS3WLqfGlbDvXojoNTYmSI.jpg",
-      backdrop_path: "/eU7HHdbzE0Zwt80xKb8XbOTFllR.jpg",
+      poster_path: "https://dummyimage.com/342x513/1f2937/ffffff.png?text=The+Bear",
+      backdrop_path: "https://dummyimage.com/1280x720/1f2937/ffffff.png?text=The+Bear",
       overview: "A young chef from the fine dining world comes home to Chicago to run his family sandwich shop.",
       first_air_date: "2022-06-23",
       vote_average: 8.3,
@@ -200,67 +223,48 @@ const getMockData = (url) => {
   return { results: [] };
 };
 
-// Enhanced fetch with caching and fallback
+// Enhanced fetch with caching and FAST fallback for TMDB outages
 const fetchWithCache = async (url) => {
   const cached = getCachedTMDBData(url);
   if (cached) {
     return cached;
   }
   
+  // ULTRA FAST timeout - immediately fallback to mock data during outages
+  const fastTimeout = 800; // 0.8 seconds only
+  
   try {
-    // First try: Direct TMDB API call with timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+    // Create timeout promise
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Quick timeout')), fastTimeout)
+    );
     
-    const response = await fetch(url, {
-      signal: controller.signal,
+    // Create fetch promise
+    const fetchPromise = fetch(url, {
+      method: 'GET',
       headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
       }
     });
     
-    clearTimeout(timeoutId);
+    // Race between fetch and timeout
+    const response = await Promise.race([fetchPromise, timeoutPromise]);
     
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
     const data = await response.json();
     setCachedTMDBData(url, data);
-    console.log('✅ TMDB API direct call successful');
+    console.log('✅ TMDB API working perfectly!');
     return data;
   } catch (error) {
-    console.warn('🔄 Direct TMDB API failed, trying alternatives...', error.message);
+    console.log('⚡ TMDB timeout/error - immediately using mock data for fast loading');
     
-    // Fallback 1: Try with CORS proxy
-    try {
-      const proxyController = new AbortController();
-      const proxyTimeoutId = setTimeout(() => proxyController.abort(), 10000); // 10 second timeout
-      
-      const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-      const proxyResponse = await fetch(proxyUrl, {
-        signal: proxyController.signal,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-      
-      clearTimeout(proxyTimeoutId);
-      
-      if (proxyResponse.ok) {
-        const data = await proxyResponse.json();
-        setCachedTMDBData(url, data);
-        console.log('✅ TMDB API proxy call successful');
-        return data;
-      }
-    } catch (proxyError) {
-      console.warn('🔄 CORS proxy also failed:', proxyError.message);
-    }
-    
-    // Fallback 2: Return mock data based on URL type
-    console.warn('📦 All API calls failed, returning mock data for:', url);
+    // IMMEDIATE fallback to mock data - no more attempts
     const mockData = getMockData(url);
-    setCachedTMDBData(url, mockData); // Cache mock data too
+    setCachedTMDBData(url, mockData);
     return mockData;
   }
 };
@@ -276,11 +280,47 @@ export const getTVEmbedUrl = (tmdbId, season, episode, options = {}) => {
   return `${VIDSRC_BASE}/tv?tmdb=${tmdbId}&season=${season}&episode=${episode}`;
 };
 
-export const getAnimeEmbedUrl = (malId, episode, type = 'sub', options = {}) => {
-  // VidSrc.xyz doesn't have specific anime endpoints in the documentation provided
-  // For now, we'll keep this function but return null as it's not supported
-  console.warn('Anime embedding not available with VidSrc.xyz API');
-  return null;
+export const getAnimeEmbedUrl = (anilistId, episode = 1, dub = 0, skip = 0) => {
+  // vidsrc.icu format: https://vidsrc.icu/embed/anime/{id}/{episode}/{dub}/{skip}
+  // anilistId: from https://anilist.co
+  // episode: episode number (required)
+  // dub: 0 for sub, 1 for dub (optional)
+  // skip: 1 to auto skip intro/outro (optional)
+  
+  if (!anilistId) {
+    console.error('Anime ID is required for streaming');
+    return null;
+  }
+  
+  let url = `${VIDSRC_ICU_BASE}/anime/${anilistId}/${episode}`;
+  
+  // Add dub preference if specified
+  if (dub !== undefined) {
+    url += `/${dub}`;
+    
+    // Add skip parameter if specified
+    if (skip !== undefined) {
+      url += `/${skip}`;
+    }
+  }
+  
+  console.log('🎌 Generated anime embed URL:', url);
+  return url;
+};
+
+export const getMangaEmbedUrl = (anilistId, chapter = 1) => {
+  // vidsrc.icu format: https://vidsrc.icu/embed/manga/{id}/{chapter}
+  // anilistId: from https://anilist.co
+  // chapter: chapter number (required)
+  
+  if (!anilistId) {
+    console.error('Manga ID is required for reading');
+    return null;
+  }
+  
+  const url = `${VIDSRC_ICU_BASE}/manga/${anilistId}/${chapter}`;
+  console.log('📚 Generated manga embed URL:', url);
+  return url;
 };
 
 // TMDB API functions for getting movie/TV data
@@ -403,9 +443,18 @@ export const getTVSeasonDetails = async (id, seasonNumber) => {
 };
 
 // Get TMDB image URL
+// Get TMDB image URL with fallback
 export const getImageUrl = (path, size = 'w500') => {
   if (!path) return null;
   return `https://image.tmdb.org/t/p/${size}${path}`;
+};
+
+// Get backup image URL when TMDB images fail
+export const getBackupImageUrl = (title, size = 'w500') => {
+  // Use a reliable image service with movie titles
+  const encodedTitle = encodeURIComponent(title || 'Movie');
+  const dimensions = size === 'w500' ? '500x750' : size === 'w342' ? '342x513' : '185x278';
+  return `https://dummyimage.com/${dimensions}/1f2937/ffffff.png&text=${encodedTitle}`;
 };
 
 // Get backdrop image URL

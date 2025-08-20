@@ -1,19 +1,48 @@
 import React, { memo } from 'react';
-import { getImageUrl, getYear } from '../utils/vidsrcApi';
+import { getImageUrl, getYear, getBackupImageUrl } from '../utils/vidsrcApi';
 
 const MovieCard = memo(({ movie, onClick, isTV = false, customBadge = null }) => {
   const title = isTV ? movie.name : movie.title;
   const releaseDate = isTV ? movie.first_air_date : movie.release_date;
   const posterPath = movie.poster_path;
   
+  // Debug logging to see what data we're getting
+  if (!title) {
+    console.log('🔍 MovieCard Debug - Movie data:', movie);
+  }
+  
   const handleImageError = (e) => {
-    // Try alternative poster size for mobile
+    console.log('🖼️ Image failed to load:', e.target.src);
+    // Try alternative poster sizes first
     if (e.target.src.includes('w500')) {
       e.target.src = getImageUrl(posterPath, 'w342');
     } else if (e.target.src.includes('w342')) {
       e.target.src = getImageUrl(posterPath, 'w185');
+    } else if (e.target.src.includes('tmdb.org')) {
+      // If TMDB images are failing, try backup image service
+      e.target.src = getBackupImageUrl(title, 'w342');
     } else {
-      e.target.src = `https://via.placeholder.com/300x450/1f2937/ef4444?text=${encodeURIComponent(title?.charAt(0) || '?')}`;
+      // Last resort: show custom fallback element
+      e.target.style.display = 'none';
+      const parent = e.target.parentElement;
+      if (parent && !parent.querySelector('.fallback-image')) {
+        const fallback = document.createElement('div');
+        fallback.className = 'fallback-image w-full h-full flex items-center justify-center bg-gray-800 rounded-lg';
+        fallback.innerHTML = `
+          <div class="text-center p-4">
+            <div class="text-3xl sm:text-4xl mb-2">
+              ${movie.media_type === 'anime' ? '🎌' : isTV ? '📺' : '🎬'}
+            </div>
+            <p class="font-['JetBrains_Mono',monospace] text-xs text-gray-400 truncate">
+              ${title || 'No Title'}
+            </p>
+            <p class="font-['JetBrains_Mono',monospace] text-xs text-gray-500 mt-1">
+              No Image
+            </p>
+          </div>
+        `;
+        parent.appendChild(fallback);
+      }
     }
   };
   
@@ -26,7 +55,7 @@ const MovieCard = memo(({ movie, onClick, isTV = false, customBadge = null }) =>
       {/* Movie Poster */}
       {posterPath ? (
         <img
-          src={movie.media_type === 'anime' ? posterPath : getImageUrl(posterPath, 'w342')}
+          src={movie.media_type === 'anime' ? posterPath : (posterPath.startsWith('http') ? posterPath : getImageUrl(posterPath, 'w342'))}
           alt={title}
           className="w-full h-full object-cover rounded-lg"
           loading="lazy"

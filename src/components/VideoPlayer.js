@@ -289,38 +289,79 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
           {isLoading && !hasError && (
             <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
               <div className="text-center">
-                <div className="inline-block w-8 h-8 sm:w-12 sm:h-12 border-4 border-red-400 border-t-transparent rounded-full animate-spin mb-4"></div>
-                <p className="font-['JetBrains_Mono',monospace] text-white text-sm sm:text-lg mb-2">
-                  Initializing NEXUS Stream...
-                </p>
+                <div className="relative mb-6">
+                  <div className="inline-block w-16 h-16 border-4 border-red-400/20 border-t-red-400 rounded-full animate-spin"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-2xl">🎬</div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="font-['JetBrains_Mono',monospace] text-white text-lg font-bold">
+                    Initializing NEXUS Stream...
+                  </p>
+                  <p className="font-['JetBrains_Mono',monospace] text-gray-400 text-sm">
+                    Connecting to quantum servers • Optimizing playback
+                  </p>
+                  <div className="flex justify-center space-x-1 mt-4">
+                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse delay-75"></div>
+                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse delay-150"></div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
-          {/* Error Display */}
+          {/* Enhanced Error Display */}
           {hasError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
-              <div className="text-center max-w-md">
-                <div className="text-red-400 mb-4">
-                  <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-black via-red-950/20 to-black z-10">
+              <div className="text-center max-w-lg p-8 bg-black/80 backdrop-blur-sm rounded-lg border border-red-900/30">
+                <div className="text-red-400 mb-6 animate-pulse">
+                  <svg className="w-20 h-20 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 18.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
                 </div>
-                <h2 className="font-['JetBrains_Mono',monospace] text-white text-xl mb-4">
+                <h2 className="font-['JetBrains_Mono',monospace] text-white text-2xl mb-2 font-bold">
                   STREAM TEMPORARILY UNAVAILABLE
                 </h2>
-                <button
-                  onClick={() => {
-                    setHasError(false);
-                    setIsLoading(true);
-                    if (iframeRef.current) {
-                      iframeRef.current.src = currentEmbedUrl;
-                    }
-                  }}
-                  className="bg-red-600 hover:bg-red-700 text-white font-['JetBrains_Mono',monospace] py-2 px-4 rounded transition-colors duration-200"
-                >
-                  RETRY CONNECTION
-                </button>
+                <p className="font-['JetBrains_Mono',monospace] text-gray-400 text-sm mb-6 leading-relaxed">
+                  The quantum servers are experiencing high traffic. Our AI is working to restore connection.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <button
+                    onClick={() => {
+                      setHasError(false);
+                      setIsLoading(true);
+                      if (iframeRef.current) {
+                        iframeRef.current.src = currentEmbedUrl;
+                      }
+                    }}
+                    className="bg-red-600 hover:bg-red-700 text-white font-['JetBrains_Mono',monospace] py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>RETRY CONNECTION</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (onClose) {
+                        onClose();
+                      }
+                    }}
+                    className="bg-gray-700 hover:bg-gray-600 text-white font-['JetBrains_Mono',monospace] py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center space-x-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span>GO BACK</span>
+                  </button>
+                </div>
+                <div className="flex justify-center space-x-1 mt-6">
+                  <div className="w-2 h-2 bg-red-400 rounded-full animate-ping"></div>
+                  <div className="w-2 h-2 bg-red-400 rounded-full animate-ping delay-75"></div>
+                  <div className="w-2 h-2 bg-red-400 rounded-full animate-ping delay-150"></div>
+                </div>
               </div>
             </div>
           )}
@@ -402,13 +443,24 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
 
       {/* Recommendations Sidebar */}
       <div className="w-full lg:w-96 bg-black/95 border-t lg:border-t-0 lg:border-l border-red-900/20 flex flex-col overflow-hidden order-2 lg:order-2 max-h-96 lg:max-h-none">
-        <div className="p-2 sm:p-4 border-b border-red-900/20">
-          <h2 className="font-['JetBrains_Mono',monospace] text-red-400 text-base sm:text-lg font-bold">
-            RECOMMENDED FOR YOU
-          </h2>
-          <p className="font-['JetBrains_Mono',monospace] text-gray-500 text-xs mt-1">
-            Click to watch next
-          </p>
+        <div className="p-2 sm:p-4 border-b border-red-900/20 bg-gradient-to-r from-red-950/30 to-black">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-['JetBrains_Mono',monospace] text-red-400 text-base sm:text-lg font-bold flex items-center">
+                <div className="w-1 h-5 bg-red-500 mr-2 sm:mr-3 rounded"></div>
+                RECOMMENDED FOR YOU
+              </h2>
+              <p className="font-['JetBrains_Mono',monospace] text-gray-500 text-xs mt-1">
+                AI-curated suggestions • Click to watch
+              </p>
+            </div>
+            <div className="flex items-center space-x-1">
+              <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+              <span className="font-['JetBrains_Mono',monospace] text-red-400 text-xs hidden sm:inline">
+                LIVE
+              </span>
+            </div>
+          </div>
         </div>
         
         <div className="flex-1 overflow-y-auto scrollbar-hide">

@@ -146,6 +146,20 @@ const Header = () => {
           </button>
           
           <button
+            onClick={() => handleNavigation("/manga")}
+            className={`relative font-['Arvo',serif] hover:text-purple-400 transition-all duration-300 font-medium group text-sm lg:text-base ${
+              isActive("/manga") ? "text-purple-400" : "text-nexus-text"
+            }`}
+          >
+            <span className="relative z-10">MANGA</span>
+            <div className="absolute inset-0 bg-purple-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            {isActive("/manga") && (
+              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-purple-400" />
+            )}
+            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-purple-400 group-hover:w-full transition-all duration-300"></div>
+          </button>
+          
+          <button
             onClick={() => handleNavigation("/vault")}
             className={`relative font-['Arvo',serif] hover:text-nexus-red-light transition-all duration-300 font-medium group text-sm lg:text-base ${
               isActive("/vault") || isActive("/my-list") ? "text-nexus-red-light" : "text-nexus-text"
@@ -378,6 +392,18 @@ const Header = () => {
               }`}
             >
               ANIME
+            </button>
+            
+            <button
+              onClick={() => {
+                handleNavigation("/manga");
+                setMobileMenuOpen(false);
+              }}
+              className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 ${
+                isActive("/manga") ? "text-purple-400 bg-purple-400/10" : "text-nexus-text hover:text-purple-400 hover:bg-purple-400/5"
+              }`}
+            >
+              MANGA
             </button>
             
             <button

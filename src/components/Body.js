@@ -4,9 +4,11 @@ import Browse from './Browse';
 import Movies from './Movies';
 import TVShows from './TVShows';
 import Anime from './Anime';
+import Manga from './Manga';
 import MovieDetails from './MovieDetails';
 import TVShowDetails from './TVShowDetails';
 import AnimeDetails from './AnimeDetails';
+import MangaDetails from './MangaDetails';
 import Vault from './Vault';
 import Profile from './Profile';
 import { useDispatch, useSelector } from 'react-redux';
@@ -160,6 +162,62 @@ const Body = () => {
               
               <div className="relative z-20">
                 <AnimeDetails />
+              </div>
+            </div>
+          </div>
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: "/manga",
+      element: (
+        <ProtectedRoute>
+          <div>
+            <Header />
+            <div className="relative min-h-screen text-white">
+              {/* NEXUS Background */}
+              <div 
+                className="fixed inset-0 w-full h-full z-0"
+                style={{
+                  backgroundImage: "url('redeye.png')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  backgroundAttachment: "fixed"
+                }}
+              />
+              <div className="fixed inset-0 z-10 bg-gradient-to-t from-black via-black/60 to-black/80" />
+              
+              <div className="relative z-20">
+                <Manga />
+              </div>
+            </div>
+          </div>
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: "/manga/:id",
+      element: (
+        <ProtectedRoute>
+          <div>
+            <Header />
+            <div className="relative min-h-screen text-white">
+              {/* NEXUS Background */}
+              <div 
+                className="fixed inset-0 w-full h-full z-0"
+                style={{
+                  backgroundImage: "url('neffexbg.jpg')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  backgroundAttachment: "fixed"
+                }}
+              />
+              <div className="fixed inset-0 z-10 bg-gradient-to-t from-black via-black/60 to-black/80" />
+              
+              <div className="relative z-20">
+                <MangaDetails />
               </div>
             </div>
           </div>
