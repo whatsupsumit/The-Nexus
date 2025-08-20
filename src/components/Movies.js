@@ -16,7 +16,6 @@ const Movies = () => {
   const [currentFilter, setCurrentFilter] = useState('popular');
 
   useEffect(() => {
-    console.log('NEXUS: TMDB API Key available:', !!process.env.REACT_APP_TMDB_API_KEY);
     const loadMovies = async () => {
       setLoading(true);
       try {
@@ -31,7 +30,6 @@ const Movies = () => {
           default:
             movieData = await fetchPopularMovies();
         }
-        console.log('NEXUS: Loaded movies:', movieData?.length || 0);
         setMovies(movieData);
         setFilteredMovies(movieData);
       } catch (error) {
