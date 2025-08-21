@@ -90,44 +90,44 @@ const Header = () => {
         <nav className="hidden md:flex items-center space-x-4 lg:space-x-8 z-10">
           <button
             onClick={() => handleNavigation("/browse")}
-            className={`relative font-['Arvo',serif] hover:text-nexus-red-light transition-all duration-300 font-medium group text-sm lg:text-base ${
-              isActive("/browse") ? "text-nexus-red-light" : "text-nexus-text"
+            className={`relative font-['Arvo',serif] hover:text-orange-400 transition-all duration-300 font-medium group text-sm lg:text-base ${
+              isActive("/browse") ? "text-orange-400" : "text-nexus-text"
             }`}
           >
             <span className="relative z-10">HOME</span>
-            <div className="absolute inset-0 bg-nexus-red/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            <div className="absolute inset-0 bg-orange-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
             {isActive("/browse") && (
-              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-red-400" />
+              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-orange-400" />
             )}
-            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-nexus-red group-hover:w-full transition-all duration-300"></div>
+            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-orange-400 group-hover:w-full transition-all duration-300"></div>
           </button>
           
           <button
             onClick={() => handleNavigation("/movies")}
-            className={`relative font-['Arvo',serif] hover:text-nexus-red-light transition-all duration-300 font-medium group text-sm lg:text-base ${
-              isActive("/movies") ? "text-nexus-red-light" : "text-nexus-text"
+            className={`relative font-['Arvo',serif] hover:text-yellow-400 transition-all duration-300 font-medium group text-sm lg:text-base ${
+              isActive("/movies") ? "text-yellow-400" : "text-nexus-text"
             }`}
           >
             <span className="relative z-10">MOVIES</span>
-            <div className="absolute inset-0 bg-nexus-red/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            <div className="absolute inset-0 bg-yellow-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
             {isActive("/movies") && (
-              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-red-400" />
+              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-yellow-400" />
             )}
-            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-nexus-red group-hover:w-full transition-all duration-300"></div>
+            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-yellow-400 group-hover:w-full transition-all duration-300"></div>
           </button>
           
           <button
             onClick={() => handleNavigation("/tv-shows")}
-            className={`relative font-['Arvo',serif] hover:text-nexus-red-light transition-all duration-300 font-medium group text-sm lg:text-base ${
-              isActive("/tv-shows") ? "text-nexus-red-light" : "text-nexus-text"
+            className={`relative font-['Arvo',serif] hover:text-green-400 transition-all duration-300 font-medium group text-sm lg:text-base ${
+              isActive("/tv-shows") ? "text-green-400" : "text-nexus-text"
             }`}
           >
             <span className="relative z-10">SERIES</span>
-            <div className="absolute inset-0 bg-nexus-red/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            <div className="absolute inset-0 bg-green-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
             {isActive("/tv-shows") && (
-              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-red-400" />
+              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-green-400" />
             )}
-            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-nexus-red group-hover:w-full transition-all duration-300"></div>
+            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-green-400 group-hover:w-full transition-all duration-300"></div>
           </button>
           
           <button
@@ -146,16 +146,16 @@ const Header = () => {
           
           <button
             onClick={() => handleNavigation("/vault")}
-            className={`relative font-['Arvo',serif] hover:text-nexus-red-light transition-all duration-300 font-medium group text-sm lg:text-base ${
-              isActive("/vault") || isActive("/my-list") ? "text-nexus-red-light" : "text-nexus-text"
+            className={`relative font-['Arvo',serif] hover:text-pink-400 transition-all duration-300 font-medium group text-sm lg:text-base ${
+              isActive("/vault") || isActive("/my-list") ? "text-pink-400" : "text-nexus-text"
             }`}
           >
             <span className="relative z-10">VAULT</span>
-            <div className="absolute inset-0 bg-nexus-red/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+            <div className="absolute inset-0 bg-pink-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
             {(isActive("/vault") || isActive("/my-list")) && (
-              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-red-400" />
+              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-pink-400" />
             )}
-            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-nexus-red group-hover:w-full transition-all duration-300"></div>
+            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-pink-400 group-hover:w-full transition-all duration-300"></div>
           </button>
 
           {/* AI Chat Tab - Hidden on smaller screens */}
@@ -337,7 +337,7 @@ const Header = () => {
                 setMobileMenuOpen(false);
               }}
               className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 ${
-                isActive("/browse") ? "text-nexus-red-light bg-nexus-red/10" : "text-nexus-text hover:text-nexus-red-light hover:bg-nexus-red/5"
+                isActive("/browse") ? "text-orange-400 bg-orange-400/10" : "text-nexus-text hover:text-orange-400 hover:bg-orange-400/5"
               }`}
             >
               HOME
@@ -349,7 +349,7 @@ const Header = () => {
                 setMobileMenuOpen(false);
               }}
               className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 ${
-                isActive("/movies") ? "text-nexus-red-light bg-nexus-red/10" : "text-nexus-text hover:text-nexus-red-light hover:bg-nexus-red/5"
+                isActive("/movies") ? "text-yellow-400 bg-yellow-400/10" : "text-nexus-text hover:text-yellow-400 hover:bg-yellow-400/5"
               }`}
             >
               MOVIES
@@ -361,7 +361,7 @@ const Header = () => {
                 setMobileMenuOpen(false);
               }}
               className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 ${
-                isActive("/tv-shows") ? "text-nexus-red-light bg-nexus-red/10" : "text-nexus-text hover:text-nexus-red-light hover:bg-nexus-red/5"
+                isActive("/tv-shows") ? "text-green-400 bg-green-400/10" : "text-nexus-text hover:text-green-400 hover:bg-green-400/5"
               }`}
             >
               SERIES
@@ -385,7 +385,7 @@ const Header = () => {
                 setMobileMenuOpen(false);
               }}
               className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 ${
-                isActive("/vault") || isActive("/my-list") ? "text-nexus-red-light bg-nexus-red/10" : "text-nexus-text hover:text-nexus-red-light hover:bg-nexus-red/5"
+                isActive("/vault") || isActive("/my-list") ? "text-pink-400 bg-pink-400/10" : "text-nexus-text hover:text-pink-400 hover:bg-pink-400/5"
               }`}
             >
               VAULT

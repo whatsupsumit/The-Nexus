@@ -60,10 +60,8 @@ const Vault = () => {
   };
 
   const clearVault = () => {
-    if (window.confirm('Are you sure you want to clear your entire vault? This action cannot be undone.')) {
-      localStorage.setItem('nexus_vault', JSON.stringify([]));
-      setVaultItems([]);
-    }
+    localStorage.setItem('nexus_vault', JSON.stringify([]));
+    setVaultItems([]);
   };
 
   const handleItemClick = (item) => {
@@ -187,18 +185,16 @@ const Vault = () => {
                       }
                     />
                     
-                    {/* Remove button */}
+                    {/* Remove button with minus symbol */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         removeFromVault(item.id);
                       }}
-                      className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100"
+                      className="absolute top-2 right-2 bg-red-600/90 hover:bg-red-700 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-0 group-hover:scale-100 flex items-center justify-center font-bold text-lg"
                       title="Remove from Vault"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
+                      -
                     </button>
 
                     {/* Date added overlay */}

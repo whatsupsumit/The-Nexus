@@ -11,6 +11,7 @@ import MangaReader from './MangaReader';
 import MangaAPITester from './MangaAPITester';
 import Vault from './Vault';
 import Profile from './Profile';
+import NeuralChat from './NeuralChat';
 import { useDispatch, useSelector } from 'react-redux';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from "firebase/auth";
@@ -254,42 +255,7 @@ const Body = () => {
         <ProtectedRoute>
           <div>
             <Header />
-            <div className="relative min-h-screen text-white">
-              {/* NEXUS Background */}
-              <div 
-                className="fixed inset-0 w-full h-full z-0"
-                style={{
-                  backgroundImage: "url('astro.jpg')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                  backgroundAttachment: "fixed"
-                }}
-              />
-              <div className="fixed inset-0 z-10 bg-gradient-to-t from-black via-black/60 to-black/80" />
-              
-              <div className="relative z-20 pt-32 px-8">
-                <div className="max-w-4xl mx-auto">
-                  <h1 className="font-['JetBrains_Mono',monospace] text-4xl font-bold text-cyan-400 mb-8 text-center">
-                    NEURAL AI INTERFACE
-                  </h1>
-                  <div className="bg-black/80 backdrop-blur-md border border-cyan-500/30 rounded-lg p-8 text-center">
-                    <div className="text-6xl mb-6">🤖</div>
-                    <h2 className="font-['JetBrains_Mono',monospace] text-2xl text-white mb-4">
-                      AI CHAT COMING SOON
-                    </h2>
-                    <p className="font-['JetBrains_Mono',monospace] text-gray-400 mb-6">
-                      Neural AI interface is being calibrated. Stay tuned for intelligent movie recommendations and entertainment assistance.
-                    </p>
-                    <div className="flex justify-center space-x-4">
-                      <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                      <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse delay-100"></div>
-                      <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-200"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <NeuralChat />
           </div>
         </ProtectedRoute>
       )
