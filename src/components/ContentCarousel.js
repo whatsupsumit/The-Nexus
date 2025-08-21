@@ -1,9 +1,8 @@
 import React, { useRef, memo, useCallback } from 'react';
 import MovieCard from './MovieCard';
-import AnimeCard from './AnimeCard';
 import MangaCard from './MangaCard';
 
-const ContentCarousel = memo(({ title, content = [], onItemClick, isTV = false, loading = false, isAnime = false, isManga = false }) => {
+const ContentCarousel = memo(({ title, content = [], onItemClick, isTV = false, loading = false, isManga = false }) => {
   const scrollRef = useRef(null);
   
   const scroll = useCallback((direction) => {
@@ -95,12 +94,7 @@ const ContentCarousel = memo(({ title, content = [], onItemClick, isTV = false, 
                 className="flex-shrink-0 w-36 xs:w-40 sm:w-44 md:w-48 lg:w-52"
                 style={{ transform: 'translateZ(0)' }}
               >
-                {isAnime ? (
-                  <AnimeCard
-                    anime={item}
-                    onClick={onItemClick}
-                  />
-                ) : isManga ? (
+                {isManga ? (
                   <MangaCard
                     manga={item}
                     onClick={onItemClick}
@@ -125,7 +119,6 @@ const ContentCarousel = memo(({ title, content = [], onItemClick, isTV = false, 
         <div className="mt-4 text-center">
           <div className="text-xs text-gray-400">
             {content.length} {
-              isAnime ? 'ANIME' : 
               isManga ? 'MANGA' : 
               isTV ? 'SHOWS' : 'MOVIES'
             } • STREAMING ACTIVE

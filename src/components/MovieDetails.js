@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getMovieDetails, getMovieCredits, getMovieVideos, getMovieRecommendations } from '../utils/vidsrcApi';
+import { safeOpenExternal } from '../utils/safeNavigation';
 import VideoPlayer from './VideoPlayer';
 
 const MovieDetails = () => {
@@ -42,8 +43,9 @@ const MovieDetails = () => {
         if (movieData && movieData.id) {
           setMovie(movieData);
           setCredits(creditsData || { cast: [], crew: [] });
-          setVideos(videosData || []);
-          setRecommendations(recommendationsData || []);
+          // Extract results array from API response
+          setVideos(videosData?.results || []);
+          setRecommendations(recommendationsData?.results || []);
 
           // Check if movie is in vault
           const vault = JSON.parse(localStorage.getItem('nexus_vault') || '[]');
@@ -158,9 +160,10 @@ const MovieDetails = () => {
     );
   }
 
-  const director = credits.crew.find(person => person.job === 'Director');
-  const writer = credits.crew.find(person => person.job === 'Writer' || person.job === 'Screenplay');
-  const trailer = videos.find(video => video.type === 'Trailer');
+  const director = credits.crew?.find(person => person.job === 'Director');
+  const writer = credits.crew?.find(person => person.job === 'Writer' || person.job === 'Screenplay');
+  const videosArray = Array.isArray(videos) ? videos : [];
+  const trailer = videosArray.find(video => video.type === 'Trailer');
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Unknown';
@@ -327,7 +330,13 @@ const MovieDetails = () => {
 
                   {trailer && (
                     <button
-                      onClick={() => window.open(`https://www.youtube.com/watch?v=${trailer.key}`, '_blank')}
+                      onClick={() => {
+                        const url = `https://www.youtube.com/watch?v=${encodeURIComponent(trailer.key)}`;
+                        const success = safeOpenExternal(url);
+                        if (!success) {
+                          console.warn('Failed to open trailer safely');
+                        }
+                      }}
                       className="border-2 border-gray-500 text-gray-300 hover:border-red-500 hover:text-red-400 px-8 py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center transition-all duration-300"
                     >
                       <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -393,7 +402,7 @@ const MovieDetails = () => {
           <div className="lg:col-span-2">
             <h2 className="font-['JetBrains_Mono',monospace] text-2xl font-bold text-red-400 mb-6">CAST & CREW</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {credits.cast.slice(0, 12).map(actor => (
+              {Array.isArray(credits.cast) && credits.cast.slice(0, 12).map(actor => (
                 <div 
                   key={actor.id} 
                   className="bg-gray-900/50 rounded-lg p-4 text-center cursor-pointer hover:bg-gray-800/50 transition-all duration-300 transform hover:scale-105"
@@ -538,7 +547,7 @@ const MovieDetails = () => {
         </div>
 
         {/* Recommendations */}
-        {recommendations.length > 0 && (
+        {Array.isArray(recommendations) && recommendations.length > 0 && (
           <div className="mt-16">
             <h2 className="font-['JetBrains_Mono',monospace] text-2xl font-bold text-red-400 mb-6">MORE LIKE THIS</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">

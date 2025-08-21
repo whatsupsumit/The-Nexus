@@ -10,10 +10,11 @@ import {
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-// Login component containing the Login form
+// Enhanced Login component with better responsiveness and animations
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const nameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
@@ -21,21 +22,18 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const handleButtonClick = async () => {
-    // Made the function async
+    setIsLoading(true);
+    
     // Validate the user credentials
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
     const name = !isSignInForm && nameRef.current ? nameRef.current.value : "";
 
-
-    console.log("Email:", email);
-    console.log("Password:", password);
-
     const message = checkValidatedata(email, password);
     setErrorMessage(message);
 
     if (message) {
-      console.error("Validation error:", message);
+      setIsLoading(false);
       return; // Stop if validation fails
     }
 
@@ -65,7 +63,32 @@ const Login = () => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.error("Sign up error:", errorCode, errorMessage);
-        setErrorMessage(`Sign Up Failed: ${errorMessage} (${errorCode})`);
+        
+        // Provide user-friendly error messages
+        let friendlyMessage = "";
+        switch (errorCode) {
+          case 'auth/email-already-in-use':
+            friendlyMessage = "This email is already registered. Please sign in instead or use a different email.";
+            // Auto-switch to sign-in mode for better UX
+            setTimeout(() => {
+              setIsSignInForm(true);
+              setErrorMessage("Switched to Sign In - this email is already registered.");
+            }, 2000);
+            break;
+          case 'auth/weak-password':
+            friendlyMessage = "Password should be at least 6 characters long.";
+            break;
+          case 'auth/invalid-email':
+            friendlyMessage = "Please enter a valid email address.";
+            break;
+          case 'auth/operation-not-allowed':
+            friendlyMessage = "Email/password accounts are not enabled. Please contact support.";
+            break;
+          default:
+            friendlyMessage = `Sign Up Failed: ${errorMessage}`;
+        }
+        
+        setErrorMessage(friendlyMessage);
       }
     } else {
       // Sign in logic
@@ -85,9 +108,37 @@ const Login = () => {
           const errorCode = error.code;
           const errorMessage = error.message;
           console.error("Sign In error:", errorCode, errorMessage);
-          setErrorMessage(`Sign In Failed: ${errorMessage} (${errorCode})`);
+          
+          // Provide user-friendly error messages
+          let friendlyMessage = "";
+          switch (errorCode) {
+            case 'auth/user-not-found':
+              friendlyMessage = "No account found with this email. Please sign up first.";
+              break;
+            case 'auth/wrong-password':
+              friendlyMessage = "Incorrect password. Please try again.";
+              break;
+            case 'auth/invalid-email':
+              friendlyMessage = "Please enter a valid email address.";
+              break;
+            case 'auth/too-many-requests':
+              friendlyMessage = "Too many failed attempts. Please try again later.";
+              break;
+            case 'auth/user-disabled':
+              friendlyMessage = "This account has been disabled. Please contact support.";
+              break;
+            case 'auth/invalid-credential':
+              friendlyMessage = "Invalid email or password. Please check your credentials.";
+              break;
+            default:
+              friendlyMessage = `Sign In Failed: ${errorMessage}`;
+          }
+          
+          setErrorMessage(friendlyMessage);
         });
     }
+    
+    setIsLoading(false);
   };
 
   const toggleSignInForm = () => {
@@ -96,243 +147,259 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-nexus-gradient font-inter overflow-x-hidden">
-      {/* Simple Background Image */}
-      <div
-        className="absolute inset-0 w-full h-full opacity-20 sm:opacity-30"
-        style={{
-          backgroundImage: "url('nexusbg.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
-
-      {/* Simple Overlay */}
-      <div className="absolute inset-0 w-full h-full bg-nexus-black/70" />
-
-      {/* Top Navigation Bar */}
-      <div className="absolute top-0 left-0 right-0 z-30 p-4 sm:p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-nexus-red rounded-lg flex items-center justify-center">
-              <span className="text-nexus-text-light font-bold text-lg sm:text-xl lg:text-2xl">N</span>
-            </div>
-            <div className="font-['Arvo',serif] text-2xl sm:text-3xl lg:text-4xl font-bold text-nexus-red tracking-wider">
-              NEXUS
-            </div>
-          </div>
-          <div className="hidden md:flex items-center space-x-4 lg:space-x-6 text-nexus-text-dark">
-            <span className="font-['Arvo',serif] text-xs lg:text-sm">Premium Streaming</span>
-            <div className="w-1 h-1 bg-nexus-red rounded-full"></div>
-            <span className="font-['Arvo',serif] text-xs lg:text-sm">Entertainment Platform</span>
-          </div>
-        </div>
+    <div className="relative min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-black font-['JetBrains_Mono',monospace] overflow-hidden">
+      {/* Enhanced Background with Parallax Effect */}
+      <div className="absolute inset-0 w-full h-full">
+        <div
+          className="absolute inset-0 w-full h-full opacity-30 transform scale-105 transition-transform duration-1000"
+          style={{
+            backgroundImage: "url('nexusbg.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            filter: "brightness(0.7) contrast(1.2)",
+          }}
+        />
+        {/* Animated Grid Overlay */}
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `
+            linear-gradient(rgba(255, 20, 35, 0.2) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 20, 35, 0.2) 1px, transparent 1px)
+          `,
+          backgroundSize: '30px 30px',
+          animation: 'gridMove 20s linear infinite'
+        }} />
       </div>
 
+      {/* Enhanced Gradient Overlays */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-red-900/20 to-black/90" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50" />
+
       {/* Main Content Area */}
-      <div className="relative flex flex-col lg:flex-row min-h-screen z-20">
-        {/* Left Side - Hero Content */}
-        <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 md:px-12 lg:px-16 pt-20 lg:pt-0">
-          <div className="max-w-2xl lg:mt-24">
-            {/* Main Headline */}
-            <div className="mb-6 lg:mb-8 text-center lg:text-left">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-nexus-text-light mb-3 lg:mb-4 font-['Arvo',serif] leading-tight"
+      <div className="relative flex flex-col lg:flex-row min-h-screen z-20 pt-8 sm:pt-12 lg:pt-16 pb-16 lg:pb-0">
+        {/* Left Side - Enhanced Hero Content */}
+        <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 py-12 sm:py-16 lg:py-8">
+          <div className="max-w-3xl mx-auto lg:mx-0 mt-8 sm:mt-12 lg:mt-0">
+            {/* Main Headline with Enhanced Animation */}
+            <div className="mb-8 lg:mb-12 text-center lg:text-left">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-6 leading-tight tracking-wider animate-fade-in"
                   style={{
-                    textShadow: "0 0 20px rgba(255, 20, 35, 0.5)"
+                    textShadow: "0 0 30px rgba(255, 20, 35, 0.5), 0 0 60px rgba(255, 20, 35, 0.3)"
                   }}>
                 STREAM THE
-                <span className="text-nexus-red block mt-4">FUTURE</span>
+                <span className="text-red-400 block mt-2 animate-fade-in-delayed">FUTURE</span>
               </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-nexus-text-dark mb-6 font-['Arvo',serif] leading-relaxed">
+              <p className="text-xl sm:text-2xl md:text-3xl text-gray-300 mb-8 leading-relaxed animate-fade-in-delayed-2">
                 Access unlimited movies and TV shows on demand
               </p>
             </div>
 
-            {/* Feature Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
-              <div className="bg-nexus-black/40 backdrop-blur-sm border border-nexus-red/20 rounded-lg p-3 sm:p-4">
-                <div className="flex items-center space-x-2 sm:space-x-3 mb-2">
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-nexus-red/20 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-nexus-red" fill="currentColor" viewBox="0 0 20 20">
+            {/* Enhanced Feature Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 lg:mb-12">
+              {[
+                {
+                  icon: (
+                    <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
-                  </div>
-                  <h3 className="text-nexus-text-light font-bold font-['Arvo',serif] text-sm sm:text-base">Premium Content</h3>
-                </div>
-                <p className="text-nexus-text-dark text-xs sm:text-sm font-['Arvo',serif]">
-                  Latest blockbusters and trending series
-                </p>
-              </div>
-
-              <div className="bg-nexus-grey/40 backdrop-blur-sm border border-nexus-red/20 rounded-lg p-3 sm:p-4">
-                <div className="flex items-center space-x-2 sm:space-x-3 mb-2">
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-nexus-red/20 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-nexus-red" fill="currentColor" viewBox="0 0 20 20">
+                  ),
+                  title: "Premium Content",
+                  desc: "Latest blockbusters and trending series"
+                },
+                {
+                  icon: (
+                    <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
                     </svg>
-                  </div>
-                  <h3 className="text-nexus-text-light font-bold font-['Arvo',serif] text-sm sm:text-base">4K Streaming</h3>
-                </div>
-                <p className="text-nexus-text-dark text-xs sm:text-sm font-['Arvo',serif]">
-                  Ultra-high definition quality
-                </p>
-              </div>
-
-              <div className="bg-nexus-grey/40 backdrop-blur-sm border border-nexus-red/20 rounded-lg p-3 sm:p-4">
-                <div className="flex items-center space-x-2 sm:space-x-3 mb-2">
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-nexus-red/20 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                  ),
+                  title: "4K Streaming",
+                  desc: "Ultra-high definition quality"
+                },
+                {
+                  icon: (
+                    <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                  </div>
-                  <h3 className="text-nexus-text-light font-bold font-['Arvo',serif] text-sm sm:text-base">No Ads</h3>
-                </div>
-                <p className="text-nexus-text-dark text-xs sm:text-sm font-['Arvo',serif]">
-                  Uninterrupted viewing experience
-                </p>
-              </div>
-
-              <div className="bg-nexus-grey/40 backdrop-blur-sm border border-nexus-red/20 rounded-lg p-3 sm:p-4">
-                <div className="flex items-center space-x-2 sm:space-x-3 mb-2">
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-nexus-red/20 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-nexus-red" fill="currentColor" viewBox="0 0 20 20">
+                  ),
+                  title: "No Ads",
+                  desc: "Uninterrupted viewing experience"
+                },
+                {
+                  icon: (
+                    <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
+                  ),
+                  title: "Multi-Device",
+                  desc: "Watch anywhere, anytime"
+                }
+              ].map((feature, index) => (
+                <div 
+                  key={index}
+                  className="bg-black/40 backdrop-blur-xl border border-red-900/30 rounded-xl p-4 sm:p-5 hover:bg-black/60 hover:border-red-500/50 transition-all duration-300 group animate-fade-in-delayed-3"
+                  style={{ animationDelay: `${0.1 * index}s` }}
+                >
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="w-10 h-10 bg-red-600/20 rounded-full flex items-center justify-center group-hover:bg-red-600/30 transition-colors duration-300">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-white font-bold text-base sm:text-lg">{feature.title}</h3>
                   </div>
-                  <h3 className="text-nexus-text-light font-bold font-['Arvo',serif] text-sm sm:text-base">Multi-Device</h3>
+                  <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
+                    {feature.desc}
+                  </p>
                 </div>
-                <p className="text-nexus-text-dark text-xs sm:text-sm font-['Arvo',serif]">
-                  Watch anywhere, anytime
-                </p>
-              </div>
+              ))}
             </div>
 
-            {/* Call to Action */}
-            <div className="mb-6 sm:mb-8">
-              <p className="text-base sm:text-lg text-nexus-text-dark font-['Arvo',serif] mb-3 sm:mb-4">
-                Ready to start streaming?
-              </p>
-              <div className="flex items-center space-x-2 text-xs sm:text-sm text-nexus-text-dark">
-                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span className="font-['Arvo',serif]">Streaming servers online</span>
-                <span className="text-nexus-grey">•</span>
-                <span className="font-['Arvo',serif]">Platform ready</span>
+            {/* Simplified Call to Action */}
+            <div className="mb-6 text-center lg:text-left animate-fade-in-delayed-4">
+              <div className="flex items-center justify-center lg:justify-start space-x-3 text-sm text-gray-400">
+                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span>Streaming servers online • Platform ready</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Side - Login Form */}
-        <div className="w-full lg:w-2/5 flex items-center justify-center p-4 sm:p-6">
-          {/* Simple Login Form */}
-          <div className="relative w-full max-w-md">
+        {/* Right Side - Enhanced Login Form */}
+        <div className="w-full lg:w-2/5 xl:w-1/3 flex items-center justify-center p-4 sm:p-6 lg:p-8 mt-8 lg:mt-0">
+          <div className="relative w-full max-w-md mt-4 sm:mt-8 lg:mt-0">
+            {/* Animated Background Elements */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-red-800 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+            
             <form
               onSubmit={(e) => e.preventDefault()}
-              className="relative bg-nexus-dark/80 backdrop-blur-xl p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl border border-nexus-red/30"
+              className="relative bg-black/80 backdrop-blur-2xl p-6 sm:p-8 lg:p-10 rounded-2xl shadow-2xl border border-red-900/30 hover:border-red-500/50 transition-all duration-500 animate-fade-in-delayed-2"
             >
-
-              {/* Simple Header */}
-              <div className="relative z-10 mb-6 sm:mb-8">
-                <h2 className="text-nexus-text-light text-2xl sm:text-3xl font-bold text-center font-['Arvo',serif] tracking-wider mb-2">
-                  {isSignInForm ? "SIGN IN" : "CREATE ACCOUNT"}
-                </h2>
-                <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-nexus-red to-transparent mb-3 sm:mb-4"></div>
-                <p className="text-nexus-text-dark text-center font-['Arvo',serif] text-xs sm:text-sm">
-                  {isSignInForm ? "Enter your credentials to continue" : "Join the streaming platform"}
-                </p>
+              {/* Enhanced Header */}
+              <div className="relative z-10 mb-8">
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-red-500/25">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h2 className="text-white text-2xl sm:text-3xl font-bold text-center tracking-wider mb-3">
+                    {isSignInForm ? "SIGN IN" : "CREATE ACCOUNT"}
+                  </h2>
+                  <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-red-400 to-transparent mb-4"></div>
+                  <p className="text-gray-400 text-center text-sm sm:text-base">
+                    {isSignInForm ? "Enter your credentials to continue" : "Join the streaming revolution"}
+                  </p>
+                </div>
               </div>
 
-              <div className="relative z-10 flex flex-col gap-4 sm:gap-6">
+              <div className="relative z-10 flex flex-col gap-5">
                 {!isSignInForm && (
-                  <div className="relative">
+                  <div className="relative group">
                     <input
                       ref={nameRef}
                       type="text"
                       placeholder="Full Name"
-                      className="w-full p-3 sm:p-4 bg-nexus-grey/90 backdrop-blur-sm rounded-lg text-nexus-text-light placeholder-nexus-text-dark focus:outline-none focus:ring-2 focus:ring-nexus-red/50 border border-nexus-red/20 font-['Arvo',serif] transition-all duration-300 text-sm sm:text-base"
+                      className="w-full p-4 bg-gray-900/90 backdrop-blur-sm rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
                     />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
                 )}
                 
-                <div className="relative">
+                <div className="relative group">
                   <input
                     ref={emailRef}
                     type="email"
                     placeholder="Email Address"
-                    className="w-full p-3 sm:p-4 bg-nexus-grey/90 backdrop-blur-sm rounded-lg text-nexus-text-light placeholder-nexus-text-dark focus:outline-none focus:ring-2 focus:ring-nexus-red/50 border border-nexus-red/20 font-['Arvo',serif] transition-all duration-300 text-sm sm:text-base"
+                    className="w-full p-4 bg-gray-900/90 backdrop-blur-sm rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
                   />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
                 
-                <div className="relative">
+                <div className="relative group">
                   <input
                     ref={passwordRef}
                     type="password"
                     placeholder="Password"
-                    className="w-full p-3 sm:p-4 bg-nexus-grey/90 backdrop-blur-sm rounded-lg text-nexus-text-light placeholder-nexus-text-dark focus:outline-none focus:ring-2 focus:ring-nexus-red/50 border border-nexus-red/20 font-['Arvo',serif] transition-all duration-300 text-sm sm:text-base"
+                    className="w-full p-4 bg-gray-900/90 backdrop-blur-sm rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
                   />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
                 
                 {errorMessage && (
-                  <div className="relative p-2 sm:p-3 bg-nexus-red/20 border border-nexus-red/50 rounded-lg">
-                    <p className="text-nexus-red-light text-xs sm:text-sm font-['Arvo',serif] font-semibold">
-                      ⚠ {errorMessage}
-                    </p>
+                  <div className="relative p-4 bg-red-900/30 border border-red-500/50 rounded-xl backdrop-blur-sm animate-fade-in">
+                    <div className="flex items-center space-x-2">
+                      <svg className="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 18.5c-.77.833.192 2.5 1.732 2.5z" />
+                      </svg>
+                      <p className="text-red-400 text-sm font-bold">
+                        {errorMessage}
+                      </p>
+                    </div>
                   </div>
                 )}
                 
-                {/* Simple Button */}
-                <div className="relative mt-4 sm:mt-6">
+                {/* Enhanced Button */}
+                <div className="relative mt-6">
                   <button
-                    className="w-full p-3 sm:p-4 bg-nexus-red hover:bg-nexus-red-light rounded-xl text-nexus-text-light font-bold text-base sm:text-lg font-['Arvo',serif] transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
+                    className="w-full p-4 bg-red-600 hover:bg-red-700 rounded-xl text-white font-bold text-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-500/25 hover:shadow-red-500/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                     onClick={handleButtonClick}
+                    disabled={isLoading}
                   >
-                    {isSignInForm ? "SIGN IN" : "CREATE ACCOUNT"}
+                    {isLoading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        <span>PROCESSING...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                        </svg>
+                        <span>{isSignInForm ? "SIGN IN" : "CREATE ACCOUNT"}</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
 
-              {/* Simple Footer Options */}
-              <div className="relative z-10 flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm mt-4 sm:mt-6 space-y-2 sm:space-y-0">
-                <label className="flex items-center text-nexus-text-dark cursor-pointer">
+              {/* Enhanced Footer Options */}
+              <div className="relative z-10 flex flex-col sm:flex-row justify-between items-center text-sm mt-6 space-y-3 sm:space-y-0">
+                <label className="flex items-center text-gray-400 cursor-pointer group">
                   <input
                     type="checkbox"
-                    className="form-checkbox h-3 w-3 sm:h-4 sm:w-4 text-nexus-red rounded border-nexus-grey focus:ring-nexus-red mr-2 sm:mr-3 bg-nexus-grey"
+                    className="form-checkbox h-4 w-4 text-red-600 rounded border-gray-600 focus:ring-red-500 mr-3 bg-gray-800 transition-colors duration-300"
                   />
-                  <span className="font-['Arvo',serif] hover:text-nexus-red-light transition-colors duration-300">
+                  <span className="group-hover:text-red-400 transition-colors duration-300">
                     Remember me
                   </span>
                 </label>
                 <button
                   type="button"
-                  className="text-nexus-text-dark hover:text-nexus-red-light bg-transparent border-none p-0 cursor-pointer font-['Arvo',serif] transition-colors duration-300"
+                  className="text-gray-400 hover:text-red-400 bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
                 >
                   Need Help?
                 </button>
               </div>
 
-              {/* Simple Toggle Section */}
-              <div className="relative z-10 mt-6 sm:mt-8 text-center">
-                <div className="w-full h-px bg-nexus-red/30 mb-4 sm:mb-6"></div>
-                <p className="text-nexus-text-dark mb-3 sm:mb-4 font-['Arvo',serif] text-xs sm:text-sm">
+              {/* Enhanced Toggle Section */}
+              <div className="relative z-10 mt-8 text-center">
+                <div className="w-full h-px bg-gray-700/50 mb-6"></div>
+                <p className="text-gray-400 mb-4 text-sm sm:text-base">
                   {isSignInForm ? "Don't have an account?" : "Already have an account?"}{" "}
                   <button
                     type="button"
-                    className="text-nexus-red hover:text-nexus-red-light font-semibold bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
+                    className="text-red-400 hover:text-red-300 font-bold bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
                     onClick={toggleSignInForm}
                   >
                     {isSignInForm ? "Sign Up" : "Sign In"}
                   </button>
                 </p>
-                <p className="text-xs text-nexus-text-dark font-['Arvo',serif]">
+                <p className="text-xs text-gray-500">
                   Secure & encrypted with industry standards.{" "}
                   <button
                     type="button"
-                    className="text-nexus-red hover:text-nexus-red-light bg-transparent border-none p-0 cursor-pointer transition-colors duration-300"
+                    className="text-red-400 hover:text-red-300 bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
                   >
                     Privacy Policy
                   </button>
-                  .
                 </p>
               </div>
             </form>
@@ -340,24 +407,11 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Bottom Footer */}
-      <div className="absolute bottom-0 left-0 right-0 z-30 p-4 sm:p-6">
-        <div className="flex flex-col md:flex-row justify-between items-center text-xs sm:text-sm text-nexus-text-dark space-y-3 md:space-y-0">
-          <div className="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-4">
-            <span className="font-['Arvo',serif]">© 2025 NEXUS Streaming</span>
-            <div className="hidden sm:block w-1 h-1 bg-nexus-grey rounded-full"></div>
-            <span className="font-['Arvo',serif]">Premium Entertainment Platform</span>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6">
-            <button className="hover:text-nexus-red transition-colors duration-300 font-['Arvo',serif]">
-              Privacy
-            </button>
-            <button className="hover:text-nexus-red transition-colors duration-300 font-['Arvo',serif]">
-              Terms of Service
-            </button>
-            <button className="hover:text-nexus-red transition-colors duration-300 font-['Arvo',serif]">
-              Help & Support
-            </button>
+      {/* Simplified Bottom Footer */}
+      <div className="absolute bottom-0 left-0 right-0 z-40 p-4 bg-gradient-to-t from-black/80 to-transparent">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="text-xs text-gray-400">
+            <span>© 2025 NEXUS Streaming • Premium Entertainment Platform</span>
           </div>
         </div>
       </div>

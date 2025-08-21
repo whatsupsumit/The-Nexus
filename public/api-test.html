@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMDB API Test - The Nexus</title>
+    <style>
+        body { 
+            font-family: monospace; 
+            background: #111; 
+            color: #fff; 
+            padding: 20px; 
+            margin: 0;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
+        .test-result { 
+            background: #222; 
+            border: 1px solid #444; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+        }
+        .success { border-color: #4CAF50; }
+        .error { border-color: #F44336; }
+        .loading { border-color: #FFC107; }
+        button { 
+            background: #DC2626; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            border-radius: 5px; 
+            margin: 5px; 
+        }
+        button:hover { background: #B91C1C; }
+        pre { 
+            background: #000; 
+            padding: 10px; 
+            border-radius: 3px; 
+            overflow-x: auto; 
+            font-size: 12px; 
+        }
+        .nexus-title {
+            font-size: 2em;
+            color: #DC2626;
+            text-align: center;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="nexus-title">NEXUS API TEST</h1>
+        
+        <div>
+            <button onclick="testTMDBConnection()">Test TMDB Connection</button>
+            <button onclick="testTrendingMovies()">Test Trending Movies</button>
+            <button onclick="testMovieDetails()">Test Movie Details</button>
+            <button onclick="testTVDetails()">Test TV Show Details</button>
+            <button onclick="testStreamingUrls()">Test Streaming URLs</button>
+            <button onclick="runAllTests()">Run All Tests</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const TMDB_API_KEY = 'dc36900a16e14b924c96e065225b935b';
+        const TMDB_ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYzM2OTAwYTE2ZTE0YjkyNGM5NmUwNjUyMjViOTM1YiIsIm5iZiI6MTczNDc4MDE1OC42NzEsInN1YiI6IjY3NjZiZDNlYWVkZGI0NjRlMzIxODQ3ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.JNuKlh1pKXjE9_Gk3VW1LzLvX1G0y-hktlZC0F-6-tY';
+        const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+
+        function addResult(title, status, data) {
+            const resultsDiv = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${status}`;
+            
+            let content = `<h3>${title}</h3>`;
+            if (status === 'success') {
+                content += `<p>✅ Success</p>`;
+            } else if (status === 'error') {
+                content += `<p>❌ Failed</p>`;
+            } else {
+                content += `<p>⏳ Testing...</p>`;
+            }
+            
+            if (data) {
+                content += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            
+            resultDiv.innerHTML = content;
+            resultsDiv.appendChild(resultDiv);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+
+        async function fetchFromTMDB(endpoint) {
+            const response = await fetch(`${TMDB_BASE_URL}${endpoint}`, {
+                headers: {
+                    'Authorization': `Bearer ${TMDB_ACCESS_TOKEN}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            return response.json();
+        }
+
+        async function testTMDBConnection() {
+            addResult('TMDB Connection Test', 'loading');
+            try {
+                const data = await fetchFromTMDB('/configuration');
+                addResult('TMDB Connection Test', 'success', {
+                    message: 'TMDB API connected successfully',
+                    imageBaseUrl: data.images?.base_url,
+                    posterSizes: data.images?.poster_sizes
+                });
+            } catch (error) {
+                addResult('TMDB Connection Test', 'error', {
+                    error: error.message
+                });
+            }
+        }
+
+        async function testTrendingMovies() {
+            addResult('Trending Movies Test', 'loading');
+            try {
+                const data = await fetchFromTMDB('/trending/movie/day');
+                addResult('Trending Movies Test', 'success', {
+                    count: data.results?.length || 0,
+                    firstMovie: data.results?.[0]?.title || 'No movies found',
+                    totalPages: data.total_pages
+                });
+            } catch (error) {
+                addResult('Trending Movies Test', 'error', {
+                    error: error.message
+                });
+            }
+        }
+
+        async function testMovieDetails() {
+            addResult('Movie Details Test', 'loading');
+            try {
+                // Test with Fast & Furious movie ID
+                const data = await fetchFromTMDB('/movie/385687');
+                addResult('Movie Details Test', 'success', {
+                    title: data.title,
+                    releaseDate: data.release_date,
+                    runtime: data.runtime,
+                    genres: data.genres?.map(g => g.name)
+                });
+            } catch (error) {
+                addResult('Movie Details Test', 'error', {
+                    error: error.message
+                });
+            }
+        }
+
+        async function testTVDetails() {
+            addResult('TV Show Details Test', 'loading');
+            try {
+                // Test with Game of Thrones ID
+                const data = await fetchFromTMDB('/tv/1399');
+                addResult('TV Show Details Test', 'success', {
+                    name: data.name,
+                    firstAirDate: data.first_air_date,
+                    seasons: data.number_of_seasons,
+                    episodes: data.number_of_episodes
+                });
+            } catch (error) {
+                addResult('TV Show Details Test', 'error', {
+                    error: error.message
+                });
+            }
+        }
+
+        function testStreamingUrls() {
+            addResult('Streaming URLs Test', 'loading');
+            try {
+                // Generate VidSrc URLs
+                const movieUrl = `https://vidsrc.xyz/embed/movie/385687`;
+                const tvUrl = `https://vidsrc.xyz/embed/tv/1399/1/1`;
+                
+                addResult('Streaming URLs Test', 'success', {
+                    movieUrl: movieUrl,
+                    tvUrl: tvUrl,
+                    message: 'Streaming URLs generated successfully'
+                });
+            } catch (error) {
+                addResult('Streaming URLs Test', 'error', {
+                    error: error.message
+                });
+            }
+        }
+
+        async function runAllTests() {
+            document.getElementById('results').innerHTML = '';
+            await testTMDBConnection();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testTrendingMovies();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testMovieDetails();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testTVDetails();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            testStreamingUrls();
+        }
+    </script>
+</body>
+</html>

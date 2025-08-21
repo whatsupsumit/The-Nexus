@@ -33,7 +33,7 @@
       (function() {
         'use strict';
         
-        // Comprehensive error suppression for video player
+        // Comprehensive error suppression for video player and external services
         const NEXUS_SUPPRESSED_PATTERNS = [
           'ReferenceError: iwpzn8',
           'ReferenceError: cqwo4j',
@@ -48,12 +48,55 @@
           'autoPlay=true&poster=false',
           'VM[0-9]+:',
           'at get (<anonymous>',
-          'Math.get (<anonymous>'
+          'Math.get (<anonymous>',
+          'googletag.destroySlots is not a function',
+          'googletag',
+          'TypeError: googletag',
+          'ERR_UNSAFE_REDIRECT',
+          'net::ERR_UNSAFE_REDIRECT',
+          'Failed to load resource: net::ERR_UNSAFE_REDIRECT',
+          'SW Ready',
+          'Service worker has been registered',
+          'chunk-vendors',
+          'app.js'
         ];
         
         // Store original functions
         window._nexusOriginalError = console.error;
         window._nexusOriginalWarn = console.warn;
+        window._nexusOriginalLog = console.log;
+        
+        // Mock Google Tag Manager to prevent errors
+        window.googletag = window.googletag || {
+          cmd: [],
+          destroySlots: function() { return []; },
+          display: function() { return this; },
+          enableServices: function() { return this; },
+          pubads: function() {
+            return {
+              enableSingleRequest: function() { return this; },
+              disableInitialLoad: function() { return this; },
+              collapseEmptyDivs: function() { return this; },
+              addEventListener: function() { return this; },
+              setTargeting: function() { return this; },
+              clearTargeting: function() { return this; },
+              refresh: function() { return this; },
+              clear: function() { return this; }
+            };
+          },
+          companionAds: function() {
+            return {
+              setRefreshUnfilledSlots: function() { return this; }
+            };
+          },
+          defineSlot: function() {
+            return {
+              addService: function() { return this; },
+              setTargeting: function() { return this; },
+              setCollapseEmptyDiv: function() { return this; }
+            };
+          }
+        };
         
         // Enhanced console.error override
         console.error = function(...args) {
@@ -91,13 +134,28 @@
           window._nexusOriginalWarn.apply(console, args);
         };
         
+        // Enhanced console.log override for SW messages
+        console.log = function(...args) {
+          const message = args.join(' ');
+          
+          const shouldSuppress = NEXUS_SUPPRESSED_PATTERNS.some(pattern => {
+            return message.includes(pattern);
+          });
+          
+          if (shouldSuppress) {
+            return;
+          }
+          
+          window._nexusOriginalLog.apply(console, args);
+        };
+        
         // Global error handler
         window.addEventListener('error', function(event) {
           const message = event.message || '';
           const source = event.filename || '';
           
           const shouldSuppress = NEXUS_SUPPRESSED_PATTERNS.some(pattern => {
-            return message.includes(pattern) || source.includes('autoPlay=true');
+            return message.includes(pattern) || source.includes('autoPlay=true') || message.includes('googletag');
           });
           
           if (shouldSuppress) {

@@ -1,24 +1,26 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { getMovieEmbedUrl, getTVEmbedUrl, setupPlayerEventListener, initializeWatchProgress, getWatchProgress, getMovieRecommendations, fetchTrendingMovies, fetchTrendingTV } from '../utils/vidsrcApi';
 
 // Watch history tracking function
-const addToWatchHistory = (movie, isTV = false) => {
+const addToWatchHistory = (movie, isTV = false, season = null, episode = null) => {
   try {
     const watchHistory = JSON.parse(localStorage.getItem('nexus_watch_history') || '[]');
     
     // Check if this item is already in recent history (last 5 items)
     const recentHistory = watchHistory.slice(-5);
+    const mediaType = isTV ? 'tv' : 'movie';
     const isRecent = recentHistory.some(item => 
       item.id === movie.id && 
-      item.media_type === (isTV ? 'tv' : 'movie')
+      item.media_type === mediaType
     );
     
     if (!isRecent) {
       const historyItem = {
         ...movie,
-        media_type: isTV ? 'tv' : 'movie',
+        media_type: mediaType,
         watchedAt: new Date().toISOString(),
-        progress: 0
+        progress: 0,
+        ...(isTV && { season, episode })
       };
       
       // Add to history and keep only last 50 items
@@ -26,14 +28,14 @@ const addToWatchHistory = (movie, isTV = false) => {
       const limitedHistory = watchHistory.slice(-50);
       
       localStorage.setItem('nexus_watch_history', JSON.stringify(limitedHistory));
-      console.log('NEXUS: Added to watch history:', movie.title || movie.name);
+      
     }
   } catch (error) {
-    console.error('NEXUS: Error adding to watch history:', error);
+    
   }
 };
 
-const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, onContentSelect }) => {
+const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, onContentSelect, onSeasonEpisodeChange }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [currentEmbedUrl, setCurrentEmbedUrl] = useState('');
@@ -42,7 +44,19 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
   const [recommendations, setRecommendations] = useState([]);
   const [loadingRecommendations, setLoadingRecommendations] = useState(true);
   const [isInVault, setIsInVault] = useState(false);
+  const [currentSeason, setCurrentSeason] = useState(season);
+  const [currentEpisode, setCurrentEpisode] = useState(episode);
+  const [playbackQuality, setPlaybackQuality] = useState('auto');
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [showSettings, setShowSettings] = useState(false);
+  const [autoPlay, setAutoPlay] = useState(true);
   const iframeRef = useRef(null);
+
+  // Update current season/episode when props change
+  useEffect(() => {
+    setCurrentSeason(season);
+    setCurrentEpisode(episode);
+  }, [season, episode]);
 
   // Initialize watch progress system
   useEffect(() => {
@@ -53,12 +67,13 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
     const movieProgress = progress[movie.id];
     if (movieProgress) {
       setWatchProgress(movieProgress);
-      console.log('NEXUS: Found existing progress for', movie.title || movie.name);
+      
     }
 
     // Check if movie is in vault
     const vault = JSON.parse(localStorage.getItem('nexus_vault') || '[]');
-    setIsInVault(vault.some(item => item.id === movie.id && item.type === (isTV ? 'tv' : 'movie')));
+    const mediaType = isTV ? 'tv' : 'movie';
+    setIsInVault(vault.some(item => item.id === movie.id && item.type === mediaType));
   }, [movie.id, movie.title, movie.name, isTV]);
 
   // Load recommendations
@@ -87,7 +102,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
         
         setRecommendations(recommendedContent);
       } catch (error) {
-        console.error('Error loading recommendations:', error);
+        
         // Fallback to trending content
         try {
           const trendingMovies = await fetchTrendingMovies();
@@ -97,7 +112,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
             .slice(0, 15);
           setRecommendations(allTrending);
         } catch (fallbackError) {
-          console.error('Error loading trending content:', fallbackError);
+          
         }
       } finally {
         setLoadingRecommendations(false);
@@ -109,26 +124,32 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
 
   // Initialize embed URL with optimized settings for better performance
   useEffect(() => {
-    const startTime = watchProgress?.progress?.watched || 0;
-    
-    const embedOptions = {
-      primaryColor: 'ef4444',
-      secondaryColor: '991b1b',
-      iconColor: 'ef4444',
-      icons: 'vid',
-      title: false, // Disable to reduce lag
-      poster: false, // Disable to reduce lag
-      autoplay: false, // Let user control playback
-      startAt: Math.floor(startTime),
-      player: 'default', // Use lighter player
+    const loadUrl = async () => {
+      const startTime = watchProgress?.progress?.watched || 0;
+      
+      const embedOptions = {
+        primaryColor: 'ef4444',
+        secondaryColor: '991b1b',
+        iconColor: 'ef4444',
+        icons: 'vid',
+        title: false, // Disable to reduce lag
+        poster: false, // Disable to reduce lag
+        autoplay: autoPlay, // Use state for autoplay
+        startAt: Math.floor(startTime),
+        player: 'default', // Use lighter player
+      };
+
+      let url;
+      // For movies and TV shows, use existing VidSrc logic
+      url = isTV 
+        ? getTVEmbedUrl(movie.id, currentSeason, currentEpisode, embedOptions)
+        : getMovieEmbedUrl(movie.id, embedOptions);
+      
+      setCurrentEmbedUrl(url);
     };
 
-    const url = isTV 
-      ? getTVEmbedUrl(movie.id, season, episode, embedOptions)
-      : getMovieEmbedUrl(movie.id, embedOptions);
-    
-    setCurrentEmbedUrl(url);
-  }, [movie.id, isTV, season, episode, watchProgress]);
+    loadUrl();
+  }, [movie.id, isTV, currentSeason, currentEpisode, watchProgress, autoPlay]);
 
   // Handle player events
   useEffect(() => {
@@ -138,13 +159,13 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
         
         switch (eventType) {
           case 'play':
-            addToWatchHistory(movie, isTV);
+            addToWatchHistory(movie, isTV, currentSeason, currentEpisode);
             break;
           case 'progress_update':
             setWatchProgress(mediaData);
             break;
           case 'ended':
-            console.log('NEXUS: Video playback completed');
+            
             break;
           case 'timeupdate':
             if (mediaData) {
@@ -160,7 +181,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
     });
     
     return () => cleanup && cleanup();
-  }, [movie, isTV]);
+  }, [movie, isTV, currentSeason, currentEpisode]);
 
   // Handle mouse movement for controls (simplified)
   useEffect(() => {
@@ -182,7 +203,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
   const title = isTV ? movie.name || movie.original_name : movie.title || movie.original_title;
   
   const handleIframeError = () => {
-    console.log('NEXUS: Stream loading failed');
+    
     setHasError(true);
     setIsLoading(false);
   };
@@ -190,12 +211,12 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
   const handleIframeLoad = () => {
     setIsLoading(false);
     setHasError(false);
-    console.log('NEXUS: Video player loaded successfully');
+    
   };
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = useCallback(() => {
     setIsFullscreen(!isFullscreen);
-  };
+  }, [isFullscreen]);
 
   const handleRecommendationClick = (content) => {
     if (onContentSelect) {
@@ -206,8 +227,9 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
 
   const toggleVault = () => {
     const vault = JSON.parse(localStorage.getItem('nexus_vault') || '[]');
+    const mediaType = isTV ? 'tv' : 'movie';
     const itemIndex = vault.findIndex(item => 
-      item.id === movie.id && item.type === (isTV ? 'tv' : 'movie')
+      item.id === movie.id && item.type === mediaType
     );
 
     if (itemIndex >= 0) {
@@ -219,7 +241,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
       vault.push({
         ...movie,
         addedAt: new Date().toISOString(),
-        type: isTV ? 'tv' : 'movie'
+        type: mediaType
       });
       setIsInVault(true);
     }
@@ -232,13 +254,72 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
       onClose();
     }
   };
+
+  // Enhanced episode navigation functions
+  const handleNextEpisode = useCallback(() => {
+    if (isTV && onSeasonEpisodeChange) {
+      const nextEpisode = currentEpisode + 1;
+      setCurrentEpisode(nextEpisode);
+      onSeasonEpisodeChange(currentSeason, nextEpisode);
+    }
+  }, [isTV, onSeasonEpisodeChange, currentEpisode, currentSeason]);
+
+  const handlePreviousEpisode = useCallback(() => {
+    if (isTV && currentEpisode > 1 && onSeasonEpisodeChange) {
+      const prevEpisode = currentEpisode - 1;
+      setCurrentEpisode(prevEpisode);
+      onSeasonEpisodeChange(currentSeason, prevEpisode);
+    }
+  }, [isTV, currentEpisode, onSeasonEpisodeChange, currentSeason]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      
+      switch (e.key) {
+        case ' ':
+          e.preventDefault();
+          // Toggle play/pause via iframe messaging if possible
+          break;
+        case 'f':
+        case 'F':
+          e.preventDefault();
+          toggleFullscreen();
+          break;
+        case 'ArrowRight':
+          if (isTV && e.shiftKey) {
+            e.preventDefault();
+            handleNextEpisode();
+          }
+          break;
+        case 'ArrowLeft':
+          if (isTV && e.shiftKey) {
+            e.preventDefault();
+            handlePreviousEpisode();
+          }
+          break;
+        case 'Escape':
+          if (isFullscreen) {
+            e.preventDefault();
+            setIsFullscreen(false);
+          }
+          break;
+        default:
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyPress);
+    return () => document.removeEventListener('keydown', handleKeyPress);
+  }, [isTV, currentEpisode, currentSeason, isFullscreen, handleNextEpisode, handlePreviousEpisode, toggleFullscreen]);
   
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col lg:flex-row">
       {/* Main Video Player Area */}
       <div className="flex-1 flex flex-col order-1 lg:order-1">
         {/* Header with Controls */}
-        <div className="flex items-center justify-between p-2 sm:p-4 bg-black/90 border-b border-red-900/20">
+        <div className="flex items-center justify-between p-3 sm:p-4 bg-black/95 border-b border-red-900/20 backdrop-blur-xl">
           <div className="flex items-center space-x-2 sm:space-x-4">
             <button
               onClick={handleBackToHome}
@@ -251,9 +332,121 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
             <div className="font-['JetBrains_Mono',monospace] text-lg sm:text-2xl font-bold text-red-400 tracking-wider">
               NEXUS
             </div>
+            
+            {/* Enhanced Episode Navigation for TV Shows */}
+            {isTV && (
+              <div className="hidden sm:flex items-center space-x-3 ml-6 bg-black/40 rounded-lg px-4 py-2 border border-red-900/30">
+                <button
+                  onClick={handlePreviousEpisode}
+                  disabled={currentEpisode <= 1}
+                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ${
+                    currentEpisode <= 1 
+                      ? 'bg-gray-700/50 text-gray-500 cursor-not-allowed' 
+                      : 'bg-red-600/20 text-white hover:bg-red-600/40 hover:text-red-400'
+                  }`}
+                  title="Previous Episode (Shift + ←)"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                
+                <div className="text-center">
+                  <div className="text-xs text-gray-400 font-['JetBrains_Mono',monospace]">
+                    S{currentSeason}E{currentEpisode}
+                  </div>
+                  <div className="text-sm text-white font-['JetBrains_Mono',monospace] font-bold">
+                    Episode {currentEpisode}
+                  </div>
+                </div>
+                
+                <button
+                  onClick={handleNextEpisode}
+                  className="flex items-center justify-center w-8 h-8 rounded-full bg-red-600/20 text-white hover:bg-red-600/40 hover:text-red-400 transition-all duration-300"
+                  title="Next Episode (Shift + →)"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
           
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Playback Settings */}
+            <div className="relative">
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-gray-700/20 backdrop-blur-sm border border-gray-600/30 hover:border-gray-500/60 rounded-full text-white hover:text-gray-300 transition-all duration-300"
+                title="Player Settings"
+              >
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
+              
+              {/* Settings Dropdown */}
+              {showSettings && (
+                <div className="absolute right-0 top-12 bg-black/95 backdrop-blur-xl border border-red-900/30 rounded-lg p-4 z-50 min-w-[200px]">
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs text-gray-400 font-['JetBrains_Mono',monospace] mb-1 block">
+                        Quality
+                      </label>
+                      <select
+                        value={playbackQuality}
+                        onChange={(e) => setPlaybackQuality(e.target.value)}
+                        className="w-full bg-gray-800 text-white text-sm rounded px-2 py-1 font-['JetBrains_Mono',monospace]"
+                      >
+                        <option value="auto">Auto</option>
+                        <option value="1080p">1080p</option>
+                        <option value="720p">720p</option>
+                        <option value="480p">480p</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="text-xs text-gray-400 font-['JetBrains_Mono',monospace] mb-1 block">
+                        Speed
+                      </label>
+                      <select
+                        value={playbackSpeed}
+                        onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
+                        className="w-full bg-gray-800 text-white text-sm rounded px-2 py-1 font-['JetBrains_Mono',monospace]"
+                      >
+                        <option value={0.5}>0.5x</option>
+                        <option value={0.75}>0.75x</option>
+                        <option value={1}>1x</option>
+                        <option value={1.25}>1.25x</option>
+                        <option value={1.5}>1.5x</option>
+                        <option value={2}>2x</option>
+                      </select>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs text-gray-400 font-['JetBrains_Mono',monospace]">
+                        Auto-play Next
+                      </label>
+                      <button
+                        onClick={() => setAutoPlay(!autoPlay)}
+                        className={`w-10 h-6 rounded-full transition-colors duration-300 ${
+                          autoPlay ? 'bg-red-600' : 'bg-gray-600'
+                        } relative`}
+                      >
+                        <div
+                          className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform duration-300 ${
+                            autoPlay ? 'translate-x-5' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Add to Vault Button */}
             <button
               onClick={toggleVault}
@@ -273,10 +466,10 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
             
             <button
               onClick={toggleFullscreen}
-              className="flex items-center justify-center w-10 h-10 bg-red-600/20 backdrop-blur-sm border border-red-500/30 hover:border-red-400/60 rounded-full text-white hover:text-red-400 transition-all duration-300"
-              title="Toggle Fullscreen"
+              className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-red-600/20 backdrop-blur-sm border border-red-500/30 hover:border-red-400/60 rounded-full text-white hover:text-red-400 transition-all duration-300"
+              title="Toggle Fullscreen (F)"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
               </svg>
             </button>
@@ -383,22 +576,69 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
           />
         </div>
 
-        {/* Video Info Section */}
-        <div className="p-3 sm:p-6 bg-black/90 border-t border-red-900/20">
-          <div className="flex flex-col sm:flex-row items-start justify-between">
-            <div className="flex-1 mb-4 sm:mb-0">
-              <h1 className="font-['JetBrains_Mono',monospace] text-white text-xl sm:text-2xl font-bold mb-2">
-                {title}
-              </h1>
-              {isTV && (
-                <p className="font-['JetBrains_Mono',monospace] text-gray-400 text-base sm:text-lg mb-3">
-                  Season {season} • Episode {episode}
-                </p>
-              )}
+        {/* Enhanced Video Info Section */}
+        <div className="p-4 sm:p-6 bg-black/95 border-t border-red-900/20 backdrop-blur-xl">
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1">
+                  <h1 className="font-['JetBrains_Mono',monospace] text-white text-xl sm:text-2xl font-bold mb-2">
+                    {title}
+                  </h1>
+                  {isTV && (
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
+                      <div className="flex items-center space-x-3">
+                        <span className="font-['JetBrains_Mono',monospace] text-gray-400 text-base sm:text-lg">
+                          Season {currentSeason} • Episode {currentEpisode}
+                        </span>
+                        <div className="hidden sm:flex items-center space-x-2">
+                          <div className="w-1 h-1 bg-red-400 rounded-full"></div>
+                          <span className="font-['JetBrains_Mono',monospace] text-red-400 text-sm">
+                            SERIES
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Mobile Episode Navigation */}
+                      <div className="flex sm:hidden items-center space-x-3 bg-black/40 rounded-lg px-3 py-2 border border-red-900/30">
+                        <button
+                          onClick={handlePreviousEpisode}
+                          disabled={currentEpisode <= 1}
+                          className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ${
+                            currentEpisode <= 1 
+                              ? 'bg-gray-700/50 text-gray-500 cursor-not-allowed' 
+                              : 'bg-red-600/20 text-white hover:bg-red-600/40'
+                          }`}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+                        
+                        <span className="text-sm text-white font-['JetBrains_Mono',monospace]">
+                          S{currentSeason}E{currentEpisode}
+                        </span>
+                        
+                        <button
+                          onClick={handleNextEpisode}
+                          className="flex items-center justify-center w-8 h-8 rounded-full bg-red-600/20 text-white hover:bg-red-600/40 transition-all duration-300"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
               <div className="flex flex-wrap items-center mt-3 gap-3 sm:gap-6">
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                  <span className="font-['JetBrains_Mono',monospace] text-red-400 text-xs sm:text-sm">NEXUS STREAM</span>
+                  <div className={`w-2 h-2 rounded-full animate-pulse ${isTV ? 'bg-purple-400' : 'bg-red-400'}`}></div>
+                  <span className="font-['JetBrains_Mono',monospace] text-xs sm:text-sm" style={{color: isTV ? '#a855f7' : '#ef4444'}}>
+                    NEXUS {isTV ? 'SERIES' : 'STREAM'}
+                  </span>
                 </div>
                 {movie.vote_average && (
                   <div className="flex items-center space-x-1">
@@ -410,16 +650,48 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
                     </span>
                   </div>
                 )}
-                {movie.release_date && (
+                {(movie.release_date || movie.first_air_date) && (
                   <span className="font-['JetBrains_Mono',monospace] text-gray-400 text-xs sm:text-sm">
-                    {new Date(movie.release_date).getFullYear()}
+                    {new Date(movie.release_date || movie.first_air_date).getFullYear()}
                   </span>
+                )}
+                
+                {/* Keyboard Shortcuts Hint */}
+                {isTV && (
+                  <div className="hidden lg:flex items-center space-x-2 bg-gray-900/50 px-3 py-1 rounded-full">
+                    <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="font-['JetBrains_Mono',monospace] text-gray-400 text-xs">
+                      Shift + ←→ for episodes • F for fullscreen
+                    </span>
+                  </div>
                 )}
               </div>
             </div>
             
-            {/* Action Buttons */}
-            <div className="flex items-center space-x-2 sm:space-x-3 sm:ml-6">
+            {/* Enhanced Action Buttons */}
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              {isTV && (
+                <button
+                  onClick={() => setAutoPlay(!autoPlay)}
+                  className={`px-3 sm:px-4 py-2 sm:py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm border-2 ${
+                    autoPlay 
+                      ? 'border-green-500 text-green-400 bg-green-500/10'
+                      : 'border-gray-500 text-gray-300 hover:border-purple-500 hover:text-purple-400'
+                  }`}
+                  title="Toggle auto-play next episode"
+                >
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                      d={autoPlay ? "M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" : "M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"} 
+                    />
+                  </svg>
+                  <span className="hidden sm:inline">{autoPlay ? 'AUTO-PLAY' : 'MANUAL'}</span>
+                  <span className="sm:hidden">{autoPlay ? 'AUTO' : 'MAN'}</span>
+                </button>
+              )}
+              
               <button
                 onClick={toggleVault}
                 className={`px-3 sm:px-6 py-2 sm:py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center transition-all duration-300 transform hover:scale-105 text-xs sm:text-sm ${

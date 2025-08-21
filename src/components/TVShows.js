@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { fetchPopularTV, fetchTopRatedTV, fetchTrendingTV, searchContent } from '../utils/vidsrcApi';
 import MovieCard from './MovieCard';
 import VideoPlayer from './VideoPlayer';
-import SmartSuggestions from './SmartSuggestions';
 
 const TVShows = () => {
   const navigate = useNavigate();
   const [shows, setShows] = useState([]);
   const [filteredShows, setFilteredShows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isDataCached, setIsDataCached] = useState(false); // Track cached data
   const [selectedShow, setSelectedShow] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,30 +20,42 @@ const TVShows = () => {
 
   useEffect(() => {
     const loadShows = async () => {
+      // Check if we already have cached data for this filter
+      if (isDataCached && shows.length > 0) {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       try {
         let showData = [];
         switch (activeFilter) {
           case 'trending':
-            showData = await fetchTrendingTV();
+            const trendingResponse = await fetchTrendingTV();
+            showData = trendingResponse.results || [];
             break;
           case 'top_rated':
-            showData = await fetchTopRatedTV();
+            const topRatedResponse = await fetchTopRatedTV();
+            showData = topRatedResponse.results || [];
             break;
           default:
-            showData = await fetchPopularTV();
+            const popularResponse = await fetchPopularTV();
+            showData = popularResponse.results || [];
         }
         setShows(showData);
         setFilteredShows(showData);
+        setIsDataCached(true); // Mark as cached
       } catch (error) {
         console.error('Error loading TV shows:', error);
+        setShows([]);
+        setFilteredShows([]);
       } finally {
         setLoading(false);
       }
     };
     
     loadShows();
-  }, [activeFilter]);
+  }, [activeFilter, isDataCached, shows.length]);
 
   // Add keyboard shortcuts
   useEffect(() => {
@@ -67,10 +79,15 @@ const TVShows = () => {
 
     setIsSearching(true);
     try {
-      const searchResults = await searchContent(query, 'tv');
-      setFilteredShows(searchResults);
+      const searchResults = await searchContent(query);
+      // Ensure we only get TV shows from search results
+      const tvResults = Array.isArray(searchResults) 
+        ? searchResults.filter(item => item.media_type === 'tv')
+        : [];
+      setFilteredShows(tvResults);
     } catch (error) {
       console.error('Search error:', error);
+      setFilteredShows([]);
     } finally {
       setIsSearching(false);
     }
@@ -83,14 +100,15 @@ const TVShows = () => {
   ];
 
   // Stats calculation
+  const showsArray = Array.isArray(filteredShows) ? filteredShows : [];
   const stats = {
-    totalShows: filteredShows.length,
-    avgRating: filteredShows.length > 0 ? (filteredShows.reduce((sum, s) => sum + (s.vote_average || 0), 0) / filteredShows.length).toFixed(1) : 0,
-    recentShows: filteredShows.filter(s => {
+    totalShows: showsArray.length,
+    avgRating: showsArray.length > 0 ? (showsArray.reduce((sum, s) => sum + (s.vote_average || 0), 0) / showsArray.length).toFixed(1) : 0,
+    recentShows: showsArray.filter(s => {
       const firstAirYear = new Date(s.first_air_date).getFullYear();
       return firstAirYear >= new Date().getFullYear() - 1;
     }).length,
-    longRunning: filteredShows.filter(s => (s.number_of_seasons || 0) > 5).length
+    longRunning: showsArray.filter(s => (s.number_of_seasons || 0) > 5).length
   };
 
   const closePlayer = () => {
@@ -221,9 +239,9 @@ const TVShows = () => {
               <div key={i} className="aspect-[2/3] bg-gray-800 rounded-lg animate-pulse"></div>
             ))}
           </div>
-        ) : filteredShows.length > 0 ? (
+        ) : showsArray.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {filteredShows.map((show, index) => (
+            {showsArray.map((show, index) => (
               <div key={show.id} className="transition-all duration-300 hover:scale-105">
                 <MovieCard
                   movie={show}
@@ -244,17 +262,6 @@ const TVShows = () => {
             </p>
           </div>
         )}
-      </div>
-
-      {/* Smart Suggestions */}
-      <div className="mt-8 px-8">
-        <SmartSuggestions 
-          currentPage="tv"
-          onContentSelect={(show) => {
-            setSelectedShow(show);
-            setShowPlayer(true);
-          }}
-        />
       </div>
 
       {/* Footer */}

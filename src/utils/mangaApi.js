@@ -120,7 +120,7 @@ const makeRequest = async (endpoint) => {
   // Check cache first
   const cachedData = getCachedData(cacheKey);
   if (cachedData) {
-    console.log('NEXUS: Returning cached manga data');
+    
     return cachedData;
   }
   
@@ -131,7 +131,7 @@ const makeRequest = async (endpoint) => {
   );
   
   if (recentRateLimit) {
-    console.log('NEXUS: Using mock manga data due to recent rate limits');
+    
     const mockData = getMockMangaData(endpoint);
     setCachedData(cacheKey, mockData);
     return mockData;
@@ -145,10 +145,10 @@ const makeRequest = async (endpoint) => {
     });
     
     setCachedData(cacheKey, data);
-    console.log('NEXUS: Manga data fetched from API');
+    
     return data;
   } catch (error) {
-    console.error('NEXUS: Manga API Error:', error);
+    
     
     // Track rate limit errors
     if (error.message.includes('429')) {
@@ -158,7 +158,7 @@ const makeRequest = async (endpoint) => {
     }
     
     // Return mock data as fallback
-    console.log('NEXUS: Using mock manga data as fallback');
+    
     const mockData = getMockMangaData(endpoint);
     setCachedData(cacheKey, mockData);
     return mockData;
@@ -223,7 +223,7 @@ export const fetchTopManga = async (page = 1) => {
     const data = await makeRequest(`/top/manga?page=${page}&limit=20`);
     return data.data.map(transformMangaData);
   } catch (error) {
-    console.error('Error fetching top manga:', error);
+    
     return [];
   }
 };
@@ -234,7 +234,7 @@ export const fetchTrendingManga = async () => {
     const data = await makeRequest('/top/manga?filter=bypopularity&page=1&limit=20');
     return data.data.map(transformMangaData);
   } catch (error) {
-    console.error('Error fetching trending manga:', error);
+    
     return [];
   }
 };
@@ -245,7 +245,7 @@ export const fetchPopularManga = async () => {
     const data = await makeRequest('/top/manga?filter=bypopularity&page=1&limit=20');
     return data.data.map(transformMangaData);
   } catch (error) {
-    console.error('Error fetching popular manga:', error);
+    
     return [];
   }
 };
@@ -259,7 +259,7 @@ export const searchManga = async (query, page = 1) => {
     const data = await makeRequest(`/manga?q=${encodedQuery}&page=${page}&limit=20&order_by=popularity`);
     return data.data.map(transformMangaData);
   } catch (error) {
-    console.error('Error searching manga:', error);
+    
     return [];
   }
 };
@@ -270,7 +270,7 @@ export const getMangaDetails = async (mangaId) => {
     const data = await makeRequest(`/manga/${mangaId}/full`);
     return transformMangaData(data.data);
   } catch (error) {
-    console.error('Error fetching manga details:', error);
+    
     return null;
   }
 };
@@ -286,7 +286,7 @@ export const getMangaCharacters = async (mangaId) => {
       role: char.role
     }));
   } catch (error) {
-    console.error('Error fetching manga characters:', error);
+    
     return [];
   }
 };
@@ -297,7 +297,7 @@ export const getMangaRecommendations = async (mangaId) => {
     const data = await makeRequest(`/manga/${mangaId}/recommendations`);
     return data.data.slice(0, 10).map(rec => transformMangaData(rec.entry));
   } catch (error) {
-    console.error('Error fetching manga recommendations:', error);
+    
     return [];
   }
 };
@@ -308,7 +308,7 @@ export const getMangaByGenre = async (genreId, page = 1) => {
     const data = await makeRequest(`/manga?genres=${genreId}&page=${page}&limit=20&order_by=popularity`);
     return data.data.map(transformMangaData);
   } catch (error) {
-    console.error('Error fetching manga by genre:', error);
+    
     return [];
   }
 };

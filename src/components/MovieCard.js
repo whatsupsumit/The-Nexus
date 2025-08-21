@@ -31,7 +31,7 @@ const MovieCard = memo(({ movie, onClick, isTV = false, customBadge = null }) =>
         fallback.innerHTML = `
           <div class="text-center p-4">
             <div class="text-3xl sm:text-4xl mb-2">
-              ${movie.media_type === 'anime' ? '🎌' : isTV ? '📺' : '🎬'}
+              ${isTV ? '📺' : '🎬'}
             </div>
             <p class="font-['JetBrains_Mono',monospace] text-xs text-gray-400 truncate">
               ${title || 'No Title'}
@@ -55,7 +55,7 @@ const MovieCard = memo(({ movie, onClick, isTV = false, customBadge = null }) =>
       {/* Movie Poster */}
       {posterPath ? (
         <img
-          src={movie.media_type === 'anime' ? posterPath : (posterPath.startsWith('http') ? posterPath : getImageUrl(posterPath, 'w342'))}
+          src={posterPath.startsWith('http') ? posterPath : getImageUrl(posterPath, 'w342')}
           alt={title}
           className="w-full h-full object-cover rounded-lg"
           loading="lazy"
@@ -66,7 +66,7 @@ const MovieCard = memo(({ movie, onClick, isTV = false, customBadge = null }) =>
         <div className="w-full h-full flex items-center justify-center bg-gray-800 rounded-lg">
           <div className="text-center p-4">
             <div className="text-3xl sm:text-4xl mb-2">
-              {movie.media_type === 'anime' ? '🎌' : isTV ? '📺' : '🎬'}
+              {isTV ? '📺' : '🎬'}
             </div>
             <p className="font-['JetBrains_Mono',monospace] text-xs text-gray-400 truncate">
               {title || 'No Title'}

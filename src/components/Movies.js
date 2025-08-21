@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { fetchPopularMovies, fetchTopRatedMovies, fetchTrendingMovies, searchContent } from '../utils/vidsrcApi';
 import MovieCard from './MovieCard';
 import VideoPlayer from './VideoPlayer';
-import SmartSuggestions from './SmartSuggestions';
 
 const Movies = () => {
   const navigate = useNavigate();
   const [movies, setMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isDataCached, setIsDataCached] = useState(false); // Track cached data
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,31 +18,43 @@ const Movies = () => {
 
   useEffect(() => {
     const loadMovies = async () => {
+      // Check if we already have cached data for this filter
+      if (isDataCached && movies.length > 0) {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       try {
         let movieData = [];
         switch (currentFilter) {
           case 'trending':
-            movieData = await fetchTrendingMovies();
+            const trendingResponse = await fetchTrendingMovies();
+            movieData = trendingResponse.results || [];
             break;
           case 'top_rated':
-            movieData = await fetchTopRatedMovies();
+            const topRatedResponse = await fetchTopRatedMovies();
+            movieData = topRatedResponse.results || [];
             break;
           default:
-            movieData = await fetchPopularMovies();
+            const popularResponse = await fetchPopularMovies();
+            movieData = popularResponse.results || [];
         }
-        console.log('🎬 Movies Component - Loaded data:', movieData);
+        
         setMovies(movieData);
         setFilteredMovies(movieData);
+        setIsDataCached(true); // Mark as cached
       } catch (error) {
         console.error('Error loading movies:', error);
+        setMovies([]);
+        setFilteredMovies([]);
       } finally {
         setLoading(false);
       }
     };
     
     loadMovies();
-  }, [currentFilter]);
+  }, [currentFilter, isDataCached, movies.length]);
 
   // Add keyboard shortcuts
   useEffect(() => {
@@ -66,10 +78,15 @@ const Movies = () => {
 
     setIsSearching(true);
     try {
-      const searchResults = await searchContent(query, 'movie');
-      setFilteredMovies(searchResults);
+      const searchResults = await searchContent(query);
+      // Ensure we only get movies from search results
+      const movieResults = Array.isArray(searchResults) 
+        ? searchResults.filter(item => item.media_type === 'movie')
+        : [];
+      setFilteredMovies(movieResults);
     } catch (error) {
       console.error('Search error:', error);
+      setFilteredMovies([]);
     } finally {
       setIsSearching(false);
     }
@@ -92,15 +109,16 @@ const Movies = () => {
     { key: 'top_rated', label: 'TOP RATED', icon: '👑', description: 'Highest rated cinematic masterpieces' }
   ];
 
-  // Stats calculation
+  // Stats calculation - ensure filteredMovies is always an array
+  const moviesArray = Array.isArray(filteredMovies) ? filteredMovies : [];
   const stats = {
-    totalMovies: filteredMovies.length,
-    avgRating: filteredMovies.length > 0 ? (filteredMovies.reduce((sum, m) => sum + (m.vote_average || 0), 0) / filteredMovies.length).toFixed(1) : 0,
-    recentReleases: filteredMovies.filter(m => {
+    totalMovies: moviesArray.length,
+    avgRating: moviesArray.length > 0 ? (moviesArray.reduce((sum, m) => sum + (m.vote_average || 0), 0) / moviesArray.length).toFixed(1) : 0,
+    recentReleases: moviesArray.filter(m => {
       const releaseYear = new Date(m.release_date).getFullYear();
       return releaseYear >= new Date().getFullYear() - 1;
     }).length,
-    blockbusters: filteredMovies.filter(m => m.popularity > 100).length
+    blockbusters: moviesArray.filter(m => m.popularity > 100).length
   };
 
   if (showPlayer && selectedMovie) {
@@ -219,9 +237,9 @@ const Movies = () => {
               <div key={i} className="aspect-[2/3] bg-gray-800 rounded-lg animate-pulse"></div>
             ))}
           </div>
-        ) : filteredMovies.length > 0 ? (
+        ) : moviesArray.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {filteredMovies.map((movie, index) => (
+            {moviesArray.map((movie, index) => (
               <div key={movie.id} className="transition-all duration-300 hover:scale-105">
                 <MovieCard
                   movie={movie}
@@ -242,17 +260,6 @@ const Movies = () => {
             </p>
           </div>
         )}
-      </div>
-
-      {/* Smart Suggestions */}
-      <div className="mt-8 px-8">
-        <SmartSuggestions 
-          currentPage="movies"
-          onContentSelect={(movie) => {
-            setSelectedMovie(movie);
-            setShowPlayer(true);
-          }}
-        />
       </div>
 
       {/* Footer */}

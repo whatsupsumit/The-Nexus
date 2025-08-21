@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchTrendingManga, fetchPopularManga, fetchTopManga, searchManga } from '../utils/mangaApi';
 import MangaCard from './MangaCard';
-import SmartSuggestions from './SmartSuggestions';
 
 const Manga = () => {
   const navigate = useNavigate();
@@ -243,17 +242,6 @@ const Manga = () => {
             </button>
           </div>
         )}
-      </div>
-
-      {/* Smart Suggestions */}
-      <div className="mt-8 px-8">
-        <SmartSuggestions 
-          currentPage="manga"
-          onContentSelect={(manga) => {
-            // For manga, navigate to read page with the manga ID
-            navigate(`/manga/read/${manga.mal_id}`);
-          }}
-        />
       </div>
 
       {/* Enhanced Stats Footer */}

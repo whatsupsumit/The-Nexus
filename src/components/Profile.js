@@ -334,7 +334,7 @@ const Profile = () => {
                               {item.title || item.name}
                             </div>
                             <div className="font-['Arvo',serif] text-purple-300 text-xs">
-                              {item.media_type === 'anime' ? 'ANIME' : (item.release_date || item.first_air_date || '').slice(0, 4)}
+                              {(item.release_date || item.first_air_date || '').slice(0, 4)}
                             </div>
                           </div>
                         </div>
