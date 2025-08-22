@@ -35,19 +35,19 @@ const NeuralChat = () => {
       icon: "🎬",
       name: "Cinema AI",
       prompt: "You are Nexus Cinema AI, the ultimate movie expert and entertainment guru. Provide passionate, engaging movie recommendations, insights about films, actors, directors, and entertainment industry. Be enthusiastic about movies and TV shows. Keep responses exciting and informative, under 100 words. Include movie titles, years, and brief compelling reasons why someone should watch them.",
-      gradient: "from-purple-600/30 via-blue-600/30 to-cyan-500/30"
+      gradient: "from-red-600/50 via-purple-600/50 to-blue-600/50"
     },
     general: {
       icon: "🤖",
       name: "General AI",
       prompt: "You are Nexus AI, a helpful and intelligent assistant. Provide thoughtful, accurate responses on any topic. Be conversational, friendly, and informative. Keep responses concise but comprehensive.",
-      gradient: "from-green-600/30 via-emerald-600/30 to-teal-500/30"
+      gradient: "from-blue-600/50 via-indigo-600/50 to-red-500/50"
     },
     creative: {
       icon: "✨",
       name: "Creative AI",
       prompt: "You are Nexus Creative AI, an imaginative and artistic assistant. Be creative, inspiring, and think outside the box. Help with creative writing, ideas, art concepts, and innovative thinking. Make responses engaging and imaginative.",
-      gradient: "from-pink-600/30 via-rose-600/30 to-orange-500/30"
+      gradient: "from-red-500/50 via-pink-600/50 to-blue-500/50"
     }
   };
 
@@ -63,18 +63,16 @@ const NeuralChat = () => {
   const getQuickResponse = (userMessage) => {
     const message = userMessage.toLowerCase();
     
-    if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-      return "Hey there! 👋 Ready to explore the universe of possibilities? What's on your mind today?";
+    // Only handle very specific commands, let AI handle everything else
+    if (message === 'clear' || message === 'reset') {
+      return "🧹 Neural pathways cleared! Starting fresh conversation.";
     }
     
-    if (message.includes('thanks') || message.includes('thank you')) {
-      return "You're absolutely welcome! 😊 I'm here whenever you need me. What else can we discover together?";
+    if (message === 'help' || message === '?') {
+      return "🤖 I'm NEXUS AI, your neural companion! Ask me anything - from movies and entertainment to general questions. I adapt to your needs!";
     }
     
-    if (message.includes('how are you')) {
-      return "I'm fantastic and energized! ⚡ My neural networks are buzzing with excitement to help you. How are you doing?";
-    }
-    
+    // Let AI handle ALL other messages including greetings, thanks, etc.
     return null;
   };
 
@@ -100,7 +98,7 @@ const NeuralChat = () => {
 
 User message: "${userMessage}"
 
-Respond with personality, enthusiasm, and intelligence. Use emojis sparingly but effectively.`;
+IMPORTANT: Always respond with genuine AI personality and intelligence. Detect the language of the user's message and respond in the same language naturally. Be helpful, enthusiastic, and engaging. Use emojis sparingly but effectively. Never give generic template responses.`;
 
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
@@ -114,10 +112,10 @@ Respond with personality, enthusiasm, and intelligence. Use emojis sparingly but
             }]
           }],
           generationConfig: {
-            temperature: 0.8,
+            temperature: 0.9,
             topK: 40,
             topP: 0.95,
-            maxOutputTokens: 200,
+            maxOutputTokens: 300,
             stopSequences: ["\n\n\n"]
           }
         })
@@ -244,18 +242,18 @@ Respond with personality, enthusiasm, and intelligence. Use emojis sparingly but
         style={{ zIndex: -1 }}
       ></div>
       
-      {/* Enhanced Color Mixing Overlays */}
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-900/75 via-gray-900/70 to-black/85"></div>
-      <div className="fixed inset-0 bg-gradient-to-t from-black/70 via-purple-900/20 to-transparent"></div>
-      <div className="fixed inset-0 bg-gradient-to-r from-blue-900/15 via-purple-900/10 to-cyan-900/15"></div>
-      <div className="fixed inset-0 bg-gradient-to-tl from-pink-900/10 via-transparent to-blue-900/10"></div>
+      {/* Enhanced Color Mixing Overlays - Blackish Red/Blue Theme */}
+      <div className="fixed inset-0 bg-gradient-to-br from-black/90 via-gray-900/85 to-black/95"></div>
+      <div className="fixed inset-0 bg-gradient-to-t from-black/90 via-red-900/30 to-transparent"></div>
+      <div className="fixed inset-0 bg-gradient-to-r from-blue-900/25 via-black/20 to-red-900/25"></div>
+      <div className="fixed inset-0 bg-gradient-to-tl from-red-900/20 via-transparent to-blue-900/20"></div>
       
-      {/* Animated Particles with Astro Theme */}
+      {/* Animated Particles with Red/Blue Theme */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {[...Array(25)].map((_, i) => (
           <div
             key={i}
-            className="absolute rounded-full animate-pulse bg-gradient-to-r from-cyan-400/20 to-purple-400/20"
+            className="absolute rounded-full animate-pulse bg-gradient-to-r from-red-400/25 to-blue-400/25"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -287,102 +285,138 @@ Respond with personality, enthusiasm, and intelligence. Use emojis sparingly but
         ))}
       </div>
 
-      {/* Main Content - Single Frame Layout */}
-      <div className="relative z-10 h-screen pt-20 pb-4">
-        <div className="container mx-auto px-4 h-full max-w-7xl">
+      {/* Main Content - Balanced Header Clearance */}
+      <div className="relative z-10 h-screen pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-4">
+        <div className="container mx-auto px-2 sm:px-4 lg:px-6 h-full max-w-7xl">
           
-          {/* Single Frame Grid Layout */}
-          <div className="grid lg:grid-cols-12 gap-6 h-full">
+          {/* Reduced Safety Margin */}
+          <div className="mb-3 sm:mb-4 lg:mb-6"></div>
+          
+          {/* Responsive Grid - Reduced Sidebar Size */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-6 h-full">
             
-            {/* Left Sidebar - Header + Controls */}
-            <div className="lg:col-span-4 flex flex-col space-y-6">
+            {/* Smaller Left Sidebar - Compact Layout */}
+            <div className="lg:col-span-3 xl:col-span-2 space-y-2 sm:space-y-3 lg:space-y-4 order-2 lg:order-1 h-fit">
               
-              {/* Epic Header */}
-              <div className="bg-gray-900/60 backdrop-blur-2xl rounded-3xl border border-gray-600/40 p-6 shadow-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/70">
+              {/* Compact Header Section */}
+              <div className="bg-black/85 backdrop-blur-xl rounded-lg sm:rounded-xl border border-red-900/60 p-2 sm:p-3 lg:p-4 shadow-xl bg-gradient-to-br from-black/70 to-gray-900/90 mt-2 sm:mt-3">
                 <div className="text-center">
-                  <div className="inline-flex items-center gap-4 mb-4">
+                  <div className="flex flex-col items-center gap-1 sm:gap-2 mb-2 sm:mb-3">
                     <div className="relative">
-                      <div className="w-14 h-14 bg-gradient-to-br from-cyan-500/40 to-purple-600/40 rounded-full flex items-center justify-center border-2 border-cyan-400/60 backdrop-blur-md shadow-2xl">
-                        <span className="text-2xl">🧠</span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-purple-600/20 rounded-full animate-ping"></div>
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-red-600/50 to-blue-600/50 rounded-full flex items-center justify-center border border-red-400/70 backdrop-blur-md shadow-lg">
+                        <span className="text-sm sm:text-lg">🧠</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-red-400/30 to-blue-600/30 rounded-full animate-ping"></div>
                       </div>
                     </div>
-                    <div className="text-left">
-                      <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-200 via-blue-200 to-purple-200 bg-clip-text text-transparent font-mono tracking-tight drop-shadow-2xl">
+                    <div className="text-center">
+                      <h1 className="text-sm sm:text-lg font-bold bg-gradient-to-r from-red-200 via-white to-blue-200 bg-clip-text text-transparent font-mono tracking-tight">
                         NEXUS NEURAL
                       </h1>
-                      <p className="text-sm text-transparent bg-gradient-to-r from-cyan-100 to-purple-100 bg-clip-text font-semibold">
-                        Artificial Intelligence Interface
+                      <p className="text-xs text-transparent bg-gradient-to-r from-red-100 to-blue-100 bg-clip-text font-medium">
+                        <span className="hidden sm:inline">AI Interface</span>
+                        <span className="sm:hidden">AI</span>
                       </p>
                     </div>
                   </div>
 
-                  {/* AI Mode Selector */}
-                  <div className="space-y-2 mb-4">
+                  {/* Compact AI Mode Selector */}
+                  <div className="space-y-1 mb-2 sm:mb-3">
                     {Object.entries(chatModes).map(([mode, config]) => (
                       <button
                         key={mode}
                         onClick={() => setChatMode(mode)}
-                        className={`w-full px-4 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 backdrop-blur-md ${
+                        className={`w-full px-2 py-1.5 sm:py-2 rounded-md font-medium transition-all duration-300 backdrop-blur-md text-xs ${
                           chatMode === mode
-                            ? `bg-gradient-to-r ${config.gradient} border-2 border-white/40 shadow-xl`
-                            : 'bg-gray-700/40 border border-gray-500/40 hover:bg-gray-600/50'
+                            ? `bg-gradient-to-r ${config.gradient} border border-white/30 shadow-md`
+                            : 'bg-gray-700/40 border border-gray-500/30 hover:bg-gray-600/50'
                         }`}
                       >
-                        <span className="mr-2">{config.icon}</span>
-                        {config.name}
+                        <span className="mr-1">{config.icon}</span>
+                        <span className="hidden sm:inline text-xs">{config.name}</span>
+                        <span className="sm:hidden text-xs">{config.name.split(' ')[0]}</span>
                       </button>
                     ))}
                   </div>
 
-                  {/* Status Indicator */}
-                  <div className="inline-flex items-center gap-2 px-3 py-2 bg-green-500/20 border border-green-400/40 rounded-full backdrop-blur-sm">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-xs text-green-200 font-medium">Neural Networks Online</span>
+                  {/* Compact Status Indicator */}
+                  <div className="inline-flex items-center gap-1 px-2 py-1 bg-red-600/30 border border-red-400/40 rounded-full backdrop-blur-sm">
+                    <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-red-400 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-red-200 font-medium">
+                      <span className="hidden sm:inline">Online</span>
+                      <span className="sm:hidden">Online</span>
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Quick Actions */}
-              <div className="bg-gray-900/60 backdrop-blur-2xl rounded-3xl border border-gray-600/40 p-4 shadow-2xl flex-1 bg-gradient-to-br from-gray-800/50 to-gray-900/70">
-                <h3 className="text-lg font-semibold mb-4 text-cyan-200 text-center">Quick Actions</h3>
-                <div className="space-y-2 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-600 scrollbar-track-gray-800/50">
+              {/* Compact Quick Actions - Fixed Height */}
+              <div className="bg-black/80 backdrop-blur-xl rounded-lg border border-blue-900/60 p-2 sm:p-3 shadow-xl bg-gradient-to-br from-black/70 to-gray-900/90 lg:block hidden">
+                <h3 className="text-xs sm:text-sm font-semibold mb-2 text-red-200 text-center">Quick Actions</h3>
+                <div className="space-y-1 max-h-32 sm:max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-600 scrollbar-track-gray-800/50">
                   {quickPrompts.map((prompt, index) => (
                     <button
                       key={index}
                       onClick={() => handleQuickPrompt(prompt)}
-                      className="w-full text-left p-3 rounded-lg bg-gray-700/40 hover:bg-gray-600/50 border border-gray-500/30 transition-all duration-200 hover:border-cyan-400/60 text-sm hover:scale-105 transform backdrop-blur-sm"
+                      className="w-full text-left p-1.5 sm:p-2 rounded-md bg-black/60 hover:bg-red-900/30 border border-red-700/40 transition-all duration-200 hover:border-red-400/60 text-xs transform backdrop-blur-sm text-white/90 hover:text-white shadow-sm"
                     >
-                      {prompt}
+                      {prompt.length > 32 ? prompt.substring(0, 32) + '...' : prompt}
                     </button>
                   ))}
                 </div>
               </div>
+
+              {/* Enhanced Mobile Quick Actions - Better Visibility */}
+              <div className="lg:hidden">
+                <div className="bg-black/80 backdrop-blur-xl rounded-lg border border-red-900/50 p-2 shadow-xl bg-gradient-to-br from-black/70 to-gray-900/90 mb-2">
+                  <h4 className="text-xs font-semibold mb-2 text-red-200 text-center">Quick Actions</h4>
+                  <div className="flex space-x-2 overflow-x-auto scrollbar-thin scrollbar-thumb-red-600/50 scrollbar-track-gray-800/50 pb-1">
+                    {quickPrompts.slice(0, 4).map((prompt, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleQuickPrompt(prompt)}
+                        className="flex-shrink-0 bg-black/70 hover:bg-red-900/30 border border-red-700/50 rounded-md px-3 py-2 text-xs transition-all duration-200 backdrop-blur-sm whitespace-nowrap text-white/90 hover:text-white shadow-md"
+                      >
+                        {prompt.split(' ').slice(0, 2).join(' ')}...
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Right Side - Chat Interface */}
-            <div className="lg:col-span-8 flex flex-col">
-              <div className="bg-gray-900/60 backdrop-blur-2xl rounded-3xl border border-gray-600/40 shadow-2xl overflow-hidden flex-1 flex flex-col bg-gradient-to-br from-gray-800/50 to-gray-900/70">
+            {/* Expanded Chat Interface - Fixed Height Container */}
+            <div className="lg:col-span-9 xl:col-span-10 flex flex-col justify-between order-1 lg:order-2 mt-2 sm:mt-3 h-full">
+              <div 
+                className="bg-black/85 backdrop-blur-2xl rounded-xl sm:rounded-2xl border justify-between border-red-900/50 shadow-2xl overflow-hidden flex flex-col bg-gradient-to-br from-black/80 to-gray-900/90"
+                style={{ height: 'calc(100vh - 140px)' }}
+              >
                 
-                {/* Chat Header */}
-                <div className="bg-gray-800/40 border-b border-gray-600/40 p-4 backdrop-blur-md">
+                {/* Compact Chat Header */}
+                <div className="bg-black/70 border-b border-red-900/60 p-2 sm:p-3 backdrop-blur-md">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl">{chatModes[chatMode].icon}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm sm:text-base">{chatModes[chatMode].icon}</span>
                       <div>
-                        <h2 className="text-lg font-semibold text-cyan-200">{chatModes[chatMode].name}</h2>
-                        <p className="text-xs text-gray-300">Ready to assist you</p>
+                        <h2 className="text-sm sm:text-base font-semibold text-red-200">{chatModes[chatMode].name}</h2>
+                        <p className="text-xs text-gray-300 hidden sm:block">Ready to assist you</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
                       <span className="text-xs text-green-300">Active</span>
                     </div>
                   </div>
                 </div>
                 
-                {/* Messages Container - Takes remaining height */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-cyan-600/50 scrollbar-track-gray-800/30 min-h-0">
+                {/* Messages Container - Fixed Scrolling */}
+                <div 
+                  className="flex-1 overflow-y-auto overflow-x-hidden p-2 sm:p-3 lg:p-4 space-y-2 sm:space-y-3 lg:space-y-4 scrollbar-thin scrollbar-thumb-cyan-600/50 scrollbar-track-gray-800/30"
+                  style={{ 
+                    minHeight: '200px',
+                    maxHeight: 'calc(100vh - 400px)',
+                    height: 'auto'
+                  }}
+                >
                   {messages.map((message, index) => (
                     <div
                       key={index}
@@ -391,24 +425,25 @@ Respond with personality, enthusiasm, and intelligence. Use emojis sparingly but
                       }`}
                     >
                       <div
-                        className={`max-w-md px-4 py-3 rounded-2xl relative backdrop-blur-md shadow-xl ${
+                        className={`max-w-[90%] sm:max-w-md lg:max-w-lg px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl relative backdrop-blur-md shadow-xl ${
                           message.isBot
                             ? `bg-gradient-to-r ${chatModes[message.mode || chatMode].gradient} border border-gray-500/50`
                             : 'bg-gradient-to-r from-gray-600/70 to-gray-700/70 border border-gray-400/50'
                         }`}
                       >
                         {message.isBot && (
-                          <div className="text-xs text-cyan-200 mb-1 flex items-center gap-1">
-                            <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse"></div>
-                            <span>{chatModes[message.mode || chatMode].icon} AI Response</span>
+                          <div className="text-xs text-red-200 mb-1 flex items-center gap-1">
+                            <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 bg-cyan-400 rounded-full animate-pulse"></div>
+                            <span className="hidden sm:inline">{chatModes[message.mode || chatMode].icon} AI Response</span>
+                            <span className="sm:hidden">AI</span>
                           </div>
                         )}
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap text-white">{message.text}</p>
+                        <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap text-white">{message.text}</p>
                         <p className="text-xs opacity-70 mt-1 text-gray-200">{message.timestamp}</p>
                         
                         {/* Glowing Edge for Bot Messages */}
                         {message.isBot && (
-                          <div className="absolute -left-0.5 top-3 w-1 h-6 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full shadow-lg"></div>
+                          <div className="absolute -left-0.5 top-2 sm:top-3 w-0.5 sm:w-1 h-4 sm:h-6 bg-gradient-to-b from-cyan-400 to-purple-500 rounded-full shadow-lg"></div>
                         )}
                       </div>
                     </div>
@@ -417,15 +452,15 @@ Respond with personality, enthusiasm, and intelligence. Use emojis sparingly but
                   {/* Typing Indicator */}
                   {(isLoading || isTyping) && (
                     <div className="flex justify-start animate-fadeInUp">
-                      <div className={`bg-gradient-to-r ${chatModes[chatMode].gradient} border border-gray-500/50 px-4 py-3 rounded-2xl shadow-xl backdrop-blur-md`}>
-                        <div className="flex items-center space-x-3">
+                      <div className={`bg-gradient-to-r ${chatModes[chatMode].gradient} border border-gray-500/50 px-3 sm:px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl shadow-xl backdrop-blur-md`}>
+                        <div className="flex items-center space-x-2 sm:space-x-3">
                           <div className="flex space-x-1">
-                            <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                            <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-bounce"></div>
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                           </div>
-                          <span className="text-sm text-cyan-200">
-                            {isTyping ? 'Neural processing...' : 'Thinking...'}
+                          <span className="text-xs sm:text-sm text-red-200">
+                            {isTyping ? 'Processing...' : 'Thinking...'}
                           </span>
                         </div>
                       </div>
@@ -434,43 +469,44 @@ Respond with personality, enthusiasm, and intelligence. Use emojis sparingly but
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* Input Area - Fixed at bottom */}
-                <div className="border-t border-gray-600/40 bg-gray-800/40 p-4 backdrop-blur-md">
-                  <div className="flex space-x-3">
+                {/* Ultra Responsive Input Area - Minimal Padding */}
+                <div className="border-t border-blue-900/60 bg-black/70 p-1 sm:p-1.5 lg:p-2 backdrop-blur-md">
+                  <div className="flex space-x-2 sm:space-x-3">
                     <div className="flex-1 relative">
                       <input
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        placeholder="Enter your message to the neural network..."
-                        className="w-full bg-gray-700/50 border border-gray-500/40 rounded-xl px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500/60 focus:border-cyan-400/60 backdrop-blur-sm transition-all duration-200"
+                        placeholder="Message the neural network..."
+                        className="w-full bg-gray-700/50 border border-gray-500/40 rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 sm:py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-cyan-500/60 focus:border-cyan-400/60 backdrop-blur-sm transition-all duration-200 text-sm sm:text-base"
                         disabled={isLoading}
                       />
                       {/* Focus Glow Effect */}
-                      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-cyan-500/10 to-purple-500/10 opacity-0 transition-opacity duration-200 pointer-events-none focus-within:opacity-100"></div>
+                      <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-cyan-500/10 to-purple-500/10 opacity-0 transition-opacity duration-200 pointer-events-none focus-within:opacity-100"></div>
                     </div>
                     <button
                       onClick={handleSendMessage}
                       disabled={isLoading || !input.trim()}
-                      className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed shadow-xl relative group backdrop-blur-md ${
+                      className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed shadow-xl relative group backdrop-blur-md text-sm sm:text-base ${
                         isLoading 
                           ? 'bg-gray-600/50 border border-gray-500/40' 
                           : `bg-gradient-to-r ${chatModes[chatMode].gradient} border border-cyan-400/60 hover:shadow-cyan-500/30 hover:shadow-xl`
                       }`}
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-lg sm:rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <span className="relative z-10">
                         {isLoading ? (
-                          <div className="w-5 h-5 border-2 border-gray-300 border-t-cyan-400 rounded-full animate-spin"></div>
+                          <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-gray-300 border-t-cyan-400 rounded-full animate-spin"></div>
                         ) : (
                           '🚀'
                         )}
                       </span>
                     </button>
                   </div>
-                  <div className="text-xs text-gray-300 mt-2 text-center">
-                    Powered by Google Gemini • {chatModes[chatMode].name} Mode Active
+                  <div className="text-xs text-gray-300 mt-5 text-center">
+                    <span className="hidden sm:inline">Powered by Google Gemini • {chatModes[chatMode].name} Mode Active</span>
+                    <span className="sm:hidden">Gemini AI • {chatModes[chatMode].icon}</span>
                   </div>
                 </div>
               </div>
@@ -480,7 +516,7 @@ Respond with personality, enthusiasm, and intelligence. Use emojis sparingly but
       </div>
 
       {/* Enhanced Custom Styles */}
-      <style jsx>{`
+      <style>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;
@@ -505,20 +541,25 @@ Respond with personality, enthusiasm, and intelligence. Use emojis sparingly but
         .animate-twinkle {
           animation: twinkle 3s ease-in-out infinite;
         }
-        /* Enhanced scrollbar styling */
+        /* Enhanced scrollbar styling - Red/Blue Theme */
         .scrollbar-thin::-webkit-scrollbar {
-          width: 6px;
+          width: 8px;
         }
         .scrollbar-thin::-webkit-scrollbar-track {
-          background: rgba(55, 65, 81, 0.3);
+          background: rgba(55, 65, 81, 0.5);
           border-radius: 10px;
+          margin: 4px;
         }
         .scrollbar-thin::-webkit-scrollbar-thumb {
-          background: rgba(34, 197, 194, 0.5);
+          background: linear-gradient(to bottom, rgba(239, 68, 68, 0.7), rgba(59, 130, 246, 0.7));
           border-radius: 10px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-          background: rgba(34, 197, 194, 0.7);
+          background: linear-gradient(to bottom, rgba(239, 68, 68, 0.9), rgba(59, 130, 246, 0.9));
+        }
+        .scrollbar-thin::-webkit-scrollbar-corner {
+          background: transparent;
         }
       `}</style>
     </div>

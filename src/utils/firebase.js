@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics, isSupported } from "firebase/analytics"; // Disabled to prevent GTM conflicts
 import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
@@ -17,6 +17,17 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// eslint-disable-next-line no-unused-vars
-const analytics = getAnalytics(app); // Analytics is initialized but not used in this snippet
-export const auth = getAuth();
+
+// Initialize Analytics with error handling and Google Tag Manager compatibility
+let analytics = null;
+
+// Analytics disabled to prevent Google Tag Manager conflicts and related errors
+// Firebase Analytics was causing googletag.destroySlots errors and ERR_UNSAFE_REDIRECT issues
+try {
+  console.log('[NEXUS] Firebase Analytics disabled to prevent GTM conflicts');
+} catch (error) {
+  console.log('[NEXUS] Firebase Analytics error caught:', error);
+}
+
+export const auth = getAuth(app);
+export { analytics };

@@ -20,7 +20,14 @@ const suppressedErrorPatterns = [
   'aclib is not defined',
   'jwplayer',
   'abort-current-inline-script',
-  'autoPlay=true&poster=false'
+  'autoPlay=true&poster=false',
+  // Google Tag Manager and Firebase Analytics related errors
+  'googletag.destroySlots is not a function',
+  'googletag',
+  'GTM-',
+  'googletagmanager',
+  'Firebase Analytics',
+  'ERR_UNSAFE_REDIRECT'
 ];
 
 console.error = (...args) => {
@@ -33,7 +40,7 @@ console.error = (...args) => {
   
   if (shouldSuppress) {
     // Log to NEXUS internal logging instead
-    console.log('%c[NEXUS PLAYER]%c Video player internal operation - no action required', 
+    console.log('%c[NEXUS SYSTEM]%c Third-party service internal operation - no action required', 
       'color: #ef4444; font-weight: bold;', 
       'color: #888888;'
     );

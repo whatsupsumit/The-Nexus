@@ -2,6 +2,9 @@
 <html lang="en">
   <head>
   <meta charset="utf-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000" />
@@ -30,6 +33,98 @@
     
     <!-- NEXUS Error Suppression System -->
     <script>
+      // Immediate Google Tag Manager protection - Execute ASAP
+      (function() {
+        'use strict';
+        
+        // Immediate Google Tag Manager mock before anything else loads
+        window.googletag = window.googletag || {};
+        window.googletag.cmd = window.googletag.cmd || [];
+        window.googletag.destroySlots = window.googletag.destroySlots || function(slots) { 
+          console.log('[NEXUS] googletag.destroySlots intercepted');
+          return slots || []; 
+        };
+        
+        // Immediately suppress any googletag errors
+        if (window.console && window.console.error) {
+          const originalError = window.console.error;
+          window.console.error = function(...args) {
+            const message = args.join(' ');
+            if (message.includes('googletag') || message.includes('destroySlots')) {
+              console.log('[NEXUS] Early googletag error suppressed:', message);
+              return;
+            }
+            originalError.apply(console, args);
+          };
+        }
+
+        // Block all Google Tag Manager and Analytics requests
+        if (window.fetch) {
+          const originalFetch = window.fetch;
+          window.fetch = function(url, options) {
+            if (typeof url === 'string' && (
+              url.includes('googletagmanager.com') ||
+              url.includes('gtm.js') ||
+              url.includes('GTM-') ||
+              url.includes('gtag') ||
+              url.includes('analytics.js') ||
+              url.includes('ga.js')
+            )) {
+              console.log('[NEXUS] Blocked GTM/Analytics request:', url);
+              return Promise.reject(new Error('GTM request blocked by NEXUS'));
+            }
+            return originalFetch.apply(this, arguments);
+          };
+        }
+
+        // Override XMLHttpRequest to block GTM requests
+        if (window.XMLHttpRequest) {
+          const originalXHROpen = XMLHttpRequest.prototype.open;
+          XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+            if (typeof url === 'string' && (
+              url.includes('googletagmanager.com') ||
+              url.includes('gtm.js') ||
+              url.includes('GTM-') ||
+              url.includes('gtag') ||
+              url.includes('analytics.js') ||
+              url.includes('ga.js')
+            )) {
+              console.log('[NEXUS] Blocked XHR GTM/Analytics request:', url);
+              return;
+            }
+            return originalXHROpen.apply(this, arguments);
+          };
+        }
+
+        // Block dynamic script injection for GTM
+        if (document.createElement) {
+          const originalCreateElement = document.createElement;
+          document.createElement = function(tagName) {
+            const element = originalCreateElement.apply(this, arguments);
+            if (tagName === 'script') {
+              const originalSetAttribute = element.setAttribute;
+              element.setAttribute = function(name, value) {
+                if (name === 'src' && typeof value === 'string' && (
+                  value.includes('googletagmanager.com') ||
+                  value.includes('gtm.js') ||
+                  value.includes('GTM-') ||
+                  value.includes('gtag') ||
+                  value.includes('analytics.js') ||
+                  value.includes('ga.js')
+                )) {
+                  console.log('[NEXUS] Blocked dynamic GTM script injection:', value);
+                  return;
+                }
+                return originalSetAttribute.apply(this, arguments);
+              };
+            }
+            return element;
+          };
+        }
+      })();
+    </script>
+    
+    <script>
       (function() {
         'use strict';
         
@@ -50,15 +145,25 @@
           'at get (<anonymous>',
           'Math.get (<anonymous>',
           'googletag.destroySlots is not a function',
+          'TypeError: googletag.destroySlots is not a function',
+          'googletag.destroySlots',
           'googletag',
           'TypeError: googletag',
+          'Cannot read properties of undefined (reading \'destroySlots\')',
+          'Cannot read property \'destroySlots\' of undefined',
           'ERR_UNSAFE_REDIRECT',
           'net::ERR_UNSAFE_REDIRECT',
           'Failed to load resource: net::ERR_UNSAFE_REDIRECT',
           'SW Ready',
           'Service worker has been registered',
           'chunk-vendors',
-          'app.js'
+          'app.js',
+          'pn (app.',
+          'at pn (',
+          'Firebase Analytics',
+          'gtag',
+          'gpt.js',
+          'pubads.g.doubleclick.net'
         ];
         
         // Store original functions
@@ -66,12 +171,31 @@
         window._nexusOriginalWarn = console.warn;
         window._nexusOriginalLog = console.log;
         
-        // Mock Google Tag Manager to prevent errors
-        window.googletag = window.googletag || {
-          cmd: [],
-          destroySlots: function() { return []; },
-          display: function() { return this; },
-          enableServices: function() { return this; },
+        // Enhanced Google Tag Manager mock to prevent errors
+        if (!window.googletag) {
+          window.googletag = {};
+        }
+        
+        // Ensure cmd array exists
+        window.googletag.cmd = window.googletag.cmd || [];
+        
+        // Enhanced mock with more comprehensive coverage and persistent protection
+        const mockGoogletag = {
+          destroySlots: function(slots) { 
+            console.log('[NEXUS] googletag.destroySlots called (mocked)');
+            return slots || []; 
+          },
+          display: function(divId) { 
+            console.log('[NEXUS] googletag.display called (mocked):', divId);
+            return this; 
+          },
+          enableServices: function() { 
+            console.log('[NEXUS] googletag.enableServices called (mocked)');
+            return this; 
+          },
+          disablePublisherConsole: function() { return this; },
+          getVersion: function() { return '3.0'; },
+          slots: [],
           pubads: function() {
             return {
               enableSingleRequest: function() { return this; },
@@ -81,7 +205,10 @@
               setTargeting: function() { return this; },
               clearTargeting: function() { return this; },
               refresh: function() { return this; },
-              clear: function() { return this; }
+              clear: function() { return this; },
+              getSlots: function() { return []; },
+              setPrivacySettings: function() { return this; },
+              setCookieOptions: function() { return this; }
             };
           },
           companionAds: function() {
@@ -89,27 +216,58 @@
               setRefreshUnfilledSlots: function() { return this; }
             };
           },
-          defineSlot: function() {
+          defineSlot: function(adUnitPath, size, divId) {
+            console.log('[NEXUS] googletag.defineSlot called (mocked):', adUnitPath, size, divId);
             return {
               addService: function() { return this; },
               setTargeting: function() { return this; },
-              setCollapseEmptyDiv: function() { return this; }
+              setCollapseEmptyDiv: function() { return this; },
+              defineSizeMapping: function() { return this; },
+              setForceSafeFrame: function() { return this; }
+            };
+          },
+          defineOutOfPageSlot: function() {
+            return {
+              addService: function() { return this; }
+            };
+          },
+          sizeMapping: function() {
+            return {
+              addSize: function() { return this; },
+              build: function() { return []; }
             };
           }
         };
+
+        // Apply the mock and make it persistent
+        Object.assign(window.googletag, mockGoogletag);
         
-        // Enhanced console.error override
+        // Make the mock persistent against overwrites
+        Object.defineProperty(window, 'googletag', {
+          value: window.googletag,
+          writable: false,
+          configurable: false
+        });
+        
+        // Enhanced console.error override with stack trace filtering
         console.error = function(...args) {
           const message = args.join(' ');
+          const stack = (new Error()).stack || '';
           
           // Check if should suppress
           const shouldSuppress = NEXUS_SUPPRESSED_PATTERNS.some(pattern => {
             if (pattern.includes('[0-9]+')) {
               const regex = new RegExp(pattern.replace('[0-9]+', '\\d+'));
-              return regex.test(message);
+              return regex.test(message) || regex.test(stack);
             }
-            return message.includes(pattern);
+            return message.includes(pattern) || stack.includes(pattern);
           });
+          
+          // Special handling for googletag errors
+          if (message.includes('googletag') || message.includes('destroySlots')) {
+            console.log('[NEXUS] Suppressed Google Tag error:', message);
+            return;
+          }
           
           if (shouldSuppress) {
             // Silent suppression for video player errors
@@ -149,13 +307,24 @@
           window._nexusOriginalLog.apply(console, args);
         };
         
-        // Global error handler
+        // Global error handler with enhanced googletag filtering
         window.addEventListener('error', function(event) {
           const message = event.message || '';
           const source = event.filename || '';
+          const stack = event.error?.stack || '';
+          
+          // Special handling for googletag errors
+          if (message.includes('googletag') || message.includes('destroySlots') || 
+              source.includes('googletag') || stack.includes('googletag')) {
+            console.log('[NEXUS] Blocked Google Tag error:', message);
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+          }
           
           const shouldSuppress = NEXUS_SUPPRESSED_PATTERNS.some(pattern => {
-            return message.includes(pattern) || source.includes('autoPlay=true') || message.includes('googletag');
+            return message.includes(pattern) || source.includes('autoPlay=true') || 
+                   message.includes('googletag') || stack.includes(pattern);
           });
           
           if (shouldSuppress) {
@@ -184,6 +353,7 @@
           'color: #22c55e;'
         );
       })();
+    </script>
     </script>
   </head>
   <body>

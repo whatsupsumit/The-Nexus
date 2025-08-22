@@ -174,11 +174,6 @@ export const getTVShowStreamUrl = (tvId, season = 1, episode = 1) => {
 // Basic embed URL aliases (deprecated - use enhanced versions below)
 export const getTVEmbedUrl = getTVShowStreamUrl;
 
-// Manga embed URL (placeholder)
-export const getMangaEmbedUrl = (mangaId) => {
-  return `https://mangaplus.shueisha.co.jp/titles/${mangaId}`;
-};
-
 // Simple cache for recently fetched data (keep it simple)
 const cache = new Map();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes

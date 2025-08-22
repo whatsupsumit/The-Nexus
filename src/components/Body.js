@@ -3,12 +3,8 @@ import Login from './Login';
 import Browse from './Browse';
 import Movies from './Movies';
 import TVShows from './TVShows';
-import Manga from './Manga';
 import MovieDetails from './MovieDetails';
 import TVShowDetails from './TVShowDetails';
-import MangaDetails from './MangaDetails';
-import MangaReader from './MangaReader';
-import MangaAPITester from './MangaAPITester';
 import Vault from './Vault';
 import Profile from './Profile';
 import NeuralChat from './NeuralChat';
@@ -112,87 +108,6 @@ const Body = () => {
         </ProtectedRoute>
       )
     },
-    {
-      path: "/manga",
-      element: (
-        <ProtectedRoute>
-          <div>
-            <Header />
-            <div className="relative min-h-screen text-white">
-              {/* NEXUS Background */}
-              <div 
-                className="fixed inset-0 w-full h-full z-0"
-                style={{
-                  backgroundImage: "url('redeye.png')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                  backgroundAttachment: "fixed"
-                }}
-              />
-              <div className="fixed inset-0 z-10 bg-gradient-to-t from-black via-black/60 to-black/80" />
-              
-              <div className="relative z-20">
-                <Manga />
-              </div>
-            </div>
-          </div>
-        </ProtectedRoute>
-      )
-    },
-    {
-      path: "/manga/:id",
-      element: (
-        <ProtectedRoute>
-          <div>
-            <Header />
-            <div className="relative min-h-screen text-white">
-              {/* NEXUS Background */}
-              <div 
-                className="fixed inset-0 w-full h-full z-0"
-                style={{
-                  backgroundImage: "url('neffexbg.jpg')",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                  backgroundAttachment: "fixed"
-                }}
-              />
-              <div className="fixed inset-0 z-10 bg-gradient-to-t from-black via-black/60 to-black/80" />
-              
-              <div className="relative z-20">
-                <MangaDetails />
-              </div>
-            </div>
-          </div>
-        </ProtectedRoute>
-      )
-    },
-    {
-      path: "/manga/:mangaId/read/:chapterId",
-      element: (
-        <ProtectedRoute>
-          <MangaReader />
-        </ProtectedRoute>
-      )
-    },
-    {
-      path: "/manga-api-test",
-      element: (
-        <ProtectedRoute>
-          <div>
-            <Header />
-            <div className="relative min-h-screen text-white pt-20">
-              <div className="fixed inset-0 z-10 bg-gradient-to-t from-black via-black/60 to-black/80" />
-              <div className="relative z-20 p-8">
-                <MangaAPITester />
-              </div>
-            </div>
-          </div>
-        </ProtectedRoute>
-      )
-    },
-
     {
       path: "/movie/:id",
       element: (

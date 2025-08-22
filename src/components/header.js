@@ -75,22 +75,23 @@ const Header = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="fixed top-0 left-0 w-full flex items-center justify-between px-4 sm:px-6 lg:px-8 py-3 sm:py-4 z-50 bg-black/95 border-b border-red-800/30">
+    <header className="fixed top-0 left-0 w-full flex items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-3 md:py-4 z-50 bg-black/95 border-b border-red-800/30 backdrop-blur-md">
 
-      {/* Logo */}
+      {/* Logo - Responsive sizing */}
       <div
-        className="font-['Arvo',serif] text-2xl sm:text-3xl lg:text-4xl font-bold text-red-500 tracking-wider cursor-pointer hover:text-red-400 z-10"
+        className="font-['Arvo',serif] text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-red-500 tracking-wider cursor-pointer hover:text-red-400 z-10 transition-all duration-300 hover:scale-105"
         onClick={() => handleNavigation(user ? "/browse" : "/")}
       >
-        NEXUS
+        <span className="hidden sm:inline">NEXUS</span>
+        <span className="sm:hidden">NX</span>
       </div>
 
-      {/* Desktop Navigation Menu */}
+      {/* Desktop Navigation Menu - Enhanced responsive */}
       {user && (
-        <nav className="hidden md:flex items-center space-x-4 lg:space-x-8 z-10">
+        <nav className="hidden lg:flex items-center space-x-1 xl:space-x-2 2xl:space-x-4 z-10">
           <button
             onClick={() => handleNavigation("/browse")}
-            className={`relative font-['Arvo',serif] hover:text-orange-400 transition-all duration-300 font-medium group text-sm lg:text-base ${
+            className={`relative font-['Arvo',serif] hover:text-orange-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
               isActive("/browse") ? "text-orange-400" : "text-nexus-text"
             }`}
           >
@@ -104,7 +105,7 @@ const Header = () => {
           
           <button
             onClick={() => handleNavigation("/movies")}
-            className={`relative font-['Arvo',serif] hover:text-yellow-400 transition-all duration-300 font-medium group text-sm lg:text-base ${
+            className={`relative font-['Arvo',serif] hover:text-yellow-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
               isActive("/movies") ? "text-yellow-400" : "text-nexus-text"
             }`}
           >
@@ -118,7 +119,7 @@ const Header = () => {
           
           <button
             onClick={() => handleNavigation("/tv-shows")}
-            className={`relative font-['Arvo',serif] hover:text-green-400 transition-all duration-300 font-medium group text-sm lg:text-base ${
+            className={`relative font-['Arvo',serif] hover:text-green-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
               isActive("/tv-shows") ? "text-green-400" : "text-nexus-text"
             }`}
           >
@@ -131,22 +132,8 @@ const Header = () => {
           </button>
           
           <button
-            onClick={() => handleNavigation("/manga")}
-            className={`relative font-['Arvo',serif] hover:text-purple-400 transition-all duration-300 font-medium group text-sm lg:text-base ${
-              isActive("/manga") ? "text-purple-400" : "text-nexus-text"
-            }`}
-          >
-            <span className="relative z-10">MANGA</span>
-            <div className="absolute inset-0 bg-purple-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
-            {isActive("/manga") && (
-              <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-purple-400" />
-            )}
-            <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-purple-400 group-hover:w-full transition-all duration-300"></div>
-          </button>
-          
-          <button
             onClick={() => handleNavigation("/vault")}
-            className={`relative font-['Arvo',serif] hover:text-pink-400 transition-all duration-300 font-medium group text-sm lg:text-base ${
+            className={`relative font-['Arvo',serif] hover:text-pink-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
               isActive("/vault") || isActive("/my-list") ? "text-pink-400" : "text-nexus-text"
             }`}
           >
@@ -158,21 +145,21 @@ const Header = () => {
             <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-pink-400 group-hover:w-full transition-all duration-300"></div>
           </button>
 
-          {/* AI Chat Tab - Hidden on smaller screens */}
+          {/* AI Chat Tab - Fixed Responsive Alignment */}
           <button
             onClick={() => handleNavigation("/neural-chat")}
-            className={`relative font-['Arvo',serif] hover:text-cyan-400 transition-all duration-300 font-medium items-center space-x-2 group text-sm lg:text-base hidden lg:flex ${
+            className={`relative font-['Arvo',serif] hover:text-cyan-400 transition-all duration-300 font-medium flex items-center justify-center space-x-1 lg:space-x-2 group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg min-w-fit ${
               isActive("/neural-chat") ? "text-cyan-400" : "text-nexus-text"
             }`}
           >
-            <div className="relative">
-              <svg className="w-4 h-4 lg:w-5 lg:h-5 group-hover:animate-spin transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="relative flex-shrink-0">
+              <svg className="w-3 h-3 lg:w-4 lg:h-4 xl:w-5 xl:h-5 group-hover:animate-spin transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
               <div className="absolute -inset-1 bg-cyan-400/20 rounded-full blur group-hover:animate-pulse"></div>
             </div>
-            <span className="relative z-10 hidden xl:inline">NEURAL AI</span>
-            <span className="relative z-10 xl:hidden">AI</span>
+            <span className="relative z-10 hidden lg:inline whitespace-nowrap">NEURAL AI</span>
+            <span className="relative z-10 lg:hidden whitespace-nowrap">AI</span>
             <div className="absolute inset-0 bg-cyan-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
             {isActive("/neural-chat") && (
               <div className="absolute -bottom-2 left-0 w-full h-0.5 bg-cyan-400" />
@@ -182,14 +169,41 @@ const Header = () => {
         </nav>
       )}
 
-      {/* Mobile Menu Button */}
+      {/* Tablet Navigation Menu (md to lg) */}
+      {user && (
+        <nav className="hidden md:flex lg:hidden items-center space-x-1 z-10">
+          {[
+            { path: "/browse", icon: "🏠", color: "orange" },
+            { path: "/movies", icon: "🎬", color: "yellow" },
+            { path: "/tv-shows", icon: "📺", color: "green" },
+            { path: "/vault", icon: "🗃️", color: "pink" },
+            { path: "/neural-chat", icon: "🧠", color: "cyan" }
+          ].map((item) => (
+            <button
+              key={item.path}
+              onClick={() => handleNavigation(item.path)}
+              className={`relative p-2 rounded-lg transition-all duration-300 hover:scale-110 ${
+                isActive(item.path) ? `text-${item.color}-400 bg-${item.color}-500/20` : "text-nexus-text hover:text-white"
+              }`}
+              title={item.path.replace("/", "").replace("-", " ").toUpperCase()}
+            >
+              <span className="text-lg">{item.icon}</span>
+              {isActive(item.path) && (
+                <div className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-${item.color}-400 rounded-full animate-pulse`} />
+              )}
+            </button>
+          ))}
+        </nav>
+      )}
+
+      {/* Mobile Menu Button - Enhanced */}
       {user && (
         <button
-          className="md:hidden flex items-center justify-center w-8 h-8 text-nexus-text hover:text-nexus-red transition-colors duration-300 z-10"
+          className="md:hidden flex items-center justify-center w-10 h-10 text-nexus-text hover:text-nexus-red transition-all duration-300 z-10 rounded-lg hover:bg-red-500/10"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle Mobile Menu"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className={`w-6 h-6 transition-transform duration-300 ${mobileMenuOpen ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             {mobileMenuOpen ? (
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             ) : (
@@ -247,16 +261,16 @@ const Header = () => {
               <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-nexus-text-light to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
             </button>
 
-            {/* Responsive Dropdown Menu */}
+            {/* Responsive Dropdown Menu - Fixed Background */}
             {dropdownOpen && (
-              <div className="absolute right-0 mt-3 w-56 sm:w-64 bg-nexus-black/95 backdrop-blur-xl rounded-xl shadow-2xl border border-nexus-red/40 animate-fade-in z-50 overflow-hidden">
+              <div className="absolute right-0 mt-3 w-56 sm:w-64 bg-black/95 backdrop-blur-xl rounded-xl shadow-2xl border border-red-800/50 animate-fade-in z-50 overflow-hidden">
                 {/* Glowing Header */}
-                <div className="relative px-6 py-4 border-b border-nexus-red/30 bg-gradient-to-r from-nexus-red/20 to-purple-900/20">
-                  <div className="absolute inset-0 bg-gradient-to-r from-nexus-red/10 to-transparent"></div>
-                  <p className="relative font-['Arvo',serif] text-nexus-text-light text-sm font-bold">
+                <div className="relative px-6 py-4 border-b border-red-800/40 bg-gradient-to-r from-red-900/30 to-black/50">
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-900/20 to-transparent"></div>
+                  <p className="relative font-['Arvo',serif] text-white text-sm font-bold">
                     {user.displayName || user.email || "Neural User"}
                   </p>
-                  <p className="relative font-['Arvo',serif] text-nexus-text-dark text-xs mt-1">
+                  <p className="relative font-['Arvo',serif] text-gray-300 text-xs mt-1">
                     {user.email}
                   </p>
                   <div className="absolute top-0 right-4 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -264,24 +278,24 @@ const Header = () => {
                 
                 <div className="py-2">
                   <button
-                    className="group relative block w-full text-left px-6 py-3 font-['Arvo',serif] text-nexus-text hover:bg-nexus-red/20 hover:text-nexus-red-light transition-all duration-300 overflow-hidden"
+                    className="group relative block w-full text-left px-6 py-3 font-['Arvo',serif] text-gray-200 hover:bg-red-900/20 hover:text-red-300 transition-all duration-300 overflow-hidden"
                     onClick={() => handleNavigation("/profile")}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-nexus-red/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="relative flex items-center space-x-3">
                       <svg className="w-4 h-4 group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                       <span>Profile Matrix</span>
-                      <div className="ml-auto w-1 h-1 bg-nexus-red rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="ml-auto w-1 h-1 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                   </button>
                   
                   <button
-                    className="group relative block w-full text-left px-6 py-3 font-['Arvo',serif] text-nexus-text hover:bg-nexus-red/20 hover:text-nexus-red-light transition-all duration-300 overflow-hidden"
+                    className="group relative block w-full text-left px-6 py-3 font-['Arvo',serif] text-gray-200 hover:bg-red-900/20 hover:text-red-300 transition-all duration-300 overflow-hidden"
                     onClick={() => handleNavigation("/account")}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-nexus-red/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="relative flex items-center space-x-3">
                       <svg className="w-4 h-4 group-hover:animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -293,18 +307,18 @@ const Header = () => {
                   </button>
                 </div>
                 
-                <div className="border-t border-nexus-red/30 bg-gradient-to-r from-nexus-red/10 to-transparent">
+                <div className="border-t border-red-800/40 bg-gradient-to-r from-red-900/20 to-transparent">
                   <button
                     onClick={handleSignOut}
-                    className="group relative block w-full text-left px-6 py-3 font-['Arvo',serif] text-nexus-text hover:bg-nexus-red/30 hover:text-nexus-red-light transition-all duration-300 overflow-hidden"
+                    className="group relative block w-full text-left px-6 py-3 font-['Arvo',serif] text-gray-200 hover:bg-red-900/30 hover:text-red-300 transition-all duration-300 overflow-hidden"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-nexus-red/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-900/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="relative flex items-center space-x-3">
                       <svg className="w-4 h-4 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
                       <span>Disconnect Neural Link</span>
-                      <div className="ml-auto w-1 h-1 bg-nexus-red rounded-full animate-pulse"></div>
+                      <div className="ml-auto w-1 h-1 bg-red-500 rounded-full animate-pulse"></div>
                     </div>
                   </button>
                 </div>
@@ -324,90 +338,80 @@ const Header = () => {
         )}
       </div>
 
-      {/* Mobile Navigation Menu */}
+      {/* Enhanced Mobile Navigation Menu - Fixed Background */}
       {user && mobileMenuOpen && (
         <div 
           ref={mobileMenuRef}
-          className="absolute top-full left-0 right-0 bg-nexus-dark/95 backdrop-blur-xl border-b border-nexus-red/30 md:hidden z-40"
+          className="absolute top-full left-0 right-0 bg-black/95 backdrop-blur-2xl border-b border-red-800/50 md:hidden z-40 transform transition-all duration-300 ease-out shadow-2xl"
+          style={{
+            animation: 'slideDown 0.3s ease-out'
+          }}
         >
-          <nav className="flex flex-col py-4">
-            <button
-              onClick={() => {
-                handleNavigation("/browse");
-                setMobileMenuOpen(false);
-              }}
-              className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 ${
-                isActive("/browse") ? "text-orange-400 bg-orange-400/10" : "text-nexus-text hover:text-orange-400 hover:bg-orange-400/5"
-              }`}
-            >
-              HOME
-            </button>
-            
-            <button
-              onClick={() => {
-                handleNavigation("/movies");
-                setMobileMenuOpen(false);
-              }}
-              className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 ${
-                isActive("/movies") ? "text-yellow-400 bg-yellow-400/10" : "text-nexus-text hover:text-yellow-400 hover:bg-yellow-400/5"
-              }`}
-            >
-              MOVIES
-            </button>
-            
-            <button
-              onClick={() => {
-                handleNavigation("/tv-shows");
-                setMobileMenuOpen(false);
-              }}
-              className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 ${
-                isActive("/tv-shows") ? "text-green-400 bg-green-400/10" : "text-nexus-text hover:text-green-400 hover:bg-green-400/5"
-              }`}
-            >
-              SERIES
-            </button>
-            
-            <button
-              onClick={() => {
-                handleNavigation("/manga");
-                setMobileMenuOpen(false);
-              }}
-              className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 ${
-                isActive("/manga") ? "text-purple-400 bg-purple-400/10" : "text-nexus-text hover:text-purple-400 hover:bg-purple-400/5"
-              }`}
-            >
-              MANGA
-            </button>
-            
-            <button
-              onClick={() => {
-                handleNavigation("/vault");
-                setMobileMenuOpen(false);
-              }}
-              className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 ${
-                isActive("/vault") || isActive("/my-list") ? "text-pink-400 bg-pink-400/10" : "text-nexus-text hover:text-pink-400 hover:bg-pink-400/5"
-              }`}
-            >
-              VAULT
-            </button>
-            
-            <button
-              onClick={() => {
-                handleNavigation("/neural-chat");
-                setMobileMenuOpen(false);
-              }}
-              className={`px-6 py-3 text-left font-['Arvo',serif] transition-all duration-300 flex items-center space-x-2 ${
-                isActive("/neural-chat") ? "text-cyan-400 bg-cyan-400/10" : "text-nexus-text hover:text-cyan-400 hover:bg-cyan-400/5"
-              }`}
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-              <span>NEURAL AI</span>
-            </button>
+          <nav className="flex flex-col py-2">
+            {[
+              { path: "/browse", label: "HOME", icon: "🏠", color: "orange" },
+              { path: "/movies", label: "MOVIES", icon: "🎬", color: "yellow" },
+              { path: "/tv-shows", label: "SERIES", icon: "📺", color: "green" },
+              { path: "/vault", label: "VAULT", icon: "🗃️", color: "pink" },
+              { path: "/neural-chat", label: "NEURAL AI", icon: "🧠", color: "cyan" }
+            ].map((item, index) => (
+              <button
+                key={item.path}
+                onClick={() => {
+                  handleNavigation(item.path);
+                  setMobileMenuOpen(false);
+                }}
+                className={`px-4 py-4 text-left font-['Arvo',serif] transition-all duration-300 flex items-center space-x-3 hover:scale-105 transform ${
+                  isActive(item.path) 
+                    ? `text-${item.color}-400 bg-black/80 border-l-4 border-${item.color}-400` 
+                    : `text-nexus-text hover:text-${item.color}-400 hover:bg-black/60 hover:border-l-4 hover:border-${item.color}-400/50`
+                }`}
+                style={{
+                  animationDelay: `${index * 0.1}s`,
+                  animation: 'slideInLeft 0.3s ease-out forwards'
+                }}
+              >
+                <span className="text-xl">{item.icon}</span>
+                <span className="font-medium">{item.label}</span>
+                {isActive(item.path) && (
+                  <div className={`ml-auto w-2 h-2 bg-${item.color}-400 rounded-full animate-pulse`}></div>
+                )}
+              </button>
+            ))}
           </nav>
+
+          {/* Mobile Menu Footer - Enhanced Background */}
+          <div className="border-t border-red-800/40 p-4 text-center bg-black/70">
+            <div className="text-xs text-gray-400 font-['JetBrains_Mono',monospace]">
+              NEXUS Mobile Interface v2.0
+            </div>
+          </div>
         </div>
       )}
+
+      {/* Custom Mobile Animation Styles */}
+      <style>{`
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes slideInLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+      `}</style>
     </header>
   );
 };
