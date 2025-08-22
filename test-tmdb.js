@@ -1,8 +1,16 @@
 // Quick test to verify TMDB API connectivity
-const TMDB_API_KEY = 'dc36900a16e14b924c96e065225b935b';
+// NOTE: Replace YOUR_API_KEY_HERE with your actual TMDB API key for testing
+const TMDB_API_KEY = 'YOUR_API_KEY_HERE';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
 async function testTMDB() {
+  // Safety check to prevent running with placeholder API key
+  if (TMDB_API_KEY === 'YOUR_API_KEY_HERE' || !TMDB_API_KEY || TMDB_API_KEY.length < 10) {
+    console.error('❌ Please replace YOUR_API_KEY_HERE with your actual TMDB API key');
+    console.log('Get your API key from: https://www.themoviedb.org/settings/api');
+    return false;
+  }
+
   try {
     console.log('Testing TMDB API connectivity...');
     const response = await fetch(`${TMDB_BASE}/movie/popular?api_key=${TMDB_API_KEY}&language=en-US&page=1`);

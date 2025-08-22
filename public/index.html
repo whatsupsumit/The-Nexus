@@ -354,6 +354,94 @@
         );
       })();
     </script>
+    
+    <script>
+      // Additional protection against disable-devtool and external scripts
+      (function() {
+        'use strict';
+        
+        // Block additional problematic URLs including disable-devtool
+        const BLOCKED_URLS = [
+          'theajack.github.io',
+          'disable-devtool',
+          'cordClip',
+          'jwplayer',
+          'adnxs.com',
+          'adsystem.google.com',
+          'doubleclick.net',
+          'google-analytics.com',
+          'googlesyndication.com'
+        ];
+        
+        // Enhanced fetch blocking
+        if (window.fetch) {
+          const originalFetch = window.fetch;
+          window.fetch = function(url, options) {
+            if (typeof url === 'string') {
+              const shouldBlock = BLOCKED_URLS.some(blocked => url.includes(blocked));
+              if (shouldBlock) {
+                console.log('[NEXUS] Blocked external request:', url);
+                return Promise.reject(new Error('External request blocked by NEXUS'));
+              }
+            }
+            return originalFetch.apply(this, arguments);
+          };
+        }
+
+        // Enhanced XMLHttpRequest blocking
+        if (window.XMLHttpRequest) {
+          const originalXHROpen = XMLHttpRequest.prototype.open;
+          XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+            if (typeof url === 'string') {
+              const shouldBlock = BLOCKED_URLS.some(blocked => url.includes(blocked));
+              if (shouldBlock) {
+                console.log('[NEXUS] Blocked XHR external request:', url);
+                return;
+              }
+            }
+            return originalXHROpen.apply(this, arguments);
+          };
+        }
+
+        // Block dynamic script creation for external URLs
+        const originalCreateElement = document.createElement;
+        document.createElement = function(tagName) {
+          const element = originalCreateElement.apply(this, arguments);
+          if (tagName.toLowerCase() === 'script') {
+            const originalSetSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
+            Object.defineProperty(element, 'src', {
+              set: function(value) {
+                if (typeof value === 'string') {
+                  const shouldBlock = BLOCKED_URLS.some(blocked => value.includes(blocked));
+                  if (shouldBlock) {
+                    console.log('[NEXUS] Blocked dynamic script:', value);
+                    return;
+                  }
+                }
+                originalSetSrc.set.call(this, value);
+              },
+              get: function() {
+                return originalSetSrc.get.call(this);
+              }
+            });
+          }
+          return element;
+        };
+
+        // Clear any problematic cache entries
+        if ('caches' in window) {
+          caches.keys().then(function(cacheNames) {
+            cacheNames.forEach(function(cacheName) {
+              if (cacheName.includes('disable-devtool') || cacheName.includes('theajack')) {
+                caches.delete(cacheName);
+                console.log('[NEXUS] Cleared problematic cache:', cacheName);
+              }
+            });
+          });
+        }
+
+        console.log('[NEXUS] External script protection activated');
+      })();
     </script>
   </head>
   <body>

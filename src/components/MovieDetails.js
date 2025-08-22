@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getMovieDetails, getMovieCredits, getMovieVideos, getMovieRecommendations } from '../utils/vidsrcApi';
 import { safeOpenExternal } from '../utils/safeNavigation';
 import VideoPlayer from './VideoPlayer';
@@ -7,12 +7,11 @@ import VideoPlayer from './VideoPlayer';
 const MovieDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [movie, setMovie] = useState(location.state?.movie || null);
+  const [movie, setMovie] = useState(null); // Always start with null to force fresh data load
   const [credits, setCredits] = useState({ cast: [], crew: [] });
   const [videos, setVideos] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
-  const [loading, setLoading] = useState(!movie);
+  const [loading, setLoading] = useState(true); // Always start loading
   const [showPlayer, setShowPlayer] = useState(false);
   const [isInVault, setIsInVault] = useState(false);
   const [backgroundVisible, setBackgroundVisible] = useState(false);
@@ -23,15 +22,17 @@ const MovieDetails = () => {
         setLoading(true);
         setBackgroundVisible(false); // Reset background on navigation
         
+        // Clear previous data when navigating to a new movie
+        setMovie(null);
+        setCredits({ cast: [], crew: [] });
+        setVideos([]);
+        setRecommendations([]);
+        
         // Use efficient loading strategy
         const promises = [];
         
-        // Load movie details first if not available
-        if (!movie) {
-          promises.push(getMovieDetails(id));
-        } else {
-          promises.push(Promise.resolve(movie));
-        }
+        // Always load fresh movie details for the new ID
+        promises.push(getMovieDetails(id));
         
         // Load additional data in parallel
         promises.push(getMovieCredits(id));
@@ -69,7 +70,7 @@ const MovieDetails = () => {
     if (id) {
       loadMovieData();
     }
-  }, [id, movie]);
+  }, [id]); // Remove movie from dependencies to always fetch fresh data
 
   const handlePlayMovie = () => {
     setShowPlayer(true);

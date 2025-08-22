@@ -147,7 +147,7 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-black font-['JetBrains_Mono',monospace] overflow-hidden">
+    <div className="relative h-screen w-full bg-gradient-to-br from-black via-gray-900 to-black font-['JetBrains_Mono',monospace] overflow-hidden">
       {/* Enhanced Background with Parallax Effect */}
       <div className="absolute inset-0 w-full h-full">
         <div
@@ -175,27 +175,27 @@ const Login = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-red-900/20 to-black/90" />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50" />
 
-      {/* Ultra Responsive Main Content Area */}
-      <div className="relative flex flex-col lg:flex-row min-h-screen z-20 pt-4 sm:pt-8 lg:pt-16 pb-8 sm:pb-16 lg:pb-0">
+      {/* Ultra Responsive Main Content Area - Account for header height */}
+      <div className="relative flex flex-col lg:flex-row h-full z-20 pt-16 sm:pt-20 md:pt-24 lg:pt-20 xl:pt-24">
         {/* Left Side - Ultra Responsive Hero Content */}
-        <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 py-6 sm:py-12 lg:py-8">
-          <div className="max-w-3xl mx-auto lg:mx-0 mt-4 sm:mt-8 lg:mt-0">
+        <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 py-2 sm:py-4 lg:py-6 overflow-y-auto">
+          <div className="max-w-lg lg:max-w-xl mx-auto lg:mx-0 lg:mr-4">
             {/* Ultra Responsive Main Headline */}
-            <div className="mb-6 sm:mb-8 lg:mb-12 text-center lg:text-left">
-              <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-3 sm:mb-6 leading-tight tracking-wider animate-fade-in"
+            <div className="mb-3 sm:mb-4 lg:mb-6 text-center lg:text-left">
+              <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-2 sm:mb-4 leading-tight tracking-wider animate-fade-in"
                   style={{
                     textShadow: "0 0 30px rgba(255, 20, 35, 0.5), 0 0 60px rgba(255, 20, 35, 0.3)"
                   }}>
                 STREAM THE
-                <span className="text-red-400 block mt-1 sm:mt-2 animate-fade-in-delayed">FUTURE</span>
+                <span className="text-red-400 block mt-1 animate-fade-in-delayed">FUTURE</span>
               </h1>
-              <p className="text-base sm:text-xl md:text-2xl lg:text-3xl text-gray-300 mb-4 sm:mb-8 leading-relaxed animate-fade-in-delayed-2">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-300 mb-2 sm:mb-4 leading-relaxed animate-fade-in-delayed-2">
                 Access unlimited movies and TV shows on demand
               </p>
             </div>
 
-            {/* Ultra Responsive Feature Cards */}
-            <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8 lg:mb-12">
+            {/* Ultra Responsive Feature Cards - Compact 2x2 Grid */}
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-3 sm:mb-4 lg:mb-6">
               {[
                 {
                   icon: (
@@ -236,16 +236,16 @@ const Login = () => {
               ].map((feature, index) => (
                 <div 
                   key={index}
-                  className="bg-black/40 backdrop-blur-xl border border-red-900/30 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-5 hover:bg-black/60 hover:border-red-500/50 transition-all duration-300 group animate-fade-in-delayed-3"
+                  className="bg-black/40 backdrop-blur-xl border border-red-900/30 rounded-lg p-2 sm:p-3 lg:p-4 hover:bg-black/60 hover:border-red-500/50 transition-all duration-300 group animate-fade-in-delayed-3"
                   style={{ animationDelay: `${0.1 * index}s` }}
                 >
-                  <div className="flex items-center space-x-2 sm:space-x-3 mb-2 sm:mb-3">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-600/20 rounded-full flex items-center justify-center group-hover:bg-red-600/30 transition-colors duration-300">
+                  <div className="flex items-center space-x-2 mb-1 sm:mb-2">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-red-600/20 rounded-full flex items-center justify-center group-hover:bg-red-600/30 transition-colors duration-300">
                       {feature.icon}
                     </div>
-                    <h3 className="text-white font-bold text-sm sm:text-base lg:text-lg">{feature.title}</h3>
+                    <h3 className="text-white font-bold text-xs sm:text-sm lg:text-base">{feature.title}</h3>
                   </div>
-                  <p className="text-gray-400 text-xs sm:text-sm lg:text-base leading-relaxed">
+                  <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
                     {feature.desc}
                   </p>
                 </div>
@@ -253,9 +253,9 @@ const Login = () => {
             </div>
 
             {/* Simplified Call to Action */}
-            <div className="mb-6 text-center lg:text-left animate-fade-in-delayed-4">
-              <div className="flex items-center justify-center lg:justify-start space-x-3 text-sm text-gray-400">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <div className="mb-2 sm:mb-3 text-center lg:text-left animate-fade-in-delayed-4">
+              <div className="flex items-center justify-center lg:justify-start space-x-2 text-xs sm:text-sm text-gray-400">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse"></div>
                 <span>Streaming servers online • Platform ready</span>
               </div>
             </div>
@@ -263,44 +263,44 @@ const Login = () => {
         </div>
 
         {/* Right Side - Ultra Responsive Login Form */}
-        <div className="w-full lg:w-2/5 xl:w-1/3 flex items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8 mt-4 sm:mt-8 lg:mt-0">
-          <div className="relative w-full max-w-xs sm:max-w-md mt-2 sm:mt-4 lg:mt-0">
+        <div className="w-full lg:w-2/5 xl:w-1/3 flex items-start lg:items-center justify-center p-2 sm:p-4 md:p-4 lg:p-4 overflow-y-auto pt-4 sm:pt-6 lg:pt-8">
+          <div className="relative w-full max-w-xs sm:max-w-sm lg:ml-4">
             {/* Ultra Responsive Animated Background Elements */}
-            <div className="absolute -inset-0.5 sm:-inset-1 bg-gradient-to-r from-red-600 to-red-800 rounded-xl sm:rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600 to-red-800 rounded-xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
             
             <form
               onSubmit={(e) => e.preventDefault()}
-              className="relative bg-black/70 sm:bg-black/80 backdrop-blur-2xl p-4 sm:p-6 md:p-8 lg:p-10 rounded-xl sm:rounded-2xl shadow-2xl border border-red-900/30 hover:border-red-500/50 transition-all duration-500 animate-fade-in-delayed-2"
+              className="relative bg-black/70 sm:bg-black/80 backdrop-blur-2xl p-3 sm:p-4 md:p-5 lg:p-6 rounded-xl shadow-2xl border border-red-900/30 hover:border-red-500/50 transition-all duration-500 animate-fade-in-delayed-2"
             >
               {/* Ultra Responsive Header */}
-              <div className="relative z-10 mb-6 sm:mb-8">
-                <div className="text-center mb-4 sm:mb-6">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-red-600 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg shadow-red-500/25">
-                    <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="relative z-10 mb-3 sm:mb-4">
+                <div className="text-center mb-2 sm:mb-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-red-600 rounded-xl flex items-center justify-center mx-auto mb-1 sm:mb-2 shadow-lg shadow-red-500/25">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h2 className="text-white text-xl sm:text-2xl md:text-3xl font-bold text-center tracking-wider mb-2 sm:mb-3">
+                  <h2 className="text-white text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-center tracking-wider mb-1">
                     {isSignInForm ? "SIGN IN" : "CREATE ACCOUNT"}
                   </h2>
-                  <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-red-400 to-transparent mb-3 sm:mb-4"></div>
-                  <p className="text-gray-400 text-center text-xs sm:text-sm md:text-base">
+                  <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-red-400 to-transparent mb-1 sm:mb-2"></div>
+                  <p className="text-gray-400 text-center text-xs sm:text-sm">
                     {isSignInForm ? "Enter your credentials to continue" : "Join the streaming revolution"}
                   </p>
                 </div>
               </div>
 
               {/* Ultra Responsive Form Fields */}
-              <div className="relative z-10 flex flex-col gap-3 sm:gap-4 lg:gap-5">
+              <div className="relative z-10 flex flex-col gap-2 sm:gap-2.5 lg:gap-3">
                 {!isSignInForm && (
                   <div className="relative group">
                     <input
                       ref={nameRef}
                       type="text"
                       placeholder="Full Name"
-                      className="w-full p-3 sm:p-4 bg-gray-900/90 backdrop-blur-sm rounded-lg sm:rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
+                      className="w-full p-2 sm:p-2.5 lg:p-3 bg-gray-900/90 backdrop-blur-sm rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
                     />
-                    <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
                 )}
                 
@@ -309,9 +309,9 @@ const Login = () => {
                     ref={emailRef}
                     type="email"
                     placeholder="Email Address"
-                    className="w-full p-3 sm:p-4 bg-gray-900/90 backdrop-blur-sm rounded-lg sm:rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
+                    className="w-full p-2 sm:p-2.5 lg:p-3 bg-gray-900/90 backdrop-blur-sm rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
                   />
-                  <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
                 
                 <div className="relative group">
@@ -319,15 +319,15 @@ const Login = () => {
                     ref={passwordRef}
                     type="password"
                     placeholder="Password"
-                    className="w-full p-3 sm:p-4 bg-gray-900/90 backdrop-blur-sm rounded-lg sm:rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
+                    className="w-full p-2 sm:p-2.5 lg:p-3 bg-gray-900/90 backdrop-blur-sm rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
                   />
-                  <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
                 
                 {errorMessage && (
-                  <div className="relative p-3 sm:p-4 bg-red-900/30 border border-red-500/50 rounded-lg sm:rounded-xl backdrop-blur-sm animate-fade-in">
+                  <div className="relative p-2 sm:p-2.5 lg:p-3 bg-red-900/30 border border-red-500/50 rounded-lg backdrop-blur-sm animate-fade-in">
                     <div className="flex items-start space-x-2">
-                      <svg className="w-4 h-4 sm:w-5 sm:h-5 text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 18.5c-.77.833.192 2.5 1.732 2.5z" />
                       </svg>
                       <p className="text-red-400 text-xs sm:text-sm font-bold leading-tight">
@@ -338,23 +338,23 @@ const Login = () => {
                 )}
                 
                 {/* Ultra Responsive Action Button */}
-                <div className="relative mt-4 sm:mt-6">
+                <div className="relative mt-2 sm:mt-3">
                   <button
-                    className="w-full p-3 sm:p-4 bg-red-600 hover:bg-red-700 rounded-lg sm:rounded-xl text-white font-bold text-sm sm:text-base lg:text-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-500/25 hover:shadow-red-500/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    className="w-full p-2 sm:p-2.5 lg:p-3 bg-red-600 hover:bg-red-700 rounded-lg text-white font-bold text-sm sm:text-base transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-500/25 hover:shadow-red-500/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                     onClick={handleButtonClick}
                     disabled={isLoading}
                   >
                     {isLoading ? (
                       <>
-                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        <span className="text-xs sm:text-sm lg:text-base">PROCESSING...</span>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        <span className="text-xs sm:text-sm">PROCESSING...</span>
                       </>
                     ) : (
                       <>
-                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                         </svg>
-                        <span className="text-xs sm:text-sm lg:text-base">{isSignInForm ? "SIGN IN" : "CREATE ACCOUNT"}</span>
+                        <span className="text-xs sm:text-sm">{isSignInForm ? "SIGN IN" : "CREATE ACCOUNT"}</span>
                       </>
                     )}
                   </button>
@@ -362,38 +362,35 @@ const Login = () => {
               </div>
 
               {/* Ultra Responsive Footer Options */}
-              <div className="relative z-10 flex flex-col xs:flex-row justify-between items-center text-xs sm:text-sm mt-4 sm:mt-6 space-y-2 xs:space-y-0">
+              <div className="relative z-10 flex flex-col xs:flex-row justify-between items-center text-xs mt-2 sm:mt-3 space-y-1 xs:space-y-0">
                 <label className="flex items-center text-gray-400 cursor-pointer group">
                   <input
                     type="checkbox"
-                    className="form-checkbox h-3 w-3 sm:h-4 sm:w-4 text-red-600 rounded border-gray-600 focus:ring-red-500 mr-2 sm:mr-3 bg-gray-800 transition-colors duration-300"
+                    className="form-checkbox h-3 w-3 text-red-600 rounded border-gray-600 focus:ring-red-500 mr-2 bg-gray-800 transition-colors duration-300"
                   />
                   <span className="group-hover:text-red-400 transition-colors duration-300">
-                    <span className="hidden sm:inline">Remember me</span>
-                    <span className="sm:hidden">Remember</span>
+                    Remember me
                   </span>
                 </label>
                 <button
                   type="button"
                   className="text-gray-400 hover:text-red-400 bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
                 >
-                  <span className="hidden sm:inline">Need Help?</span>
-                  <span className="sm:hidden">Help?</span>
+                  Need Help?
                 </button>
               </div>
 
               {/* Sign Up Instructions */}
               {!isSignInForm && (
-                <div className="relative z-10 mt-4 sm:mt-6 p-3 sm:p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
-                  <div className="flex items-start space-x-2 sm:space-x-3">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="relative z-10 mt-2 sm:mt-3 p-2 sm:p-2.5 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                  <div className="flex items-start space-x-2">
+                    <svg className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <div className="text-xs sm:text-sm text-blue-300">
+                    <div className="text-xs text-blue-300">
                       <p className="font-medium mb-1">Demo Account Info:</p>
                       <p className="text-blue-200/80">
-                        You can use any random email and password for testing. 
-                        <span className="block sm:inline sm:ml-1">No real verification required!</span>
+                        You can use any random email and password for testing. No real verification required!
                       </p>
                     </div>
                   </div>
@@ -401,15 +398,10 @@ const Login = () => {
               )}
 
               {/* Ultra Responsive Toggle Section */}
-              <div className="relative z-10 mt-6 sm:mt-8 text-center">
-                <div className="w-full h-px bg-gray-700/50 mb-4 sm:mb-6"></div>
-                <p className="text-gray-400 mb-3 sm:mb-4 text-xs sm:text-sm">
-                  <span className="hidden sm:inline">
-                    {isSignInForm ? "Don't have an account?" : "Already have an account?"}
-                  </span>
-                  <span className="sm:hidden">
-                    {isSignInForm ? "No account?" : "Have account?"}
-                  </span>{" "}
+              <div className="relative z-10 mt-3 sm:mt-4 text-center">
+                <div className="w-full h-px bg-gray-700/50 mb-2 sm:mb-3"></div>
+                <p className="text-gray-400 mb-1 sm:mb-2 text-xs">
+                  {isSignInForm ? "Don't have an account?" : "Already have an account?"}{" "}
                   <button
                     type="button"
                     className="text-red-400 hover:text-red-300 font-bold bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
@@ -418,15 +410,13 @@ const Login = () => {
                     {isSignInForm ? "Sign Up" : "Sign In"}
                   </button>
                 </p>
-                <p className="text-xs text-gray-500 px-1 sm:px-2">
-                  <span className="hidden sm:inline">Secure & encrypted with industry standards.</span>
-                  <span className="sm:hidden">Secure & encrypted.</span>{" "}
+                <p className="text-xs text-gray-500">
+                  Secure & encrypted.{" "}
                   <button
                     type="button"
                     className="text-red-400 hover:text-red-300 bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
                   >
-                    <span className="hidden sm:inline">Privacy Policy</span>
-                    <span className="sm:hidden">Privacy</span>
+                    Privacy
                   </button>
                 </p>
               </div>
@@ -436,11 +426,10 @@ const Login = () => {
       </div>
 
       {/* Ultra Responsive Bottom Footer */}
-      <div className="absolute bottom-0 left-0 right-0 z-40 p-2 sm:p-4 bg-gradient-to-t from-black/80 to-transparent">
+      <div className="absolute bottom-0 left-0 right-0 z-40 p-2 bg-gradient-to-t from-black/80 to-transparent">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="text-xs sm:text-sm text-gray-400">
-            <span className="hidden sm:inline">© 2025 NEXUS Streaming • Premium Entertainment Platform</span>
-            <span className="sm:hidden">© 2025 NEXUS • Premium Streaming</span>
+          <div className="text-xs text-gray-400">
+            © 2025 NEXUS • Premium Streaming
           </div>
         </div>
       </div>
