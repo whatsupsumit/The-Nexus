@@ -324,7 +324,7 @@ const Login = () => {
                   <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
                 
-                {/* Password Requirements for Sign Up */}
+                {/* Password Requirements for Sign Up - Updated validation display */}
                 {!isSignInForm && (
                   <div className="bg-gray-900/50 border border-gray-700/30 rounded-lg p-2 sm:p-3 backdrop-blur-sm">
                     <p className="text-gray-400 text-xs sm:text-sm font-medium mb-1 sm:mb-2">Password Requirements:</p>
