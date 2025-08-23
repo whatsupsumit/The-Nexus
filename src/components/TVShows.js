@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchPopularTV, fetchTopRatedTV, fetchTrendingTV, searchContent } from '../utils/vidsrcApi';
+import { detectDevice, mobileCache } from '../utils/mobileApiHelper';
 import MovieCard from './MovieCard';
 import VideoPlayer from './VideoPlayer';
 
@@ -17,6 +18,56 @@ const TVShows = () => {
   const [activeFilter, setActiveFilter] = useState('popular');
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [selectedEpisode, setSelectedEpisode] = useState(1);
+  const [mobileStatus, setMobileStatus] = useState({ isMobile: false, connectionType: 'unknown', isOffline: false });
+
+  // Initialize mobile detection and network monitoring
+  useEffect(() => {
+    const device = detectDevice();
+    setMobileStatus({
+      isMobile: device.isMobile,
+      connectionType: device.connectionType,
+      isOffline: !navigator.onLine
+    });
+
+    // Mobile-specific network listeners for TV shows
+    if (device.isMobile) {
+      const handleOnline = () => {
+        setMobileStatus(prev => ({ ...prev, isOffline: false }));
+        console.log('📱 Mobile device came online, refreshing TV show data...');
+        setIsDataCached(false); // Force refresh when coming online
+      };
+
+      const handleOffline = () => {
+        setMobileStatus(prev => ({ ...prev, isOffline: true }));
+        console.log('📱 Mobile device went offline, using cached TV show data...');
+      };
+
+      const handleConnectionChange = () => {
+        if (navigator.connection) {
+          setMobileStatus(prev => ({ 
+            ...prev, 
+            connectionType: navigator.connection.effectiveType 
+          }));
+          console.log('📱 Mobile TV connection changed to:', navigator.connection.effectiveType);
+        }
+      };
+
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
+      
+      if (navigator.connection) {
+        navigator.connection.addEventListener('change', handleConnectionChange);
+      }
+
+      return () => {
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+        if (navigator.connection) {
+          navigator.connection.removeEventListener('change', handleConnectionChange);
+        }
+      };
+    }
+  }, []);
 
   useEffect(() => {
     const loadShows = async () => {
@@ -29,33 +80,62 @@ const TVShows = () => {
       setLoading(true);
       try {
         let showData = [];
+        let response = {};
+        
+        // Mobile-optimized loading with enhanced error handling for TV shows
         switch (activeFilter) {
           case 'trending':
-            const trendingResponse = await fetchTrendingTV();
-            showData = trendingResponse.results || [];
+            response = await fetchTrendingTV();
+            showData = response.results || [];
             break;
           case 'top_rated':
-            const topRatedResponse = await fetchTopRatedTV();
-            showData = topRatedResponse.results || [];
+            response = await fetchTopRatedTV();
+            showData = response.results || [];
             break;
           default:
-            const popularResponse = await fetchPopularTV();
-            showData = popularResponse.results || [];
+            response = await fetchPopularTV();
+            showData = response.results || [];
         }
+
+        // Show user feedback for mobile fallback data
+        if (response.isMockData && mobileStatus.isMobile) {
+          console.log('📱 Using offline TV show content for mobile device');
+        }
+        
         setShows(showData);
         setFilteredShows(showData);
         setIsDataCached(true); // Mark as cached
+
+        // Cache data for mobile devices
+        if (mobileStatus.isMobile && showData.length > 0) {
+          mobileCache.set(`tvshows_${activeFilter}`, showData, 600000); // 10 minutes
+        }
+        
       } catch (error) {
         console.error('Error loading TV shows:', error);
-        setShows([]);
-        setFilteredShows([]);
+        
+        // Mobile fallback - try to use any cached data
+        if (mobileStatus.isMobile) {
+          const cachedData = mobileCache.get(`tvshows_${activeFilter}`);
+          if (cachedData && cachedData.length > 0) {
+            console.log('📱 Using emergency TV show cache for mobile');
+            setShows(cachedData);
+            setFilteredShows(cachedData);
+          } else {
+            setShows([]);
+            setFilteredShows([]);
+          }
+        } else {
+          setShows([]);
+          setFilteredShows([]);
+        }
       } finally {
         setLoading(false);
       }
     };
     
     loadShows();
-  }, [activeFilter, isDataCached, shows.length]);
+  }, [activeFilter, isDataCached, shows.length, mobileStatus.isMobile]);
 
   // Add keyboard shortcuts
   useEffect(() => {
@@ -161,6 +241,29 @@ const TVShows = () => {
 
         {/* Search Bar */}
         <div className="max-w-3xl mb-8">
+          {/* Mobile Status Indicator for TV Shows */}
+          {mobileStatus.isMobile && (
+            <div className="mb-4 p-3 bg-black/40 backdrop-blur-sm border border-blue-500/30 rounded-lg">
+              <div className="flex items-center justify-between text-sm font-['JetBrains_Mono',monospace]">
+                <div className="flex items-center space-x-2">
+                  <span className="text-blue-400">📱</span>
+                  <span className="text-gray-300">Mobile TV Mode</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-1">
+                    <div className={`w-2 h-2 rounded-full ${mobileStatus.isOffline ? 'bg-red-400' : 'bg-green-400'}`}></div>
+                    <span className={mobileStatus.isOffline ? 'text-red-400' : 'text-green-400'}>
+                      {mobileStatus.isOffline ? 'Offline' : 'Online'}
+                    </span>
+                  </div>
+                  {!mobileStatus.isOffline && (
+                    <span className="text-purple-400">{mobileStatus.connectionType}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className="relative group">
             <input
               type="text"

@@ -5,6 +5,10 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+  <!-- Block theajack.github.io and disable-devtool at DNS level -->
+  <meta http-equiv="Permissions-Policy" content="sync-xhr=(self), camera=(), microphone=(), geolocation=()">
+  <!-- Enhanced Content Security Policy to block disable-devtool and cordClip -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob: *; connect-src 'self' https: http: data: blob: wss: ws: * !theajack.github.io; img-src 'self' https: http: data: blob: *; font-src 'self' https: http: data: *; style-src 'self' 'unsafe-inline' https: http: *; frame-src 'self' https: http: *; child-src 'self' https: http: blob: data: *; worker-src 'self' blob: data: *; object-src 'none'; base-uri 'self'; form-action 'self' https: http:; frame-ancestors 'self' https: http:;">
   <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000" />
@@ -33,6 +37,89 @@
     
     <!-- NEXUS Error Suppression System -->
     <script>
+      // IMMEDIATE cordClip/disable-devtool blocking - Execute before anything else
+      (function() {
+        'use strict';
+        
+        // Immediate cordClip error suppression
+        const originalError = console.error;
+        console.error = function(...args) {
+          const message = args.join(' ');
+          if (message.includes('cordClip') || 
+              message.includes('theajack.github.io') || 
+              message.includes('disable-devtool') ||
+              message.includes('ERR_ABORTED 404')) {
+            // Silent suppression for cordClip errors
+            return;
+          }
+          originalError.apply(console, args);
+        };
+        
+        // Block all network requests to theajack.github.io immediately
+        if (window.fetch) {
+          const originalFetch = window.fetch;
+          window.fetch = function(url, options) {
+            if (typeof url === 'string' && (
+              url.includes('theajack.github.io') ||
+              url.includes('cordClip') ||
+              url.includes('disable-devtool')
+            )) {
+              console.log('[NEXUS] Blocked cordClip/disable-devtool fetch:', url);
+              return Promise.reject(new Error('Network request blocked by NEXUS security'));
+            }
+            return originalFetch.apply(this, arguments);
+          };
+        }
+        
+        // Block XMLHttpRequest for cordClip
+        if (window.XMLHttpRequest) {
+          const originalXHROpen = XMLHttpRequest.prototype.open;
+          XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+            if (typeof url === 'string' && (
+              url.includes('theajack.github.io') ||
+              url.includes('cordClip') ||
+              url.includes('disable-devtool')
+            )) {
+              console.log('[NEXUS] Blocked cordClip XHR request:', url);
+              // Create a fake successful response
+              setTimeout(() => {
+                this.readyState = 4;
+                this.status = 404;
+                this.statusText = 'Blocked by NEXUS';
+                this.responseText = '';
+                if (this.onreadystatechange) this.onreadystatechange();
+                if (this.onerror) this.onerror();
+              }, 1);
+              return;
+            }
+            return originalXHROpen.apply(this, arguments);
+          };
+        }
+        
+        // Block dynamic script injection for cordClip
+        if (document.createElement) {
+          const originalCreateElement = document.createElement;
+          document.createElement = function(tagName) {
+            const element = originalCreateElement.apply(this, arguments);
+            if (tagName === 'script') {
+              const originalSetAttribute = element.setAttribute;
+              element.setAttribute = function(name, value) {
+                if (name === 'src' && typeof value === 'string' && (
+                  value.includes('theajack.github.io') ||
+                  value.includes('cordClip') ||
+                  value.includes('disable-devtool')
+                )) {
+                  console.log('[NEXUS] Blocked cordClip script injection:', value);
+                  return;
+                }
+                return originalSetAttribute.apply(this, arguments);
+              };
+            }
+            return element;
+          };
+        }
+      })();
+      
       // Immediate Google Tag Manager protection - Execute ASAP
       (function() {
         'use strict';
@@ -130,6 +217,13 @@
         
         // Comprehensive error suppression for video player and external services
         const NEXUS_SUPPRESSED_PATTERNS = [
+          'cordClip',
+          'disable-devtool',
+          'theajack.github.io',
+          'ERR_ABORTED 404',
+          '404.html?h=vidsrc.xyz',
+          'net::ERR_ABORTED 404',
+          'Failed to load resource: the server responded with a status of 404',
           'ReferenceError: iwpzn8',
           'ReferenceError: cqwo4j',
           'ReferenceError: n7fhfw',
@@ -307,11 +401,20 @@
           window._nexusOriginalLog.apply(console, args);
         };
         
-        // Global error handler with enhanced googletag filtering
+        // Global error handler with enhanced cordClip filtering
         window.addEventListener('error', function(event) {
           const message = event.message || '';
           const source = event.filename || '';
           const stack = event.error?.stack || '';
+          
+          // Special handling for cordClip and disable-devtool errors
+          if (message.includes('cordClip') || message.includes('theajack.github.io') || 
+              message.includes('disable-devtool') || source.includes('theajack.github.io') ||
+              message.includes('ERR_ABORTED 404') || message.includes('net::ERR_ABORTED')) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+          }
           
           // Special handling for googletag errors
           if (message.includes('googletag') || message.includes('destroySlots') || 
@@ -356,12 +459,128 @@
     </script>
     
     <script>
-      // Additional protection against disable-devtool and external scripts
+      // Mobile-specific VidSrc cordClip blocking
       (function() {
         'use strict';
         
-        // Block additional problematic URLs including disable-devtool
-        const BLOCKED_URLS = [
+        // Detect mobile devices
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+          console.log('%c[NEXUS]%c Mobile device detected - Enhanced cordClip blocking enabled', 
+            'color: #ef4444; font-weight: bold; background: #1a1a1a; padding: 2px 6px; border-radius: 3px;', 
+            'color: #22c55e;'
+          );
+          
+          // Override XMLHttpRequest for mobile
+          const originalXMLHttpRequest = window.XMLHttpRequest;
+          window.XMLHttpRequest = function() {
+            const xhr = new originalXMLHttpRequest();
+            const originalOpen = xhr.open;
+            
+            xhr.open = function(method, url, ...args) {
+              if (url && (url.includes('cordClip') || url.includes('theajack.github.io') || url.includes('disable-devtool'))) {
+                console.log('🛡️ NEXUS Mobile: Blocked XHR request to', url);
+                // Create a fake successful response
+                xhr.status = 200;
+                xhr.readyState = 4;
+                xhr.responseText = '';
+                setTimeout(() => {
+                  if (xhr.onload) xhr.onload();
+                  if (xhr.onreadystatechange) xhr.onreadystatechange();
+                }, 0);
+                return;
+              }
+              return originalOpen.apply(this, [method, url, ...args]);
+            };
+            
+            return xhr;
+          };
+          
+          // Override fetch for mobile
+          const originalFetch = window.fetch;
+          window.fetch = function(url, options) {
+            if (url && (url.includes('cordClip') || url.includes('theajack.github.io') || url.includes('disable-devtool'))) {
+              console.log('🛡️ NEXUS Mobile: Blocked fetch request to', url);
+              return Promise.resolve(new Response('', { status: 200, statusText: 'OK' }));
+            }
+            return originalFetch.apply(this, arguments);
+          };
+          
+          // Block dynamic script creation on mobile
+          const originalCreateElement = document.createElement;
+          document.createElement = function(tagName) {
+            const element = originalCreateElement.call(this, tagName);
+            
+            if (tagName.toLowerCase() === 'script') {
+              const originalSetAttribute = element.setAttribute;
+              element.setAttribute = function(name, value) {
+                if (name === 'src' && value && (value.includes('cordClip') || value.includes('theajack.github.io') || value.includes('disable-devtool'))) {
+                  console.log('🛡️ NEXUS Mobile: Blocked script src', value);
+                  return;
+                }
+                return originalSetAttribute.call(this, name, value);
+              };
+              
+              const originalSrcSetter = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src') || 
+                                       Object.getOwnPropertyDescriptor(Element.prototype, 'src');
+              if (originalSrcSetter) {
+                Object.defineProperty(element, 'src', {
+                  get: function() {
+                    return originalSrcSetter.get.call(this);
+                  },
+                  set: function(value) {
+                    if (value && (value.includes('cordClip') || value.includes('theajack.github.io') || value.includes('disable-devtool'))) {
+                      console.log('🛡️ NEXUS Mobile: Blocked script src setter', value);
+                      return;
+                    }
+                    return originalSrcSetter.set.call(this, value);
+                  }
+                });
+              }
+            }
+            
+            // Enhanced iframe blocking for VidSrc
+            if (tagName.toLowerCase() === 'iframe') {
+              element.addEventListener('load', function() {
+                try {
+                  // Try to inject cordClip blocking into iframe
+                  if (this.contentWindow && this.src && this.src.includes('vidsrc')) {
+                    this.contentWindow.postMessage({
+                      type: 'NEXUS_MOBILE_BLOCK',
+                      patterns: ['cordClip', 'theajack.github.io', 'disable-devtool']
+                    }, '*');
+                  }
+                } catch (e) {
+                  // Cross-origin iframe, continue with external blocking
+                }
+              });
+            }
+            
+            return element;
+          };
+          
+          // Listen for iframe messages and block cordClip attempts
+          window.addEventListener('message', function(event) {
+            if (event.data && typeof event.data === 'string' && 
+                (event.data.includes('cordClip') || event.data.includes('disable-devtool'))) {
+              console.log('🛡️ NEXUS Mobile: Blocked iframe message', event.data);
+              event.preventDefault();
+              event.stopPropagation();
+              return false;
+            }
+          });
+        }
+      })();
+    </script>
+    
+    <script>
+      // Ultimate protection against disable-devtool and all external scripts
+      (function() {
+        'use strict';
+        
+        // Block ALL theajack.github.io domains and disable-devtool completely
+        const ULTIMATE_BLOCKED_DOMAINS = [
           'theajack.github.io',
           'disable-devtool',
           'cordClip',
@@ -370,32 +589,141 @@
           'adsystem.google.com',
           'doubleclick.net',
           'google-analytics.com',
-          'googlesyndication.com'
+          'googlesyndication.com',
+          'googletagmanager.com',
+          'gtm.js',
+          'analytics.js',
+          'ga.js',
+          'gpt.js'
         ];
         
-        // Enhanced fetch blocking
+        // Enhanced error suppression specifically for disable-devtool cordClip errors
+        const CORDCLIP_ERROR_PATTERNS = [
+          'cordClip',
+          'theajack.github.io',
+          'disable-devtool',
+          'ERR_ABORTED 404',
+          'net::ERR_ABORTED 404',
+          'net::ERR_CONNECTION_CLOSED',
+          'ERR_CONNECTION_CLOSED',
+          'Failed to load resource: net::ERR_ABORTED 404',
+          'Failed to load resource: net::ERR_CONNECTION_CLOSED',
+          '404.html?h=vidsrc.xyz',
+          'vidsrc.xyz:238',
+          'GET https://theajack.github.io/disable-devtool/cordClip'
+        ];
+        
+        // Monitor and block iframe content
+        function blockIframeRequests() {
+          // Override iframe creation to add load event listeners
+          const originalCreateElement = document.createElement;
+          document.createElement = function(tagName) {
+            const element = originalCreateElement.apply(this, arguments);
+            
+            if (tagName.toLowerCase() === 'iframe') {
+              element.addEventListener('load', function() {
+                try {
+                  // Try to access iframe content and block cordClip requests
+                  const iframeWindow = this.contentWindow;
+                  if (iframeWindow && iframeWindow.fetch) {
+                    const originalIframeFetch = iframeWindow.fetch;
+                    iframeWindow.fetch = function(url, options) {
+                      if (typeof url === 'string' && ULTIMATE_BLOCKED_DOMAINS.some(domain => url.includes(domain))) {
+                        console.log('[NEXUS] Blocked iframe fetch to:', url);
+                        return Promise.reject(new Error('Blocked by NEXUS iframe protection'));
+                      }
+                      return originalIframeFetch.apply(this, arguments);
+                    };
+                  }
+                } catch (e) {
+                  // Cross-origin iframe, can't access content
+                  console.log('[NEXUS] Cross-origin iframe detected, applying external monitoring');
+                }
+              });
+            }
+            
+            return element;
+          };
+        }
+        
+        // Block postMessage communications related to cordClip
+        function blockCordClipMessages() {
+          window.addEventListener('message', function(event) {
+            if (event.data && typeof event.data === 'string') {
+              const shouldBlock = CORDCLIP_ERROR_PATTERNS.some(pattern => 
+                event.data.includes(pattern)
+              );
+              if (shouldBlock) {
+                console.log('[NEXUS] Blocked cordClip postMessage:', event.data);
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+              }
+            }
+          }, true);
+        }
+        
+        // Initialize iframe and message blocking
+        blockIframeRequests();
+        blockCordClipMessages();
+        
+        // Store original console methods before overriding
+        const originalConsoleError = console.error;
+        const originalConsoleWarn = console.warn;
+        
+        // Override console.error to suppress cordClip errors
+        console.error = function(...args) {
+          const message = args.join(' ');
+          const shouldSuppress = CORDCLIP_ERROR_PATTERNS.some(pattern => 
+            message.toLowerCase().includes(pattern.toLowerCase())
+          );
+          if (shouldSuppress) {
+            // Silent suppression for cordClip errors
+            return;
+          }
+          originalConsoleError.apply(console, args);
+        };
+        
+        // Override console.warn to suppress cordClip warnings
+        console.warn = function(...args) {
+          const message = args.join(' ');
+          const shouldSuppress = CORDCLIP_ERROR_PATTERNS.some(pattern => 
+            message.toLowerCase().includes(pattern.toLowerCase())
+          );
+          if (shouldSuppress) {
+            return;
+          }
+          originalConsoleWarn.apply(console, args);
+        };
+        
+        // Override fetch to block problematic requests completely
         if (window.fetch) {
           const originalFetch = window.fetch;
           window.fetch = function(url, options) {
             if (typeof url === 'string') {
-              const shouldBlock = BLOCKED_URLS.some(blocked => url.includes(blocked));
+              const shouldBlock = ULTIMATE_BLOCKED_DOMAINS.some(blocked => 
+                url.toLowerCase().includes(blocked.toLowerCase())
+              );
               if (shouldBlock) {
-                console.log('[NEXUS] Blocked external request:', url);
-                return Promise.reject(new Error('External request blocked by NEXUS'));
+                console.log('[NEXUS] Ultimate block - Fetch request:', url);
+                return Promise.resolve(new Response('', { status: 204, statusText: 'Blocked by NEXUS' }));
               }
             }
             return originalFetch.apply(this, arguments);
           };
         }
 
-        // Enhanced XMLHttpRequest blocking
+        // Override XMLHttpRequest completely
         if (window.XMLHttpRequest) {
           const originalXHROpen = XMLHttpRequest.prototype.open;
           XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
             if (typeof url === 'string') {
-              const shouldBlock = BLOCKED_URLS.some(blocked => url.includes(blocked));
+              const shouldBlock = ULTIMATE_BLOCKED_DOMAINS.some(blocked => 
+                url.toLowerCase().includes(blocked.toLowerCase())
+              );
               if (shouldBlock) {
-                console.log('[NEXUS] Blocked XHR external request:', url);
+                console.log('[NEXUS] Ultimate block - XHR request:', url);
+                // Return empty function to prevent execution
                 return;
               }
             }
@@ -403,44 +731,116 @@
           };
         }
 
-        // Block dynamic script creation for external URLs
-        const originalCreateElement = document.createElement;
-        document.createElement = function(tagName) {
-          const element = originalCreateElement.apply(this, arguments);
-          if (tagName.toLowerCase() === 'script') {
-            const originalSetSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
-            Object.defineProperty(element, 'src', {
-              set: function(value) {
-                if (typeof value === 'string') {
-                  const shouldBlock = BLOCKED_URLS.some(blocked => value.includes(blocked));
-                  if (shouldBlock) {
-                    console.log('[NEXUS] Blocked dynamic script:', value);
-                    return;
+        // Block dynamic script creation with aggressive checking
+        if (document.createElement) {
+          const originalCreateElement = document.createElement;
+          document.createElement = function(tagName) {
+            const element = originalCreateElement.apply(this, arguments);
+            if (tagName && tagName.toLowerCase() === 'script') {
+              // Override src property setter
+              Object.defineProperty(element, 'src', {
+                set: function(value) {
+                  if (typeof value === 'string') {
+                    const shouldBlock = ULTIMATE_BLOCKED_DOMAINS.some(blocked => 
+                      value.toLowerCase().includes(blocked.toLowerCase())
+                    );
+                    if (shouldBlock) {
+                      console.log('[NEXUS] Ultimate block - Dynamic script:', value);
+                      return; // Don't set the src
+                    }
                   }
+                  // Set src normally if not blocked
+                  Object.defineProperty(this, '_src', { value: value, writable: true });
+                },
+                get: function() {
+                  return this._src || '';
                 }
-                originalSetSrc.set.call(this, value);
-              },
-              get: function() {
-                return originalSetSrc.get.call(this);
-              }
-            });
-          }
-          return element;
-        };
+              });
+            }
+            return element;
+          };
+        }
 
-        // Clear any problematic cache entries
+        // Block iframe sources as well
+        if (window.HTMLIFrameElement) {
+          const originalIFrameSetAttribute = window.HTMLIFrameElement.prototype.setAttribute;
+          window.HTMLIFrameElement.prototype.setAttribute = function(name, value) {
+            if (name === 'src' && typeof value === 'string') {
+              const shouldBlock = ULTIMATE_BLOCKED_DOMAINS.some(blocked => 
+                value.toLowerCase().includes(blocked.toLowerCase())
+              );
+              if (shouldBlock) {
+                console.log('[NEXUS] Ultimate block - iframe src:', value);
+                return; // Don't set the src
+              }
+            }
+            return originalIFrameSetAttribute.apply(this, arguments);
+          };
+        }
+
+        // Clear all problematic caches aggressively
         if ('caches' in window) {
           caches.keys().then(function(cacheNames) {
             cacheNames.forEach(function(cacheName) {
-              if (cacheName.includes('disable-devtool') || cacheName.includes('theajack')) {
+              const shouldClear = ULTIMATE_BLOCKED_DOMAINS.some(blocked => 
+                cacheName.toLowerCase().includes(blocked.toLowerCase())
+              );
+              if (shouldClear) {
                 caches.delete(cacheName);
-                console.log('[NEXUS] Cleared problematic cache:', cacheName);
+                console.log('[NEXUS] Ultimate cache clear:', cacheName);
               }
             });
+          }).catch(() => {
+            // Ignore cache errors
           });
         }
 
-        console.log('[NEXUS] External script protection activated');
+        // Override document.write to prevent script injection
+        if (document.write) {
+          const originalDocumentWrite = document.write;
+          document.write = function(text) {
+            if (typeof text === 'string') {
+              const shouldBlock = ULTIMATE_BLOCKED_DOMAINS.some(blocked => 
+                text.toLowerCase().includes(blocked.toLowerCase())
+              );
+              if (shouldBlock) {
+                console.log('[NEXUS] Ultimate block - document.write:', text.substring(0, 100));
+                return; // Don't write
+              }
+            }
+            return originalDocumentWrite.apply(this, arguments);
+          };
+        }
+
+        console.log('[NEXUS] Ultimate external script protection activated');
+        
+        // Additional resource blocking for cordClip specifically
+        document.addEventListener('DOMContentLoaded', function() {
+          // Block any late-loading scripts that might try to load cordClip
+          const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach(function(node) {
+                  if (node.nodeType === 1) { // Element node
+                    if (node.tagName === 'SCRIPT' && node.src && 
+                        (node.src.includes('theajack.github.io') || 
+                         node.src.includes('cordClip') || 
+                         node.src.includes('disable-devtool'))) {
+                      console.log('[NEXUS] Blocked late script injection:', node.src);
+                      node.remove();
+                    }
+                    if (node.tagName === 'IFRAME' && node.src && 
+                        node.src.includes('theajack.github.io')) {
+                      console.log('[NEXUS] Blocked iframe injection:', node.src);
+                      node.remove();
+                    }
+                  }
+                });
+              }
+            });
+          });
+          observer.observe(document.body, { childList: true, subtree: true });
+        });
       })();
     </script>
   </head>

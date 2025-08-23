@@ -72,13 +72,13 @@ const HeroSection = ({
 
       {/* Content */}
       <div className="relative z-20 h-full flex items-end">
-        <div className="w-full max-w-7xl mx-auto p-6 lg:p-12">
+        <div className="w-full max-w-7xl mx-auto p-6 lg:p-12 pt-20 md:pt-24 lg:pt-6">
           <div className="max-w-4xl">
             {/* Series Badge */}
             <div className="flex items-center space-x-3 mb-4 animate-fade-in">
-              <div className="flex items-center space-x-2 bg-red-600/20 backdrop-blur-sm border border-red-500/30 rounded-full px-4 py-2">
+              <div className="flex items-center space-x-2 bg-red-600/20 backdrop-blur-sm border border-red-500/30 rounded-full px-3 md:px-4 py-2">
                 <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                <span className="font-['JetBrains_Mono',monospace] text-red-400 text-sm font-bold tracking-wider">
+                <span className="font-['JetBrains_Mono',monospace] text-red-400 text-xs md:text-sm font-bold tracking-wider">
                   NEXUS SERIES
                 </span>
               </div>
@@ -94,7 +94,7 @@ const HeroSection = ({
             </div>
 
             {/* Title */}
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 animate-fade-in-delayed font-['JetBrains_Mono',monospace] leading-tight tracking-wider">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-4 md:mb-6 animate-fade-in-delayed font-['JetBrains_Mono',monospace] leading-tight tracking-wider">
               {show.name}
             </h1>
 
@@ -129,16 +129,16 @@ const HeroSection = ({
             </div>
 
             {/* Overview */}
-            <p className="text-lg lg:text-xl text-gray-300 max-w-3xl mb-8 leading-relaxed animate-fade-in-delayed-3 font-['JetBrains_Mono',monospace]">
+            <p className="text-base md:text-lg lg:text-xl text-gray-300 max-w-3xl mb-6 md:mb-8 leading-relaxed animate-fade-in-delayed-3 font-['JetBrains_Mono',monospace]">
               {show.overview}
             </p>
 
             {/* Genres */}
-            <div className="flex flex-wrap gap-2 mb-8 animate-fade-in-delayed-4">
+            <div className="flex flex-wrap gap-2 mb-6 md:mb-8 animate-fade-in-delayed-4">
               {show.genres?.slice(0, 4).map(genre => (
                 <span 
                   key={genre.id}
-                  className="px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded-full text-sm font-['JetBrains_Mono',monospace] border border-white/20 hover:bg-red-600/20 hover:border-red-500/30 transition-all duration-300"
+                  className="px-3 md:px-4 py-1 md:py-2 bg-white/10 backdrop-blur-sm text-white rounded-full text-xs md:text-sm font-['JetBrains_Mono',monospace] border border-white/20 hover:bg-red-600/20 hover:border-red-500/30 transition-all duration-300"
                 >
                   {genre.name}
                 </span>
@@ -146,12 +146,12 @@ const HeroSection = ({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-4 animate-fade-in-delayed-5">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4 animate-fade-in-delayed-5 pb-4 md:pb-0">
               <button 
                 onClick={onWatchClick}
-                className="group flex items-center gap-3 bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-xl font-['JetBrains_Mono',monospace] font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-red-500/25"
+                className="group flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-['JetBrains_Mono',monospace] font-bold text-base md:text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-red-500/25"
               >
-                <svg className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 md:w-6 h-5 md:h-6 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
                 </svg>
                 WATCH S{selectedSeason}E{selectedEpisode}
@@ -159,22 +159,23 @@ const HeroSection = ({
               
               <button 
                 onClick={onWatchlistToggle}
-                className={`group flex items-center gap-3 px-6 py-4 rounded-xl font-['JetBrains_Mono',monospace] font-bold text-lg transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border-2 ${
+                className={`group flex items-center justify-center gap-3 px-4 md:px-6 py-3 md:py-4 rounded-xl font-['JetBrains_Mono',monospace] font-bold text-base md:text-lg transition-all duration-300 transform hover:scale-105 backdrop-blur-sm border-2 ${
                   inWatchlist 
                     ? 'bg-green-600/20 border-green-500 text-green-400 hover:bg-green-600/30' 
                     : 'bg-white/10 border-white/30 text-white hover:border-red-500 hover:text-red-400'
                 }`}
               >
-                <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 md:w-5 h-4 md:h-5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
                     d={inWatchlist ? "M5 13l4 4L19 7" : "M12 6v6m0 0v6m0-6h6m-6 0H6"} 
                   />
                 </svg>
-                {inWatchlist ? 'IN VAULT' : 'ADD TO VAULT'}
+                <span className="hidden sm:inline">{inWatchlist ? 'IN VAULT' : 'ADD TO VAULT'}</span>
+                <span className="sm:hidden">{inWatchlist ? 'VAULT' : 'ADD'}</span>
               </button>
               
-              <button className="group flex items-center gap-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white px-6 py-4 rounded-xl font-['JetBrains_Mono',monospace] font-bold hover:border-purple-500 hover:text-purple-400 transition-all duration-300 transform hover:scale-105">
-                <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button className="group flex items-center justify-center gap-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white px-4 md:px-6 py-3 md:py-4 rounded-xl font-['JetBrains_Mono',monospace] font-bold text-base md:text-lg hover:border-purple-500 hover:text-purple-400 transition-all duration-300 transform hover:scale-105">
+                <svg className="w-4 md:w-5 h-4 md:h-5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                 </svg>
                 LIKE
@@ -235,7 +236,7 @@ const TVShowDetails = () => {
         setInWatchlist(vault.some(item => item.id === parseInt(id) && item.type === 'tv'));
 
       } catch (error) {
-        console.error('Error loading show data:', error);
+        // Silent error handling for production
       } finally {
         setIsLoading(false);
       }
@@ -256,7 +257,7 @@ const TVShowDetails = () => {
           setSeasonDetails(seasonData);
           setSelectedEpisode(1);
         } catch (error) {
-          console.error('Error loading season details:', error);
+          // Silent error handling for production
         } finally {
           setLoadingSeasonDetails(false);
         }
@@ -311,11 +312,11 @@ const TVShowDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white pt-16 md:pt-20">
       {/* Enhanced Back Button */}
       <button 
         onClick={() => navigate(-1)}
-        className="fixed top-6 left-6 z-50 flex items-center gap-2 bg-black/80 backdrop-blur-xl text-white px-4 py-3 rounded-xl hover:bg-black/90 transition-all duration-300 border border-red-900/30 hover:border-red-500/50 font-['JetBrains_Mono',monospace] font-bold"
+        className="fixed top-20 md:top-24 left-6 z-50 flex items-center gap-2 bg-black/80 backdrop-blur-xl text-white px-4 py-3 rounded-xl hover:bg-black/90 transition-all duration-300 border border-red-900/30 hover:border-red-500/50 font-['JetBrains_Mono',monospace] font-bold"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -347,15 +348,15 @@ const TVShowDetails = () => {
       )}
 
       {/* Main Content */}
-      <div className="relative -mt-20 z-30">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
+      <div className="relative z-30 mt-8 md:mt-16 lg:-mt-20">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-12 py-8 md:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-12">
             
             {/* Show Details Sidebar */}
-            <div className="lg:col-span-1">
-              <div className="bg-black/60 backdrop-blur-xl rounded-2xl p-6 border border-red-900/20 sticky top-8">
+            <div className="lg:col-span-1 order-2 lg:order-1">
+              <div className="bg-black/60 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-red-900/20 lg:sticky lg:top-8">
                 {/* Poster */}
-                <div className="aspect-[2/3] rounded-xl overflow-hidden mb-6 group">
+                <div className="aspect-[2/3] rounded-xl overflow-hidden mb-4 md:mb-6 group max-w-xs mx-auto lg:max-w-none">
                   <img
                     src={getImageUrl(show?.poster_path, 'w500')}
                     alt={show?.name}
@@ -445,29 +446,29 @@ const TVShowDetails = () => {
             </div>
 
             {/* Episode Selection */}
-            <div className="lg:col-span-3">
-              <div className="bg-black/40 backdrop-blur-xl rounded-2xl p-6 lg:p-8 border border-red-900/20">
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-3xl font-bold text-red-400 font-['JetBrains_Mono',monospace] tracking-wider">
+            <div className="lg:col-span-3 order-1 lg:order-2">
+              <div className="bg-black/40 backdrop-blur-xl rounded-2xl p-4 md:p-6 lg:p-8 border border-red-900/20">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
+                  <h2 className="text-2xl md:text-3xl font-bold text-red-400 font-['JetBrains_Mono',monospace] tracking-wider">
                     SELECT EPISODE
                   </h2>
-                  <div className="flex items-center space-x-2 bg-red-600/20 backdrop-blur-sm border border-red-500/30 rounded-full px-4 py-2">
+                  <div className="flex items-center space-x-2 bg-red-600/20 backdrop-blur-sm border border-red-500/30 rounded-full px-3 md:px-4 py-2">
                     <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                    <span className="font-['JetBrains_Mono',monospace] text-red-400 text-sm font-bold">
+                    <span className="font-['JetBrains_Mono',monospace] text-red-400 text-xs md:text-sm font-bold">
                       S{selectedSeason}E{selectedEpisode} READY
                     </span>
                   </div>
                 </div>
 
                 {/* Season Selector */}
-                <div className="mb-8">
-                  <h3 className="text-xl font-semibold text-white mb-4 font-['JetBrains_Mono',monospace]">SEASON</h3>
-                  <div className="flex flex-wrap gap-3">
+                <div className="mb-6 md:mb-8">
+                  <h3 className="text-lg md:text-xl font-semibold text-white mb-3 md:mb-4 font-['JetBrains_Mono',monospace]">SEASON</h3>
+                  <div className="flex flex-wrap gap-2 md:gap-3">
                     {seasons.map(season => (
                       <button
                         key={season.id}
                         onClick={() => setSelectedSeason(season.season_number)}
-                        className={`px-6 py-3 rounded-xl font-['JetBrains_Mono',monospace] font-bold transition-all duration-300 transform hover:scale-105 ${
+                        className={`px-4 md:px-6 py-2 md:py-3 rounded-xl font-['JetBrains_Mono',monospace] font-bold transition-all duration-300 transform hover:scale-105 text-sm md:text-base ${
                           selectedSeason === season.season_number
                             ? 'bg-red-600 text-white shadow-lg shadow-red-500/25'
                             : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 border border-gray-600/30'
@@ -481,15 +482,15 @@ const TVShowDetails = () => {
 
                 {/* Episode Grid */}
                 {loadingSeasonDetails ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-3 md:gap-4">
                     {[...Array(8)].map((_, i) => (
-                      <div key={i} className="bg-gray-800/50 rounded-xl p-4 animate-pulse">
-                        <div className="flex items-start space-x-4">
-                          <div className="w-24 h-16 bg-gray-700 rounded flex-shrink-0"></div>
+                      <div key={i} className="bg-gray-800/50 rounded-xl p-3 md:p-4 animate-pulse">
+                        <div className="flex items-start space-x-3 md:space-x-4">
+                          <div className="w-20 md:w-24 h-12 md:h-16 bg-gray-700 rounded flex-shrink-0"></div>
                           <div className="flex-1 space-y-2">
-                            <div className="h-4 bg-gray-700 rounded w-3/4"></div>
-                            <div className="h-3 bg-gray-700 rounded w-1/2"></div>
-                            <div className="h-3 bg-gray-700 rounded"></div>
+                            <div className="h-3 md:h-4 bg-gray-700 rounded w-3/4"></div>
+                            <div className="h-2 md:h-3 bg-gray-700 rounded w-1/2"></div>
+                            <div className="h-2 md:h-3 bg-gray-700 rounded"></div>
                           </div>
                         </div>
                       </div>
@@ -497,23 +498,23 @@ const TVShowDetails = () => {
                   </div>
                 ) : seasonDetails ? (
                   <div>
-                    <h3 className="text-xl font-semibold text-white mb-6 font-['JetBrains_Mono',monospace]">
+                    <h3 className="text-lg md:text-xl font-semibold text-white mb-4 md:mb-6 font-['JetBrains_Mono',monospace]">
                       EPISODES - SEASON {selectedSeason}
                     </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-3 md:gap-4">
                       {seasonDetails.episodes?.map(episode => (
                         <div
                           key={episode.id}
                           onClick={() => setSelectedEpisode(episode.episode_number)}
-                          className={`group cursor-pointer rounded-xl p-4 transition-all duration-300 transform hover:scale-[1.02] ${
+                          className={`group cursor-pointer rounded-xl p-3 md:p-4 transition-all duration-300 transform hover:scale-[1.02] ${
                             selectedEpisode === episode.episode_number
                               ? 'bg-red-600/20 border-2 border-red-500 shadow-lg shadow-red-500/10'
                               : 'bg-gray-800/30 border-2 border-gray-700/50 hover:border-gray-600 hover:bg-gray-800/50'
                           }`}
                         >
-                          <div className="flex items-start space-x-4">
+                          <div className="flex items-start space-x-3 md:space-x-4">
                             {/* Episode Thumbnail */}
-                            <div className="w-24 h-16 bg-gray-700 rounded flex-shrink-0 overflow-hidden">
+                            <div className="w-20 md:w-24 h-12 md:h-16 bg-gray-700 rounded flex-shrink-0 overflow-hidden">
                               {episode.still_path ? (
                                 <img
                                   src={getImageUrl(episode.still_path, 'w300')}
@@ -522,7 +523,7 @@ const TVShowDetails = () => {
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gradient-to-br from-gray-700 to-gray-800">
-                                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <svg className="w-4 md:w-6 h-4 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                   </svg>
                                 </div>
@@ -531,15 +532,15 @@ const TVShowDetails = () => {
 
                             {/* Episode Info */}
                             <div className="flex-1 min-w-0">
-                              <h4 className="font-['JetBrains_Mono',monospace] font-bold text-white text-sm mb-1 truncate group-hover:text-red-400 transition-colors">
+                              <h4 className="font-['JetBrains_Mono',monospace] font-bold text-white text-sm md:text-base mb-1 truncate group-hover:text-red-400 transition-colors">
                                 {episode.episode_number}. {episode.name}
                               </h4>
-                              <p className="text-gray-400 text-xs mb-2 line-clamp-2 font-['JetBrains_Mono',monospace]">
+                              <p className="text-gray-400 text-xs md:text-sm mb-2 line-clamp-2 font-['JetBrains_Mono',monospace]">
                                 {episode.overview || 'No description available.'}
                               </p>
-                              <div className="flex items-center justify-between text-xs text-gray-500 font-['JetBrains_Mono',monospace]">
-                                <span>{episode.air_date}</span>
-                                {episode.runtime && <span>{episode.runtime} min</span>}
+                              <div className="flex items-center justify-between text-xs font-['JetBrains_Mono',monospace] text-gray-500">
+                                <span className="hidden sm:inline">{episode.air_date}</span>
+                                {episode.runtime && <span className="hidden sm:inline">{episode.runtime} min</span>}
                                 {episode.vote_average > 0 && (
                                   <div className="flex items-center space-x-1">
                                     <svg className="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -556,13 +557,13 @@ const TVShowDetails = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-12">
+                  <div className="text-center py-8 md:py-12">
                     <div className="text-gray-600 mb-4">
-                      <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-12 md:w-16 h-12 md:h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                       </svg>
                     </div>
-                    <p className="font-['JetBrains_Mono',monospace] text-gray-400 text-lg">
+                    <p className="font-['JetBrains_Mono',monospace] text-gray-400 text-base md:text-lg">
                       No episodes available for this season
                     </p>
                   </div>
@@ -573,20 +574,20 @@ const TVShowDetails = () => {
 
           {/* Cast Section */}
           {cast.length > 0 && (
-            <div className="mt-12 bg-black/40 backdrop-blur-xl rounded-2xl p-6 lg:p-8 border border-red-900/20">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-3xl font-bold text-white font-['JetBrains_Mono',monospace] tracking-wider">CAST</h2>
-                <div className="flex items-center space-x-2 bg-purple-600/20 backdrop-blur-sm border border-purple-500/30 rounded-full px-4 py-2">
+            <div className="mt-8 md:mt-12 bg-black/40 backdrop-blur-xl rounded-2xl p-4 md:p-6 lg:p-8 border border-red-900/20">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold text-white font-['JetBrains_Mono',monospace] tracking-wider">CAST</h2>
+                <div className="flex items-center space-x-2 bg-purple-600/20 backdrop-blur-sm border border-purple-500/30 rounded-full px-3 md:px-4 py-2">
                   <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-                  <span className="font-['JetBrains_Mono',monospace] text-purple-400 text-sm font-bold">
+                  <span className="font-['JetBrains_Mono',monospace] text-purple-400 text-xs md:text-sm font-bold">
                     {cast.length} ACTORS
                   </span>
                 </div>
               </div>
-              <div className="flex overflow-x-auto space-x-6 pb-4 scrollbar-hide">
+              <div className="flex overflow-x-auto space-x-4 md:space-x-6 pb-4 scrollbar-hide">
                 {cast.slice(0, 12).map(person => (
-                  <div key={person.id} className="flex-shrink-0 w-36 group">
-                    <div className="aspect-[2/3] rounded-xl overflow-hidden mb-3 bg-gray-800">
+                  <div key={person.id} className="flex-shrink-0 w-28 md:w-36 group">
+                    <div className="aspect-[2/3] rounded-xl overflow-hidden mb-2 md:mb-3 bg-gray-800">
                       <img
                         src={getImageUrl(person.profile_path, 'w185')}
                         alt={person.name}
@@ -596,7 +597,7 @@ const TVShowDetails = () => {
                         }}
                       />
                     </div>
-                    <h4 className="font-['JetBrains_Mono',monospace] font-bold text-white text-sm truncate group-hover:text-red-400 transition-colors">
+                    <h4 className="font-['JetBrains_Mono',monospace] font-bold text-white text-xs md:text-sm truncate group-hover:text-red-400 transition-colors">
                       {person.name}
                     </h4>
                     <p className="font-['JetBrains_Mono',monospace] text-gray-400 text-xs truncate">

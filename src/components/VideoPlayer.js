@@ -117,17 +117,13 @@ const generateMockEpisodes = (tvId, seasonNumber, episodeCount) => {
 // Function to fetch TV show details including seasons
 const fetchTVShowDetails = async (tvId) => {
   try {
-    console.log(`[NEXUS] Fetching TV show details for ID: ${tvId}`);
-    
     // Check if we have mock data for this TV show
     if (MOCK_TV_SHOWS[tvId]) {
-      console.log(`[NEXUS] Using mock data for TV show: ${MOCK_TV_SHOWS[tvId].name}`);
       await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
       return MOCK_TV_SHOWS[tvId];
     }
     
     // For shows not in mock data, create a generic show structure with realistic episode counts
-    console.log(`[NEXUS] Creating generic show structure for ID: ${tvId}`);
     await new Promise(resolve => setTimeout(resolve, 300)); // Simulate API delay
     
     // Create different season structures based on TV show ID for variety
@@ -159,7 +155,6 @@ const fetchTVShowDetails = async (tvId) => {
       seasons: selectedStructure
     };
   } catch (error) {
-    console.error(`[NEXUS] Error fetching TV show details for ID ${tvId}:`, error.message);
     return null;
   }
 };
@@ -167,8 +162,6 @@ const fetchTVShowDetails = async (tvId) => {
 // Function to fetch season details including episodes
 const fetchSeasonDetails = async (tvId, seasonNumber) => {
   try {
-    console.log(`[NEXUS] Fetching season ${seasonNumber} details for TV ID: ${tvId}`);
-    
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 300));
     
@@ -177,7 +170,6 @@ const fetchSeasonDetails = async (tvId, seasonNumber) => {
       const season = MOCK_TV_SHOWS[tvId].seasons.find(s => s.season_number === seasonNumber);
       if (season) {
         const episodes = generateMockEpisodes(tvId, seasonNumber, season.episode_count);
-        console.log(`[NEXUS] Season ${seasonNumber} loaded: ${episodes.length} episodes`);
         return {
           id: `${tvId}-season-${seasonNumber}`,
           season_number: seasonNumber,
@@ -199,14 +191,12 @@ const fetchSeasonDetails = async (tvId, seasonNumber) => {
     
     const episodes = generateMockEpisodes(tvId, seasonNumber, episodeCount);
     
-    console.log(`[NEXUS] Generic season ${seasonNumber} created: ${episodes.length} episodes`);
     return {
       id: `${tvId}-season-${seasonNumber}`,
       season_number: seasonNumber,
       episodes: episodes
     };
   } catch (error) {
-    console.error(`[NEXUS] Error fetching season ${seasonNumber} for TV ID ${tvId}:`, error.message);
     return null;
   }
 };
@@ -297,14 +287,10 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
       setNextEpisodes([]); // Clear previous episodes
       
       try {
-        console.log('[NEXUS] Loading TV show data for ID:', movie.id, 'Season:', currentSeason);
-        
         // Fetch TV show details first
         const showDetails = await fetchTVShowDetails(movie.id);
-        console.log('[NEXUS] TV show details loaded:', !!showDetails);
         
         if (!showDetails) {
-          console.error('[NEXUS] Failed to load TV show details');
           setTvShowDetails(null);
           setNextEpisodes([]);
           return;
@@ -318,15 +304,10 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
           ? currentSeason 
           : (validSeasons[0]?.season_number || 1);
 
-        console.log('[NEXUS] Fetching season', targetSeason, 'data...');
-        
         // Fetch current season details
         const seasonData = await fetchSeasonDetails(movie.id, targetSeason);
-        console.log('[NEXUS] Season data loaded:', !!seasonData, 'Episodes:', seasonData?.episodes?.length || 0);
         
         if (!seasonData || !seasonData.episodes || seasonData.episodes.length === 0) {
-          console.warn('[NEXUS] No episodes found for season', targetSeason);
-          
           // Try to fetch episodes from season 1 if current season fails
           if (targetSeason !== 1) {
             console.log('[NEXUS] Trying season 1 as fallback...');
@@ -344,7 +325,6 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
         
         // Get all episodes from current season
         let episodesList = [...seasonData.episodes];
-        console.log('[NEXUS] Base episodes from season', targetSeason, ':', episodesList.length);
         
         // Ensure episodes have proper season numbers
         episodesList = episodesList.map(ep => ({
@@ -359,7 +339,6 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
           // Try to get episodes from next season
           if (currentSeasonIndex >= 0 && currentSeasonIndex < validSeasons.length - 1) {
             const nextSeason = validSeasons[currentSeasonIndex + 1];
-            console.log('[NEXUS] Fetching additional episodes from season', nextSeason.season_number);
             
             try {
               const nextSeasonData = await fetchSeasonDetails(movie.id, nextSeason.season_number);
@@ -372,19 +351,16 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
                   }));
                 
                 episodesList.push(...additionalEpisodes);
-                console.log('[NEXUS] Added', additionalEpisodes.length, 'episodes from next season');
               }
             } catch (error) {
-              console.warn('[NEXUS] Could not fetch next season episodes:', error.message);
+              // Silent error handling
             }
           }
         }
 
-        console.log('[NEXUS] Final episodes list ready:', episodesList.length, 'episodes');
         setNextEpisodes(episodesList);
         
       } catch (error) {
-        console.error('[NEXUS] Error loading TV show data:', error.message);
         setTvShowDetails(null);
         setNextEpisodes([]);
       } finally {

@@ -179,7 +179,7 @@ const MovieDetails = () => {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Hero Section */}
-      <div className="relative h-screen overflow-hidden">
+      <div className="relative min-h-screen overflow-auto">
         {/* Always present dark background */}
         <div className="absolute inset-0 bg-black" />
         
@@ -200,10 +200,10 @@ const MovieDetails = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
         
         {/* Content */}
-        <div className="relative z-10 container mx-auto px-8 pt-32 h-full flex items-center">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 pb-12 min-h-screen flex items-start lg:items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 w-full">
             {/* Poster */}
-            <div className="flex justify-center md:justify-start">
+            <div className="flex justify-center lg:justify-start order-1 lg:order-1">
               <div className="relative group">
                 <img
                   src={movie.poster_path 
@@ -211,14 +211,14 @@ const MovieDetails = () => {
                     : '/placeholder-movie.jpg'
                   }
                   alt={movie.title}
-                  className="w-80 h-auto rounded-lg shadow-2xl transition-transform duration-300 group-hover:scale-105"
+                  className="w-64 sm:w-72 lg:w-80 h-auto rounded-lg shadow-2xl transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
               </div>
             </div>
 
             {/* Details */}
-            <div className="md:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6 order-2 lg:order-2">
               {/* Back Button */}
               <button
                 onClick={() => navigate('/movies')}
@@ -232,7 +232,7 @@ const MovieDetails = () => {
 
               {/* Title and Rating */}
               <div>
-                <h1 className="font-['JetBrains_Mono',monospace] text-4xl md:text-6xl font-bold text-white mb-2">
+                <h1 className="font-['JetBrains_Mono',monospace] text-2xl sm:text-3xl lg:text-4xl xl:text-6xl font-bold text-white mb-2">
                   {movie.title}
                 </h1>
                 {movie.tagline && (
@@ -299,23 +299,23 @@ const MovieDetails = () => {
                 </p>
               </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-4">
-                {/* Primary Actions */}
-                <div className="flex flex-wrap gap-4">
+              {/* Action Buttons - Enhanced for responsive with better mobile visibility */}
+              <div className="space-y-4 mt-8">
+                {/* Primary Actions - Always visible with enhanced mobile spacing */}
+                <div className="flex flex-col sm:flex-row flex-wrap gap-4">
                   <button
                     onClick={handlePlayMovie}
-                    className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center transition-all duration-300 transform hover:scale-105"
+                    className="bg-red-600 hover:bg-red-700 text-white px-6 sm:px-8 py-4 sm:py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center justify-center transition-all duration-300 transform hover:scale-105 w-full sm:w-auto text-lg shadow-lg order-1"
                   >
-                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                     </svg>
-                    PLAY NOW
+                    <span className="text-base sm:text-lg">PLAY NOW</span>
                   </button>
                   
                   <button
                     onClick={toggleVault}
-                    className={`border-2 px-8 py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center transition-all duration-300 transform hover:scale-105 ${
+                    className={`border-2 px-6 sm:px-8 py-4 sm:py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center justify-center transition-all duration-300 transform hover:scale-105 w-full sm:w-auto order-2 ${
                       isInVault 
                         ? 'border-green-500 text-green-400 bg-green-500/10'
                         : 'border-gray-500 text-gray-300 hover:border-red-500 hover:text-red-400'
@@ -338,7 +338,7 @@ const MovieDetails = () => {
                           console.warn('Failed to open trailer safely');
                         }
                       }}
-                      className="border-2 border-gray-500 text-gray-300 hover:border-red-500 hover:text-red-400 px-8 py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center transition-all duration-300"
+                      className="border-2 border-gray-500 text-gray-300 hover:border-red-500 hover:text-red-400 px-6 sm:px-8 py-4 sm:py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center justify-center transition-all duration-300 w-full sm:w-auto order-3"
                     >
                       <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchPopularMovies, fetchTopRatedMovies, fetchTrendingMovies, searchContent } from '../utils/vidsrcApi';
+import { detectDevice, mobileCache } from '../utils/mobileApiHelper';
 import MovieCard from './MovieCard';
 import VideoPlayer from './VideoPlayer';
 
@@ -15,6 +16,56 @@ const Movies = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [currentFilter, setCurrentFilter] = useState('popular');
+  const [mobileStatus, setMobileStatus] = useState({ isMobile: false, connectionType: 'unknown', isOffline: false });
+
+  // Initialize mobile detection and network monitoring
+  useEffect(() => {
+    const device = detectDevice();
+    setMobileStatus({
+      isMobile: device.isMobile,
+      connectionType: device.connectionType,
+      isOffline: !navigator.onLine
+    });
+
+    // Mobile-specific network listeners
+    if (device.isMobile) {
+      const handleOnline = () => {
+        setMobileStatus(prev => ({ ...prev, isOffline: false }));
+        console.log('📱 Mobile device came online, refreshing movie data...');
+        setIsDataCached(false); // Force refresh when coming online
+      };
+
+      const handleOffline = () => {
+        setMobileStatus(prev => ({ ...prev, isOffline: true }));
+        console.log('📱 Mobile device went offline, using cached movie data...');
+      };
+
+      const handleConnectionChange = () => {
+        if (navigator.connection) {
+          setMobileStatus(prev => ({ 
+            ...prev, 
+            connectionType: navigator.connection.effectiveType 
+          }));
+          console.log('📱 Mobile connection changed to:', navigator.connection.effectiveType);
+        }
+      };
+
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
+      
+      if (navigator.connection) {
+        navigator.connection.addEventListener('change', handleConnectionChange);
+      }
+
+      return () => {
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+        if (navigator.connection) {
+          navigator.connection.removeEventListener('change', handleConnectionChange);
+        }
+      };
+    }
+  }, []);
 
   useEffect(() => {
     const loadMovies = async () => {
@@ -27,34 +78,62 @@ const Movies = () => {
       setLoading(true);
       try {
         let movieData = [];
+        let response = {};
+        
+        // Mobile-optimized loading with enhanced error handling
         switch (currentFilter) {
           case 'trending':
-            const trendingResponse = await fetchTrendingMovies();
-            movieData = trendingResponse.results || [];
+            response = await fetchTrendingMovies();
+            movieData = response.results || [];
             break;
           case 'top_rated':
-            const topRatedResponse = await fetchTopRatedMovies();
-            movieData = topRatedResponse.results || [];
+            response = await fetchTopRatedMovies();
+            movieData = response.results || [];
             break;
           default:
-            const popularResponse = await fetchPopularMovies();
-            movieData = popularResponse.results || [];
+            response = await fetchPopularMovies();
+            movieData = response.results || [];
+        }
+
+        // Show user feedback for mobile fallback data
+        if (response.isMockData && mobileStatus.isMobile) {
+          console.log('📱 Using offline movie content for mobile device');
         }
         
         setMovies(movieData);
         setFilteredMovies(movieData);
         setIsDataCached(true); // Mark as cached
+
+        // Cache data for mobile devices
+        if (mobileStatus.isMobile && movieData.length > 0) {
+          mobileCache.set(`movies_${currentFilter}`, movieData, 600000); // 10 minutes
+        }
+        
       } catch (error) {
         console.error('Error loading movies:', error);
-        setMovies([]);
-        setFilteredMovies([]);
+        
+        // Mobile fallback - try to use any cached data
+        if (mobileStatus.isMobile) {
+          const cachedData = mobileCache.get(`movies_${currentFilter}`);
+          if (cachedData && cachedData.length > 0) {
+            console.log('📱 Using emergency movie cache for mobile');
+            setMovies(cachedData);
+            setFilteredMovies(cachedData);
+          } else {
+            setMovies([]);
+            setFilteredMovies([]);
+          }
+        } else {
+          setMovies([]);
+          setFilteredMovies([]);
+        }
       } finally {
         setLoading(false);
       }
     };
     
     loadMovies();
-  }, [currentFilter, isDataCached, movies.length]);
+  }, [currentFilter, isDataCached, movies.length, mobileStatus.isMobile]);
 
   // Add keyboard shortcuts
   useEffect(() => {
@@ -156,6 +235,29 @@ const Movies = () => {
 
         {/* Search Bar */}
         <div className="max-w-3xl mb-8">
+          {/* Mobile Status Indicator */}
+          {mobileStatus.isMobile && (
+            <div className="mb-4 p-3 bg-black/40 backdrop-blur-sm border border-orange-500/30 rounded-lg">
+              <div className="flex items-center justify-between text-sm font-['JetBrains_Mono',monospace]">
+                <div className="flex items-center space-x-2">
+                  <span className="text-orange-400">📱</span>
+                  <span className="text-gray-300">Mobile Mode</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-1">
+                    <div className={`w-2 h-2 rounded-full ${mobileStatus.isOffline ? 'bg-red-400' : 'bg-green-400'}`}></div>
+                    <span className={mobileStatus.isOffline ? 'text-red-400' : 'text-green-400'}>
+                      {mobileStatus.isOffline ? 'Offline' : 'Online'}
+                    </span>
+                  </div>
+                  {!mobileStatus.isOffline && (
+                    <span className="text-blue-400">{mobileStatus.connectionType}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className="relative group">
             <input
               type="text"

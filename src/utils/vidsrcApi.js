@@ -1,15 +1,29 @@
-// Enhanced TMDB API integration for The Nexus with updated credentials
+// Enhanced TMDB API integration for The Nexus with mobile optimization
+import { 
+  mobileApiHandler, 
+  detectDevice, 
+  generateMockMovieData, 
+  generateMockTVData,
+  initializeMobileOptimizations
+} from './mobileApiHelper.js';
+
 const API_KEY = 'dc36900a16e14b924c96e065225b935b';
 const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYzM2OTAwYTE2ZTE0YjkyNGM5NmUwNjUyMjViOTM1YiIsIm5iZiI6MTc1NTQzNDczNi44NjcsInN1YiI6IjY4YTFjZWYwYWNlMmM3YzQwNjBiZmY1YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.jwZaRn4PXAErqKqfd7rREoVT7G9Mb6BKx_T5Kuw-fPY';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 const BACKDROP_BASE_URL = 'https://image.tmdb.org/t/p/w1280';
 
-// Enhanced fetch wrapper with Bearer token and better error handling
+// Initialize mobile optimizations on module load
+const deviceInfo = initializeMobileOptimizations();
+console.log('TMDB API initialized for device:', deviceInfo);
+
+// Enhanced fetch wrapper with mobile-specific optimizations
 const fetchFromTMDB = async (endpoint) => {
   try {
     const url = `${BASE_URL}${endpoint}${endpoint.includes('?') ? '&' : '?'}api_key=${API_KEY}`;
-    const response = await fetch(url, {
+    
+    // Use mobile-optimized API handler
+    const data = await mobileApiHandler.call(url, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${ACCESS_TOKEN}`,
@@ -18,18 +32,40 @@ const fetchFromTMDB = async (endpoint) => {
       }
     });
     
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error(`TMDB API Error: ${response.status} - ${response.statusText}`, errorData);
-      throw new Error(`TMDB API Error: ${response.status} - ${response.statusText}`);
-    }
-    
-    const data = await response.json();
     return data;
   } catch (error) {
-    console.error('TMDB API Request Failed:', error);
-    // Return fallback data structure to prevent app crashes
-    return { results: [], total_results: 0, error: error.message };
+    // Enhanced fallback for mobile devices
+    const device = detectDevice();
+    if (device.isMobile) {
+      // Determine content type and return appropriate mock data
+      if (endpoint.includes('/movie/') || endpoint.includes('/trending/movie')) {
+        return {
+          results: generateMockMovieData(20),
+          total_results: 20,
+          total_pages: 1,
+          page: 1,
+          isMockData: true,
+          fallbackReason: 'Mobile API failure'
+        };
+      } else if (endpoint.includes('/tv/') || endpoint.includes('/trending/tv')) {
+        return {
+          results: generateMockTVData(20),
+          total_results: 20,
+          total_pages: 1,
+          page: 1,
+          isMockData: true,
+          fallbackReason: 'Mobile API failure'
+        };
+      }
+    }
+    
+    // Standard fallback for desktop or unknown content
+    return { 
+      results: [], 
+      total_results: 0, 
+      error: error.message,
+      isFallback: true
+    };
   }
 };
 
@@ -263,7 +299,6 @@ export const saveWatchProgress = (contentId, contentType, progress) => {
 // Player event listener setup (placeholder)
 export const setupPlayerEventListener = (iframe, contentId, contentType) => {
   // Simple implementation - in a real app you'd set up postMessage listeners
-  console.log('Player event listener setup for:', contentId, contentType);
   return () => {}; // Return cleanup function
 };
 
@@ -281,7 +316,7 @@ export const getContinueWatching = () => {
           watchedItems.push(data);
         }
       } catch (error) {
-        console.error('Error parsing watch progress:', error);
+        // Silent error handling
       }
     }
   }

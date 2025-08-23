@@ -285,15 +285,15 @@ IMPORTANT: Always respond with genuine AI personality and intelligence. Detect t
         ))}
       </div>
 
-      {/* Main Content - Balanced Header Clearance */}
-      <div className="relative z-10 h-screen pt-20 sm:pt-24 md:pt-28 lg:pt-32 pb-4">
-        <div className="container mx-auto px-2 sm:px-4 lg:px-6 h-full max-w-7xl">
+      {/* Main Content - Enhanced Header Clearance for Proper Spacing */}
+      <div className="relative z-10 min-h-screen pt-24 sm:pt-28 md:pt-32 lg:pt-36 xl:pt-40 pb-4 neural-chat-container">
+        <div className="container mx-auto px-2 sm:px-4 lg:px-6 min-h-full max-w-7xl">
           
-          {/* Reduced Safety Margin */}
-          <div className="mb-3 sm:mb-4 lg:mb-6"></div>
+          {/* Additional Safety Margin */}
+          <div className="mb-4 sm:mb-6 lg:mb-8"></div>
           
-          {/* Responsive Grid - Reduced Sidebar Size */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-6 h-full">
+          {/* Responsive Grid - Mobile-First Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-6 min-h-full">
             
             {/* Smaller Left Sidebar - Compact Layout */}
             <div className="lg:col-span-3 xl:col-span-2 space-y-2 sm:space-y-3 lg:space-y-4 order-2 lg:order-1 h-fit">
@@ -384,11 +384,14 @@ IMPORTANT: Always respond with genuine AI personality and intelligence. Detect t
               </div>
             </div>
 
-            {/* Expanded Chat Interface - Fixed Height Container */}
-            <div className="lg:col-span-9 xl:col-span-10 flex flex-col justify-between order-1 lg:order-2 mt-2 sm:mt-3 h-full">
+            {/* Expanded Chat Interface - Responsive Height Container */}
+            <div className="lg:col-span-9 xl:col-span-10 flex flex-col justify-between order-1 lg:order-2 mt-2 sm:mt-3 min-h-full">
               <div 
                 className="bg-black/85 backdrop-blur-2xl rounded-xl sm:rounded-2xl border justify-between border-red-900/50 shadow-2xl overflow-hidden flex flex-col bg-gradient-to-br from-black/80 to-gray-900/90"
-                style={{ height: 'calc(100vh - 140px)' }}
+                style={{ 
+                  height: 'calc(100vh - 180px)',
+                  minHeight: 'calc(100vh - 220px)'
+                }}
               >
                 
                 {/* Compact Chat Header */}
@@ -408,12 +411,12 @@ IMPORTANT: Always respond with genuine AI personality and intelligence. Detect t
                   </div>
                 </div>
                 
-                {/* Messages Container - Fixed Scrolling */}
+                {/* Messages Container - Responsive Scrolling */}
                 <div 
                   className="flex-1 overflow-y-auto overflow-x-hidden p-2 sm:p-3 lg:p-4 space-y-2 sm:space-y-3 lg:space-y-4 scrollbar-thin scrollbar-thumb-cyan-600/50 scrollbar-track-gray-800/30"
                   style={{ 
                     minHeight: '200px',
-                    maxHeight: 'calc(100vh - 400px)',
+                    maxHeight: 'calc(100vh - 450px)',
                     height: 'auto'
                   }}
                 >
@@ -560,6 +563,19 @@ IMPORTANT: Always respond with genuine AI personality and intelligence. Detect t
         }
         .scrollbar-thin::-webkit-scrollbar-corner {
           background: transparent;
+        }
+        
+        /* Mobile header spacing fix */
+        @media (max-width: 640px) {
+          .neural-chat-container {
+            padding-top: max(6rem, env(safe-area-inset-top) + 4rem) !important;
+          }
+        }
+        
+        @media (min-width: 641px) and (max-width: 768px) {
+          .neural-chat-container {
+            padding-top: max(7rem, env(safe-area-inset-top) + 5rem) !important;
+          }
         }
       `}</style>
     </div>

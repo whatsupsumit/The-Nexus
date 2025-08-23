@@ -324,6 +324,31 @@ const Login = () => {
                   <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
                 
+                {/* Password Requirements for Sign Up */}
+                {!isSignInForm && (
+                  <div className="bg-gray-900/50 border border-gray-700/30 rounded-lg p-2 sm:p-3 backdrop-blur-sm">
+                    <p className="text-gray-400 text-xs sm:text-sm font-medium mb-1 sm:mb-2">Password Requirements:</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                      <div className="flex items-center space-x-1.5">
+                        <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                        <span className="text-gray-400 text-xs">8-32 characters</span>
+                      </div>
+                      <div className="flex items-center space-x-1.5">
+                        <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                        <span className="text-gray-400 text-xs">One number (0-9)</span>
+                      </div>
+                      <div className="flex items-center space-x-1.5">
+                        <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                        <span className="text-gray-400 text-xs">One lowercase (a-z)</span>
+                      </div>
+                      <div className="flex items-center space-x-1.5">
+                        <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
+                        <span className="text-gray-400 text-xs">One uppercase (A-Z)</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 {errorMessage && (
                   <div className="relative p-2 sm:p-2.5 lg:p-3 bg-red-900/30 border border-red-500/50 rounded-lg backdrop-blur-sm animate-fade-in">
                     <div className="flex items-start space-x-2">
