@@ -207,9 +207,6 @@ export const getTVShowStreamUrl = (tvId, season = 1, episode = 1) => {
   return `https://vidsrc.xyz/embed/tv/${tvId}/${season}/${episode}`;
 };
 
-// Basic embed URL aliases (deprecated - use enhanced versions below)
-export const getTVEmbedUrl = getTVShowStreamUrl;
-
 // Simple cache for recently fetched data (keep it simple)
 const cache = new Map();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
@@ -332,100 +329,24 @@ const VIDSRC_BASE_URL = 'https://vidsrc.xyz';
 
 // Generate movie embed URL
 export const getMovieEmbedUrl = (movieId, options = {}) => {
-  const { 
-    useImdb = false, 
-    subtitleUrl = null, 
-    defaultLang = null, 
-    autoplay = true 
-  } = options;
-  
-  let url = `${VIDSRC_BASE_URL}/embed/movie`;
-  const params = new URLSearchParams();
-  
-  if (useImdb) {
-    params.append('imdb', movieId);
-  } else {
-    params.append('tmdb', movieId);
-  }
-  
-  if (subtitleUrl) {
-    params.append('sub_url', encodeURIComponent(subtitleUrl));
-  }
-  
-  if (defaultLang) {
-    params.append('ds_lang', defaultLang);
-  }
-  
-  if (autoplay !== undefined) {
-    params.append('autoplay', autoplay ? '1' : '0');
-  }
-  
-  return `${url}?${params.toString()}`;
+  // VidSrc uses simple path format: /embed/movie/TMDB_ID
+  return `${VIDSRC_BASE_URL}/embed/movie/${movieId}`;
 };
 
-// Generate TV show embed URL
-export const getTVShowEmbedUrl = (tvId, options = {}) => {
-  const { 
-    useImdb = false, 
-    defaultLang = null 
-  } = options;
-  
-  let url = `${VIDSRC_BASE_URL}/embed/tv`;
-  const params = new URLSearchParams();
-  
-  if (useImdb) {
-    params.append('imdb', tvId);
-  } else {
-    params.append('tmdb', tvId);
-  }
-  
-  if (defaultLang) {
-    params.append('ds_lang', defaultLang);
-  }
-  
-  return `${url}?${params.toString()}`;
+// Generate TV show embed URL (for episodes)
+export const getTVShowEmbedUrl = (tvId, season = 1, episode = 1, options = {}) => {
+  // VidSrc uses path format: /embed/tv/TMDB_ID/SEASON/EPISODE
+  return `${VIDSRC_BASE_URL}/embed/tv/${tvId}/${season}/${episode}`;
 };
 
-// Generate episode embed URL
+// Generate episode embed URL (alias for getTVShowEmbedUrl)
 export const getEpisodeEmbedUrl = (tvId, season, episode, options = {}) => {
-  const { 
-    useImdb = false, 
-    subtitleUrl = null, 
-    defaultLang = null, 
-    autoplay = true,
-    autonext = false 
-  } = options;
-  
-  let url = `${VIDSRC_BASE_URL}/embed/tv`;
-  const params = new URLSearchParams();
-  
-  if (useImdb) {
-    params.append('imdb', tvId);
-  } else {
-    params.append('tmdb', tvId);
-  }
-  
-  params.append('season', season.toString());
-  params.append('episode', episode.toString());
-  
-  if (subtitleUrl) {
-    params.append('sub_url', encodeURIComponent(subtitleUrl));
-  }
-  
-  if (defaultLang) {
-    params.append('ds_lang', defaultLang);
-  }
-  
-  if (autoplay !== undefined) {
-    params.append('autoplay', autoplay ? '1' : '0');
-  }
-  
-  if (autonext !== undefined) {
-    params.append('autonext', autonext ? '1' : '0');
-  }
-  
-  return `${url}?${params.toString()}`;
+  // VidSrc uses path format: /embed/tv/TMDB_ID/SEASON/EPISODE  
+  return `${VIDSRC_BASE_URL}/embed/tv/${tvId}/${season}/${episode}`;
 };
+
+// Basic embed URL aliases (for compatibility)
+export const getTVEmbedUrl = getTVShowEmbedUrl;
 
 // Fetch latest movies from VidSrc
 export const fetchLatestMoviesFromVidSrc = async (page = 1) => {

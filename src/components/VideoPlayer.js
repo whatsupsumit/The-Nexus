@@ -434,26 +434,12 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
         return;
       }
 
-      const startTime = watchProgress?.progress?.watched || 0;
-      
-      const embedOptions = {
-        primaryColor: 'ef4444',
-        secondaryColor: '991b1b',
-        iconColor: 'ef4444',
-        icons: 'vid',
-        title: false, // Disable to reduce lag
-        poster: false, // Disable to reduce lag
-        autoplay: autoPlay, // Use state for autoplay
-        startAt: Math.floor(startTime),
-        player: 'default', // Use lighter player
-      };
-
       let url = '';
       try {
-        // For movies and TV shows, use existing VidSrc logic
+        // For movies and TV shows, use simplified VidSrc URLs
         url = isTV 
-          ? getTVEmbedUrl(movie.id, currentSeason, currentEpisode, embedOptions)
-          : getMovieEmbedUrl(movie.id, embedOptions);
+          ? getTVEmbedUrl(movie.id, currentSeason, currentEpisode)
+          : getMovieEmbedUrl(movie.id);
         
         // Only set URL if it's valid and not empty
         if (url && url.trim() !== '') {
@@ -941,7 +927,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
             frameBorder="0"
             allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
             allowFullScreen={true}
-            referrerPolicy="origin"
+            referrerPolicy="unsafe-url"
             onLoad={handleIframeLoad}
             onError={handleIframeError}
             className="w-full h-full"
@@ -1419,7 +1405,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
               frameBorder="0"
               allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
               allowFullScreen={true}
-              referrerPolicy="origin"
+              referrerPolicy="unsafe-url"
               onLoad={handleIframeLoad}
               onError={handleIframeError}
               className="w-full h-full"
