@@ -9,7 +9,7 @@ import Vault from './Vault';
 import Profile from './Profile';
 import NeuralChat from './NeuralChat';
 import { useDispatch, useSelector } from 'react-redux';
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate, useLocation } from 'react-router-dom';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '../utils/firebase';
 import { addUser, removeUser } from '../utils/userSlice';
@@ -21,8 +21,11 @@ const Body = () => {
   const user = useSelector(store => store.user.name);
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Component to handle root path logic
+  // Component to handle root path logic with access to location
   const RootHandler = () => {
+    const location = useLocation();
+    const from = location.state?.from || '/browse';
+    
     // Show loading spinner while checking authentication status
     if (authLoading) {
       return (
@@ -38,8 +41,8 @@ const Body = () => {
     }
     
     if (user) {
-      // If user is authenticated, redirect to browse
-      return <Navigate to="/browse" replace />;
+      // If user is authenticated, redirect to intended destination or browse
+      return <Navigate to={from} replace />;
     } else {
       // If user is not authenticated, show login
       return (

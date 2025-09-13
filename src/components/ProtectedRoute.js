@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '../utils/firebase';
@@ -7,6 +7,7 @@ import { auth } from '../utils/firebase';
 const ProtectedRoute = ({ children }) => {
   const user = useSelector((store) => store.user.name);
   const [authLoading, setAuthLoading] = useState(true);
+  const location = useLocation();
   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -31,8 +32,13 @@ const ProtectedRoute = ({ children }) => {
     );
   }
   
-  // If user is not authenticated, redirect to login
-  return user ? children : <Navigate to="/" replace />;
+  // If user is not authenticated, redirect to login with the intended destination
+  if (!user) {
+    return <Navigate to="/" state={{ from: location.pathname }} replace />;
+  }
+  
+  // User is authenticated, show the protected content
+  return children;
 };
 
 export default ProtectedRoute;

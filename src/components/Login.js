@@ -8,7 +8,7 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // Enhanced Login component with better responsiveness and animations
 const Login = () => {
@@ -19,7 +19,11 @@ const Login = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+
+  // Get the intended destination from location state, default to /browse
+  const from = location.state?.from || '/browse';
 
   const handleButtonClick = async () => {
     setIsLoading(true);
@@ -58,7 +62,7 @@ const Login = () => {
           displayName: name,
         }));
         setErrorMessage(null);
-        navigate("/browse");
+        navigate(from, { replace: true });
       } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -102,7 +106,7 @@ const Login = () => {
             displayName: user.displayName,
           }));
           setErrorMessage(null);
-          navigate("/browse");
+          navigate(from, { replace: true });
         })
         .catch((error) => {
           const errorCode = error.code;
