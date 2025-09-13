@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Login from './Login';
 import Browse from './Browse';
 import Movies from './Movies';
@@ -19,9 +19,24 @@ import Header from './header';
 const Body = () => {
   const dispatch = useDispatch();
   const user = useSelector(store => store.user.name);
+  const [authLoading, setAuthLoading] = useState(true);
 
   // Component to handle root path logic
   const RootHandler = () => {
+    // Show loading spinner while checking authentication status
+    if (authLoading) {
+      return (
+        <div className="min-h-screen bg-black flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4"></div>
+            <p className="font-['JetBrains_Mono',monospace] text-white text-lg">
+              Loading NEXUS...
+            </p>
+          </div>
+        </div>
+      );
+    }
+    
     if (user) {
       // If user is authenticated, redirect to browse
       return <Navigate to="/browse" replace />;
@@ -352,6 +367,8 @@ const Body = () => {
       } else {
         dispatch(removeUser());
       }
+      // Set loading to false once Firebase has determined auth state
+      setAuthLoading(false);
     });
 
     // Cleanup subscription on unmount to prevent memory leaks
