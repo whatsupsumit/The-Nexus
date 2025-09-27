@@ -7,8 +7,9 @@ import {
   initializeMobileOptimizations
 } from './mobileApiHelper.js';
 
-const API_KEY = 'dc36900a16e14b924c96e065225b935b';
-const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYzM2OTAwYTE2ZTE0YjkyNGM5NmUwNjUyMjViOTM1YiIsIm5iZiI6MTc1NTQzNDczNi44NjcsInN1YiI6IjY4YTFjZWYwYWNlMmM3YzQwNjBiZmY1YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.jwZaRn4PXAErqKqfd7rREoVT7G9Mb6BKx_T5Kuw-fPY';
+// Use environment variables for security
+const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
+const ACCESS_TOKEN = process.env.REACT_APP_TMDB_ACCESS_TOKEN;
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 const BACKDROP_BASE_URL = 'https://image.tmdb.org/t/p/w1280';

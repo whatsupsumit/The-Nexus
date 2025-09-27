@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getMovieEmbedUrl, getTVEmbedUrl, setupPlayerEventListener, initializeWatchProgress, getWatchProgress, getMovieRecommendations, fetchTrendingMovies, fetchTrendingTV } from '../utils/vidsrcApi';
 
 // Mock TV shows data for testing when TMDB API is not available
@@ -236,6 +237,7 @@ const addToWatchHistory = (movie, isTV = false, season = null, episode = null) =
 };
 
 const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, onContentSelect, onSeasonEpisodeChange }) => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [currentEmbedUrl, setCurrentEmbedUrl] = useState('');
@@ -547,6 +549,19 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
     if (onContentSelect) {
       const contentIsTV = content.media_type === 'tv' || content.first_air_date;
       onContentSelect(content, contentIsTV);
+    } else {
+      // Close current player first
+      if (onClose) {
+        onClose();
+      }
+      
+      // Navigate to the content details page
+      const contentIsTV = content.media_type === 'tv' || content.first_air_date;
+      if (contentIsTV) {
+        navigate(`/tv/${content.id}`);
+      } else {
+        navigate(`/movie/${content.id}`);
+      }
     }
   };
 

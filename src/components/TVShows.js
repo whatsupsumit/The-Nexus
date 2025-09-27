@@ -10,7 +10,6 @@ const TVShows = () => {
   const [shows, setShows] = useState([]);
   const [filteredShows, setFilteredShows] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isDataCached, setIsDataCached] = useState(false); // Track cached data
   const [selectedShow, setSelectedShow] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,7 +33,6 @@ const TVShows = () => {
       const handleOnline = () => {
         setMobileStatus(prev => ({ ...prev, isOffline: false }));
         console.log('📱 Mobile device came online, refreshing TV show data...');
-        setIsDataCached(false); // Force refresh when coming online
       };
 
       const handleOffline = () => {
@@ -71,12 +69,6 @@ const TVShows = () => {
 
   useEffect(() => {
     const loadShows = async () => {
-      // Check if we already have cached data for this filter
-      if (isDataCached && shows.length > 0) {
-        setLoading(false);
-        return;
-      }
-
       setLoading(true);
       try {
         let showData = [];
@@ -104,7 +96,6 @@ const TVShows = () => {
         
         setShows(showData);
         setFilteredShows(showData);
-        setIsDataCached(true); // Mark as cached
 
         // Cache data for mobile devices
         if (mobileStatus.isMobile && showData.length > 0) {
@@ -135,7 +126,7 @@ const TVShows = () => {
     };
     
     loadShows();
-  }, [activeFilter, isDataCached, shows.length, mobileStatus.isMobile]);
+  }, [activeFilter, mobileStatus.isMobile]);
 
   // Add keyboard shortcuts
   useEffect(() => {

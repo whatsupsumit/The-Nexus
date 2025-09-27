@@ -1,0 +1,452 @@
+import React, { useState, useRef, useEffect } from "react";
+
+const NeuralChat = () => {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    const welcomeMessage = {
+      text: "🎬 Hey there! I am your NEXUS movie buddy! Tell me what you are in the mood for and I will find you the perfect film. Want something funny? Scary? Romantic? Just ask me anything like I want a good action movie or something to make me cry - I got you covered! 🍿",
+      isBot: true,
+      timestamp: new Date().toLocaleTimeString(),
+      animated: true
+    };
+    
+    setTimeout(() => {
+      setMessages([welcomeMessage]);
+    }, 500);
+  }, []);
+
+  const moviePrompts = [
+    "🎭 What should I watch tonight?",
+    "💕 Something romantic and sweet",
+    "👻 Scary movie that is actually good", 
+    "😂 Make me laugh with a comedy",
+    "💥 High action and explosions",
+    "🧠 Smart movie that makes me think"
+  ];
+
+  const callMovieAPI = async (userMessage) => {
+    // Skip API entirely for now - use our amazing smart recommendations!
+    console.log('🎬 Using NEXUS Smart Movie Recommendations (API-free)');
+    return getSmartMovieRecommendation(userMessage);
+  };
+
+  const getSmartMovieRecommendation = (userMessage) => {
+    const message = userMessage.toLowerCase();
+    
+    // Comedy requests
+    if (message.includes('comedy') || message.includes('funny') || message.includes('laugh') || message.includes('humor')) {
+      const comedies = [
+        "🤣 **Superbad (2007)** - Absolute comedy gold! Michael Cera and Jonah Hill's chemistry is hilarious, and the whole high school adventure will have you dying of laughter!",
+        "😂 **The Grand Budapest Hotel (2014)** - Wes Anderson's quirky masterpiece! Ralph Fiennes is absolutely delightful, and the visual comedy is chef's kiss perfect!",
+        "🎭 **Airplane! (1980)** - The king of parody movies! Every single line is quotable, and Leslie Nielsen is comedy perfection. You'll be laughing for days!",
+        "🤪 **Knives Out (2019)** - Smart, witty, and Daniel Craig's accent is hilariously perfect! A murder mystery that'll keep you guessing and giggling!",
+        "😆 **What We Do in the Shadows (2014)** - Vampire flatmates being awkward? YES PLEASE! This mockumentary is pure comedic genius!"
+      ];
+      return comedies[Math.floor(Math.random() * comedies.length)] + " 🍿✨";
+    }
+    
+    // Action requests
+    if (message.includes('action') || message.includes('explosion') || message.includes('fight') || message.includes('adrenaline')) {
+      const actions = [
+        "💥 **Mad Max: Fury Road (2015)** - NON-STOP INSANITY! Charlize Theron kicks absolute butt, and the practical effects will blow your mind! Pure adrenaline rush!",
+        "🔫 **John Wick (2014)** - Keanu Reeves + incredible choreography = PERFECTION! The action scenes are like deadly ballet, absolutely mesmerizing!",
+        "🚗 **Mission: Impossible - Fallout (2018)** - Tom Cruise literally risked his life for these stunts! The helicopter chase will have you on the edge of your seat!",
+        "🥊 **The Raid (2011)** - Indonesian martial arts masterpiece! The fight choreography is absolutely BRUTAL and beautiful at the same time!",
+        "🚀 **Baby Driver (2017)** - Action + amazing soundtrack = EPIC! The car chases are perfectly synced to music, it's like a musical but with explosions!"
+      ];
+      return actions[Math.floor(Math.random() * actions.length)] + " 🎬💥";
+    }
+    
+    // Horror/Scary requests
+    if (message.includes('horror') || message.includes('scary') || message.includes('fear') || message.includes('nightmare')) {
+      const horrors = [
+        "👻 **Hereditary (2018)** - This will mess with your head SO BAD! Toni Collette's performance is terrifyingly perfect. Psychological horror at its finest!",
+        "😱 **The Conjuring (2013)** - Classic ghost story done RIGHT! James Wan knows exactly how to scare you without relying on cheap tricks!",
+        "🩸 **Get Out (2017)** - Jordan Peele's genius thriller! It's scary AND brilliantly written with social commentary that'll make you think!",
+        "🔪 **A Quiet Place (2018)** - The tension is UNREAL! Emily Blunt and John Krasinski created something truly special and terrifying!",
+        "👹 **Midsommar (2019)** - Bright, beautiful, and absolutely disturbing! This daylight horror will haunt your dreams in the best way!"
+      ];
+      return horrors[Math.floor(Math.random() * horrors.length)] + " Sweet dreams... 😈🌙";
+    }
+    
+    // Romance requests
+    if (message.includes('romance') || message.includes('romantic') || message.includes('love') || message.includes('sweet')) {
+      const romances = [
+        "💕 **The Princess Bride (1987)** - TRUE LOVE at its absolute best! Adventure, romance, and quotable lines forever. 'As you wish' will melt your heart!",
+        "🥰 **About Time (2013)** - Prepare the tissues! Domhnall Gleeson and Rachel McAdams are perfect, and the message about appreciating life is beautiful!",
+        "💖 **Crazy, Stupid, Love (2011)** - Ryan Gosling being charming + Emma Stone being perfect = FEELS! Multiple love stories that'll warm your heart!",
+        "✨ **Her (2013)** - Joaquin Phoenix falling for an AI? Sounds weird but it's absolutely beautiful and will make you believe in love again!",
+        "🌟 **The Half of It (2020)** - Fresh take on classic love triangle! Smart, sweet, and the friendship is just as important as the romance!"
+      ];
+      return romances[Math.floor(Math.random() * romances.length)] + " Get ready for ALL the feels! 💕✨";
+    }
+    
+    // Sci-fi/Smart movie requests
+    if (message.includes('smart') || message.includes('think') || message.includes('intelligent') || message.includes('sci-fi') || message.includes('science')) {
+      const scifis = [
+        "🧠 **Inception (2010)** - Christopher Nolan's mind-bending masterpiece! Dreams within dreams within dreams - your brain will thank you for the workout!",
+        "🤖 **Ex Machina (2014)** - AI thriller that's scary relevant right now! Oscar Isaac dances, Alicia Vikander is mesmerizing, and you'll question reality!",
+        "👽 **Arrival (2016)** - Amy Adams communicating with aliens through language! It's beautiful, emotional, and will change how you think about time!",
+        "🕳️ **Interstellar (2014)** - Space, time, love, and Matthew McConaughey crying! The science is real, the emotions are REAL, and Hans Zimmer's score is perfect!",
+        "🔮 **Blade Runner 2049 (2017)** - Visual masterpiece! Ryan Gosling and Harrison Ford in a future that feels incredibly real and beautifully depressing!"
+      ];
+      return scifis[Math.floor(Math.random() * scifis.length)] + " Time to exercise those brain cells! 🤔🎬";
+    }
+    
+    // Tonight/General watch requests
+    if (message.includes('tonight') || message.includes('watch') || message.includes('recommend')) {
+      const tonightPicks = [
+        "🎬 **Dune (2021)** - EPIC space opera! Timothée Chalamet on a desert planet with amazing visuals and Hans Zimmer score that'll blow your speakers!",
+        "🕷️ **Spider-Man: No Way Home (2021)** - ALL THE SPIDER-MANS! Pure nostalgic joy and Tom Holland being adorable while multiverse chaos happens!",
+        "🌀 **Everything Everywhere All at Once (2022)** - The most BONKERS movie ever made! Michelle Yeoh jumping through universes, and somehow it all makes sense!",
+        "🦇 **The Batman (2022)** - Robert Pattinson's dark take on Batman! Gotham has never looked more beautifully grim, and the Riddler is genuinely creepy!",
+        "🎭 **Top Gun: Maverick (2022)** - Tom Cruise back in the cockpit! The flying scenes are absolutely INCREDIBLE, and it's everything you wanted from a sequel!"
+      ];
+      return tonightPicks[Math.floor(Math.random() * tonightPicks.length)] + " Perfect for tonight! 🍿✨";
+    }
+    
+    // Animated/Fun requests
+    if (message.includes('animated') || message.includes('pixar') || message.includes('disney') || message.includes('cartoon')) {
+      const animated = [
+        "🕷️ **Spider-Man: Into the Spider-Verse (2018)** - Animation revolution! Every frame is a work of art, and Miles Morales' story will inspire you!",
+        "👗 **Encanto (2021)** - Lin-Manuel Miranda's music + Disney magic! 'We Don't Talk About Bruno' will be stuck in your head for WEEKS!",
+        "🤠 **Toy Story 3 (2010)** - Prepare to cry! Andy growing up hits different, and this trilogy ending is absolutely perfect emotional devastation!",
+        "❄️ **Frozen (2013)** - Let it go, LET IT GOOO! Elsa and Anna's sister story is beautiful, and the songs are undeniably catchy!",
+        "🌊 **Moana (2016)** - Island adventure with The Rock singing! The ocean is gorgeous, and 'How Far I'll Go' is pure inspiration!"
+      ];
+      return animated[Math.floor(Math.random() * animated.length)] + " Animation at its absolute finest! 🎨✨";
+    }
+    
+    // Default amazing recommendations
+    const defaultRecs = [
+      "🎬 **Parasite (2019)** - Bong Joon-ho's masterpiece! Class commentary that's thrilling, funny, and devastating all at once. You'll never see it coming!",
+      "🕴️ **The Menu (2022)** - Ralph Fiennes as a psycho chef! Dark comedy meets horror in the most delicious way possible!",
+      "🏆 **Nomadland (2020)** - Frances McDormand living in a van and finding beauty in simple moments. Quietly powerful and absolutely gorgeous!",
+      "⚡ **Thor: Ragnarok (2017)** - The funniest Marvel movie! Chris Hemsworth's comedy timing + Taika Waititi's direction = pure joy!",
+      "🎨 **La La Land (2016)** - Ryan Gosling and Emma Stone singing and dancing in LA! Even if you hate musicals, this one might convert you!"
+    ];
+    return defaultRecs[Math.floor(Math.random() * defaultRecs.length)] + " What genre gets you most excited? 🍿✨";
+  };
+    const message = userMessage.toLowerCase();
+    
+    if (message.includes('comedy') || message.includes('funny') || message.includes('laugh')) {
+      return "� Hey! I've got some hilarious picks for you! Try **Superbad (2007)** - it's absolutely ridiculous and will have you crying with laughter! Or check out **The Grand Budapest Hotel (2014)** - quirky, stylish, and surprisingly funny. For something classic, **Airplane! (1980)** is pure comedy gold! 🎭✈️";
+    }
+    
+    if (message.includes('action') || message.includes('explosion') || message.includes('fight')) {
+      return "💥 ACTION TIME! **Mad Max: Fury Road (2015)** is an absolute adrenaline rush - non-stop action and amazing stunts! **John Wick (2014)** has incredible fight choreography that'll blow your mind. And **Mission: Impossible - Fallout (2018)** delivers insane practical stunts! Get ready for some heart-pounding excitement! 🔥�";
+    }
+    
+    if (message.includes('horror') || message.includes('scary') || message.includes('fear')) {
+      return "👻 Ooh, feeling brave tonight! **Hereditary (2018)** will mess with your head in the best way - psychological horror at its finest! **The Conjuring (2013)** delivers classic scares without being too gory. Or try **Get Out (2017)** - it's scary AND brilliantly written! Sweet dreams... if you can sleep after these! 😱🌙";
+    }
+    
+    if (message.includes('romance') || message.includes('romantic') || message.includes('love')) {
+      return "💕 Aww, love is in the air! **The Princess Bride (1987)** is the perfect mix of romance and adventure - true love at its best! **About Time (2013)** will make you cry happy tears, guaranteed! And **Crazy, Stupid, Love (2011)** is sweet, funny, and totally heartwarming! Get ready to feel all the feels! 🥰✨";
+    }
+    
+    if (message.includes('smart') || message.includes('think') || message.includes('intelligent')) {
+      return "🧠 Brain food coming up! **Inception (2010)** will have you questioning reality - layers within layers of amazing storytelling! **Ex Machina (2014)** is a brilliant AI thriller that's super relevant. And **Arrival (2016)** combines sci-fi with deep emotional intelligence. Time to exercise those brain cells! 🤔🎬";
+    }
+    
+    // Default recommendation
+    return "🎬 Hey there! I'm your movie buddy and I've got some awesome suggestions! Try **Parasite (2019)** - it's a masterpiece that'll keep you guessing! Or **Spider-Man: Into the Spider-Verse (2018)** for amazing animation and heart. And **Everything Everywhere All at Once (2022)** is absolutely wild and wonderful! What kind of mood are you in for tonight? �✨";
+  };
+
+  const handleSendMessage = async () => {
+    if (!input.trim()) return;
+
+    const userMessage = input.trim();
+    setInput("");
+    setIsLoading(true);
+
+    const newUserMessage = {
+      text: userMessage,
+      isBot: false,
+      timestamp: new Date().toLocaleTimeString(),
+      animated: true
+    };
+    setMessages(prev => [...prev, newUserMessage]);
+
+    try {
+      const movieResponse = await callMovieAPI(userMessage);
+      
+      const newBotMessage = {
+        text: movieResponse,
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString(),
+        animated: true
+      };
+      setMessages(prev => [...prev, newBotMessage]);
+      
+    } catch (error) {
+      console.error("Error:", error);
+      const errorMessage = {
+        text: "🌟 Something went wrong with my movie magic! Try asking me about movies again - I love talking about films! 🎭",
+        isBot: true,
+        timestamp: new Date().toLocaleTimeString(),
+        animated: true
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const handleQuickPrompt = (prompt) => {
+    setInput(prompt);
+    setTimeout(() => {
+      handleSendMessage();
+    }, 100);
+  };
+
+  return (
+    <div className="min-h-screen relative text-white overflow-hidden">
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url("/astro.jpg")`,
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+          filter: "brightness(0.3)",
+        }}
+      ></div>
+      
+      <div className="fixed inset-0 bg-gradient-to-br from-black/80 via-red-900/20 to-black/80"></div>
+      
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {["🎬", "🍿", "🎭", "🎪", "🎨", "⭐"].map((icon, i) => (
+          <div
+            key={i}
+            className="absolute text-2xl opacity-20 animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 2}s`
+            }}
+          >
+            {icon}
+          </div>
+        ))}
+      </div>
+
+      {/* Fixed navbar spacing and two-column layout */}
+      <div className="relative z-10 min-h-screen pt-24 pb-4">
+        <div className="container mx-auto px-4 max-w-7xl h-full">
+          
+          {/* Two Column Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+            
+            {/* Left Sidebar - Movie Info & Quick Actions */}
+            <div className="lg:col-span-4 xl:col-span-3 space-y-4">
+              
+              {/* Header Section */}
+              <div className="bg-black/70 backdrop-blur-xl rounded-2xl border border-red-500/30 p-4 shadow-2xl">
+                <div className="text-center">
+                  <div className="inline-flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-purple-500 rounded-full flex items-center justify-center">
+                      <span className="text-2xl">🎬</span>
+                    </div>
+                    <div>
+                      <h1 className="text-xl font-bold bg-gradient-to-r from-red-400 to-purple-400 bg-clip-text text-transparent">
+                        NEXUS Movie AI
+                      </h1>
+                      <p className="text-sm text-gray-300">Your Personal Film Finder</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-green-300">Online & Ready</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Movie Requests */}
+              <div className="bg-black/70 backdrop-blur-xl rounded-2xl border border-red-500/30 p-4 shadow-2xl">
+                <h3 className="text-lg font-bold mb-4 text-red-300 text-center flex items-center justify-center gap-2">
+                  <span>🍿</span>
+                  Quick Movie Requests
+                </h3>
+                <div className="space-y-3">
+                  {moviePrompts.map((prompt, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleQuickPrompt(prompt)}
+                      className="w-full text-left bg-black/50 hover:bg-red-900/30 border border-red-700/40 rounded-xl px-4 py-3 text-sm transition-all duration-200 hover:border-red-400/60 hover:scale-105 hover:shadow-lg group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg group-hover:scale-110 transition-transform">
+                          {prompt.split(' ')[0]}
+                        </span>
+                        <span className="text-gray-200 group-hover:text-white">
+                          {prompt.substring(prompt.indexOf(' ') + 1)}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Right Side - Chat Interface */}
+            <div className="lg:col-span-8 xl:col-span-9">
+              <div className="bg-black/70 backdrop-blur-xl rounded-2xl border border-red-500/30 shadow-2xl overflow-hidden h-full flex flex-col" style={{ minHeight: 'calc(100vh - 120px)' }}>
+                
+                {/* Chat Header */}
+                <div className="bg-black/50 border-b border-red-500/30 p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">🤖</span>
+                      <div>
+                        <h2 className="text-lg font-semibold text-red-200">Movie AI Assistant</h2>
+                        <p className="text-xs text-gray-400">Ready to find your perfect movie</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      <span className="text-xs text-green-300">Active</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Messages Area */}
+                <div 
+                  className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-red-500/50 scrollbar-track-gray-800/50"
+                  style={{ maxHeight: 'calc(100vh - 280px)' }}
+                >
+                  {messages.map((message, index) => (
+                    <div
+                      key={index}
+                      className={`flex ${message.isBot ? "justify-start" : "justify-end"} ${
+                        message.animated ? "animate-fadeInUp" : ""
+                      }`}
+                    >
+                      <div
+                        className={`max-w-lg px-4 py-3 rounded-2xl relative ${
+                          message.isBot
+                            ? "bg-gradient-to-r from-red-600/30 to-purple-600/30 border border-red-500/40"
+                            : "bg-gradient-to-r from-gray-600/50 to-gray-700/50 border border-gray-500/40"
+                        }`}
+                      >
+                        {message.isBot && (
+                          <div className="text-xs text-red-300 mb-1 flex items-center gap-1">
+                            <span>🤖</span>
+                            Movie AI
+                          </div>
+                        )}
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.text}</p>
+                        <p className="text-xs opacity-70 mt-2">{message.timestamp}</p>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {isLoading && (
+                    <div className="flex justify-start animate-fadeInUp">
+                      <div className="bg-gradient-to-r from-red-600/30 to-purple-600/30 border border-red-500/40 px-4 py-3 rounded-2xl">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
+                            <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                          </div>
+                          <span className="text-sm text-red-300">Finding perfect movies...</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Input Area */}
+                <div className="border-t border-red-500/30 bg-black/50 p-4">
+                  <div className="flex space-x-3">
+                    <input
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      placeholder="Tell me what movie mood you are in..."
+                      className="flex-1 bg-gray-800/50 border border-gray-600/40 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/60 focus:border-red-400/60"
+                      disabled={isLoading}
+                    />
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={isLoading || !input.trim()}
+                      className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                        isLoading 
+                          ? "bg-gray-600/50 border border-gray-500/40" 
+                          : "bg-gradient-to-r from-red-600 to-purple-600 border border-red-400/60 hover:shadow-lg hover:scale-105"
+                      }`}
+                    >
+                      {isLoading ? (
+                        <div className="w-5 h-5 border-2 border-gray-300 border-t-red-400 rounded-full animate-spin"></div>
+                      ) : (
+                        "🚀"
+                      )}
+                    </button>
+                  </div>
+                  <div className="text-xs text-gray-400 mt-2 text-center">
+                    Ask me anything like "funny movies" or "best action films" 🎬
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fadeInUp {
+          animation: fadeInUp 0.5s ease-out;
+        }
+        .scrollbar-thin::-webkit-scrollbar {
+          width: 8px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+          background: rgba(55, 65, 81, 0.5);
+          border-radius: 10px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+          background: linear-gradient(to bottom, rgba(239, 68, 68, 0.7), rgba(147, 51, 234, 0.7));
+          border-radius: 10px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(to bottom, rgba(239, 68, 68, 0.9), rgba(147, 51, 234, 0.9));
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default NeuralChat;

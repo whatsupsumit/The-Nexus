@@ -10,7 +10,6 @@ const Movies = () => {
   const [movies, setMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isDataCached, setIsDataCached] = useState(false); // Track cached data
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,7 +31,6 @@ const Movies = () => {
       const handleOnline = () => {
         setMobileStatus(prev => ({ ...prev, isOffline: false }));
         console.log('📱 Mobile device came online, refreshing movie data...');
-        setIsDataCached(false); // Force refresh when coming online
       };
 
       const handleOffline = () => {
@@ -69,12 +67,6 @@ const Movies = () => {
 
   useEffect(() => {
     const loadMovies = async () => {
-      // Check if we already have cached data for this filter
-      if (isDataCached && movies.length > 0) {
-        setLoading(false);
-        return;
-      }
-
       setLoading(true);
       try {
         let movieData = [];
@@ -102,7 +94,6 @@ const Movies = () => {
         
         setMovies(movieData);
         setFilteredMovies(movieData);
-        setIsDataCached(true); // Mark as cached
 
         // Cache data for mobile devices
         if (mobileStatus.isMobile && movieData.length > 0) {
@@ -133,7 +124,7 @@ const Movies = () => {
     };
     
     loadMovies();
-  }, [currentFilter, isDataCached, movies.length, mobileStatus.isMobile]);
+  }, [currentFilter, mobileStatus.isMobile]);
 
   // Add keyboard shortcuts
   useEffect(() => {
