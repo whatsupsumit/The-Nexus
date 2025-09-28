@@ -39,22 +39,7 @@
 
 ## 🚀 **Live Demo**
 
-🌐 **[Visit NEXUS Live](https://your-vercel-url.vercel.app)**
-
-*Experience the future of entertainment streaming*
-
-## 📸 **Screenshots**
-
-### Home Page
-![NEXUS Home](https://via.placeholder.com/800x400/1a1a1a/ef4444?text=NEXUS+Home+Page)
-
-### Video Player
-![NEXUS Player](https://via.placeholder.com/800x400/1a1a1a/ef4444?text=Advanced+Video+Player)
-
-### TV Series Management
-![NEXUS Series](https://via.placeholder.com/800x400/1a1a1a/ef4444?text=TV+Series+Episodes)
-
-## 🛠️ **Tech Stack**
+🌐 **[Visit NEXUS Live](https://iamnexus.vercel.app)**
 
 ### **Frontend**
 ```bash
@@ -359,7 +344,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 **Links**
 
-- **Live Demo**: [https://your-vercel-url.vercel.app](https://your-vercel-url.vercel.app)
+- **Live Demo**: [https://your-vercel-url.vercel.app](https://iamnexus.vercel.app)
 - **Repository**: [https://github.com/whatsupsumit/The-Nexus](https://github.com/whatsupsumit/The-Nexus)
 - **Issues**: [https://github.com/whatsupsumit/The-Nexus/issues](https://github.com/whatsupsumit/The-Nexus/issues)
 
