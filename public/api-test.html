@@ -69,8 +69,8 @@
     </div>
 
     <script>
-        const TMDB_API_KEY = 'YOUR_API_KEY_HERE';
-        const TMDB_ACCESS_TOKEN = 'YOUR_ACCESS_TOKEN_HERE';
+        const TMDB_API_KEY = process.env.TMDB_API_KEY || 'YOUR_API_KEY_HERE';
+        const TMDB_ACCESS_TOKEN = process.env.TMDB_ACCESS_TOKEN ||'YOUR_ACCESS_TOKEN_HERE';
         const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
         function addResult(title, status, data) {
