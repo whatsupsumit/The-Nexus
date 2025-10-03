@@ -1,48 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TMDB API Test - The Nexus</title>
     <style>
-        body { 
-            font-family: monospace; 
-            background: #111; 
-            color: #fff; 
-            padding: 20px; 
+        body {
+            font-family: monospace;
+            background: #111;
+            color: #fff;
+            padding: 20px;
             margin: 0;
         }
-        .container { 
-            max-width: 800px; 
-            margin: 0 auto; 
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
         }
-        .test-result { 
-            background: #222; 
-            border: 1px solid #444; 
-            padding: 15px; 
-            margin: 10px 0; 
-            border-radius: 5px; 
+
+        .test-result {
+            background: #222;
+            border: 1px solid #444;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
         }
-        .success { border-color: #4CAF50; }
-        .error { border-color: #F44336; }
-        .loading { border-color: #FFC107; }
-        button { 
-            background: #DC2626; 
-            color: white; 
-            border: none; 
-            padding: 10px 20px; 
-            cursor: pointer; 
-            border-radius: 5px; 
-            margin: 5px; 
+
+        .success {
+            border-color: #4CAF50;
         }
-        button:hover { background: #B91C1C; }
-        pre { 
-            background: #000; 
-            padding: 10px; 
-            border-radius: 3px; 
-            overflow-x: auto; 
-            font-size: 12px; 
+
+        .error {
+            border-color: #F44336;
         }
+
+        .loading {
+            border-color: #FFC107;
+        }
+
+        button {
+            background: #DC2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #B91C1C;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
         .nexus-title {
             font-size: 2em;
             color: #DC2626;
@@ -52,10 +70,11 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1 class="nexus-title">NEXUS API TEST</h1>
-        
+
         <div>
             <button onclick="testTMDBConnection()">Test TMDB Connection</button>
             <button onclick="testTrendingMovies()">Test Trending Movies</button>
@@ -67,17 +86,17 @@
 
         <div id="results"></div>
     </div>
-
+    <script src="./.env.js"></script>
     <script>
-        const TMDB_API_KEY = process.env.TMDB_API_KEY || 'YOUR_API_KEY_HERE';
-        const TMDB_ACCESS_TOKEN = process.env.TMDB_ACCESS_TOKEN ||'YOUR_ACCESS_TOKEN_HERE';
+        const TMDB_API_KEY = window.ENV?.TMDB_API_KEY || 'YOUR_API_KEY_HERE';
+        const TMDB_ACCESS_TOKEN = window.ENV?.TMDB_ACCESS_TOKEN || 'YOUR_ACCESS_TOKEN_HERE';
         const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
         function addResult(title, status, data) {
             const resultsDiv = document.getElementById('results');
             const resultDiv = document.createElement('div');
             resultDiv.className = `test-result ${status}`;
-            
+
             let content = `<h3>${title}</h3>`;
             if (status === 'success') {
                 content += `<p>✅ Success</p>`;
@@ -86,11 +105,11 @@
             } else {
                 content += `<p>⏳ Testing...</p>`;
             }
-            
+
             if (data) {
                 content += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
             }
-            
+
             resultDiv.innerHTML = content;
             resultsDiv.appendChild(resultDiv);
             resultsDiv.scrollTop = resultsDiv.scrollHeight;
@@ -103,11 +122,11 @@
                     'Content-Type': 'application/json'
                 }
             });
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-            
+
             return response.json();
         }
 
@@ -185,7 +204,7 @@
                 // Generate VidSrc URLs
                 const movieUrl = `https://vidsrc.xyz/embed/movie/385687`;
                 const tvUrl = `https://vidsrc.xyz/embed/tv/1399/1/1`;
-                
+
                 addResult('Streaming URLs Test', 'success', {
                     movieUrl: movieUrl,
                     tvUrl: tvUrl,
@@ -212,4 +231,5 @@
         }
     </script>
 </body>
+
 </html>
