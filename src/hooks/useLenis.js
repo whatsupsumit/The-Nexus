@@ -3,8 +3,16 @@ import Lenis from '@studio-freight/lenis';
 
 const useLenis = () => {
   useEffect(() => {
+
+    if (typeof window === 'undefined' || typeof document === 'undefined') return
+
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    let lenis = null;
+    let rafId = null;
+    
     // Initialize Lenis with optimized settings for better performance
-    const lenis = new Lenis({
+    if (!prefersReducedMotion) {
+    lenis = new Lenis({
       duration: 0.8, // Faster, more responsive scrolling
       easing: (t) => 1 - Math.pow(1 - t, 2), // Quadratic ease-out for snappier feel
       orientation: 'vertical',
@@ -21,60 +29,116 @@ const useLenis = () => {
     // Expose lenis instance globally for other components
     window.lenis = lenis;
 
-    // Optimized scroll event listener - throttled for better performance
-    let scrollThrottle = null;
-    lenis.on('scroll', ({ scroll, limit, velocity, direction, progress }) => {
-      // Throttle scroll effects to improve performance
-      if (scrollThrottle) return;
-      
-      scrollThrottle = setTimeout(() => {
-        // Add scroll-triggered fade-in animations (optimized)
-        const fadeElements = document.querySelectorAll('.scroll-fade-in:not(.in-view)');
-        fadeElements.forEach((el) => {
-          const rect = el.getBoundingClientRect();
-          const isVisible = rect.top < window.innerHeight * 0.9 && rect.bottom > 0;
-          
-          if (isVisible) {
-            el.classList.add('in-view');
-          }
-        });
-        
-        scrollThrottle = null;
-      }, 16); // ~60fps throttling for smooth performance
-    });
-
-    // RAF loop for Lenis
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
+    const loop = (time) => {
+       lenis.raf(time)
+        rafId = requestAnimationFrame(loop);
+      }
+      rafId = requestAnimationFrame(loop);
+    } else {
+      window.lenis = null;
     }
+    
+    const fadeEls = Array.from(document.querySelectorAll('.scroll-fade-in:not(.in-view)'));
+    let io = null;
+    let ticking = false;
+    let usingWindowScrollFallback = false;
+    let scheduleCheckRef = null;
+    
+    if ('IntersectionObserver' in window) {
+      io = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('in-view')
+              observer.unobserve(entry.target) // stop observing once applied
+            }
+          });
+        },
+        {
+          root: null,
+          rootMargin: '0px 0px -10% 0px',
+          threshold: 0,
+        }
+      );
+      fadeEls.forEach((el) => io.observe(el));
+    } else {
+      const checkVisibility = () => {
+        const vh = window.innerHeight
+        for (let i = 0; i < fadeEls.length; i++) {
+          const el = fadeEls[i]
+          if (el.classList.contains('in-view')) continue
+          const rect = el.getBoundingClientRect()
+          const isVisible = rect.top < vh * 0.9 && rect.bottom > 0
+          if (isVisible) el.classList.add('in-view')
+        }
+        ticking = false;
+      };
 
-    requestAnimationFrame(raf);
+      const scheduleCheck = () => {
+        if (!ticking) {
+          ticking = true
+          requestAnimationFrame(checkVisibility)
+        }
+      };
 
+      scheduleCheckRef = scheduleCheck;
+      
+      if (lenis) {
+        lenis.on('scroll', scheduleCheck);
+      } else {
+        usingWindowScrollFallback = true;
+        window.addEventListener('scroll', scheduleCheck, { passive: true });
+      }
+
+      scheduleCheck();
+    }
+    
     // Add smooth anchor linking
     const handleAnchorClick = (e) => {
       const target = e.target.closest('a[href^="#"]');
-      if (target) {
-        e.preventDefault();
-        const id = target.getAttribute('href').slice(1);
-        const element = document.getElementById(id);
-        if (element) {
-          lenis.scrollTo(element, {
-            offset: -100, // Account for fixed headers
-            duration: 1.2, // Faster anchor scrolling
-          });
-        }
+      if (!target) return;
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || target.hasAttribute('download')) {
+        return;
       }
-    };
+      
+        const href = target.getAttribute('href');
+        if (!href || href === '#') return;
+        const id = href.slice(1);
+        const el = document.getElementById(id);
+        if (!el) return;
+        e.preventDefault();
 
-    document.addEventListener('click', handleAnchorClick);
+      const offset = -100
+      if (lenis) {
+        lenis.scrollTo(el, { offset, duration: 1.2 })
+      } else {
+        const rectTop = el.getBoundingClientRect().top + window.pageYOffset + offset
+        window.scrollTo({ top: rectTop, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
+      }
+    }
+
+
+    document.addEventListener('click', handleAnchorClick, false)
 
     // Cleanup function
     return () => {
-      if (scrollThrottle) clearTimeout(scrollThrottle);
-      lenis.destroy();
+      document.removeEventListener('click', handleAnchorClick, false)
+      
+      if (io) {
+        io.disconnect()
+        io = null
+      }
+      if (rafId != null) {
+        cancelAnimationFrame(rafId)
+        rafId = null
+      }
+      if (lenis) {
+      lenis.destroy()
+      }
+      if (usingWindowScrollFallback && scheduleCheckRef) {
+        window.removeEventListener('scroll', scheduleCheckRef);
+      }
       window.lenis = null;
-      document.removeEventListener('click', handleAnchorClick);
     };
   }, []);
 };
