@@ -1,8 +1,8 @@
 // Enhanced TMDB API integration for The Nexus with mobile optimization
-import { 
-  mobileApiHandler, 
-  detectDevice, 
-  generateMockMovieData, 
+import {
+  mobileApiHandler,
+  detectDevice,
+  generateMockMovieData,
   generateMockTVData,
   initializeMobileOptimizations
 } from './mobileApiHelper.js';
@@ -19,10 +19,11 @@ const deviceInfo = initializeMobileOptimizations();
 console.log('TMDB API initialized for device:', deviceInfo);
 
 // Enhanced fetch wrapper with mobile-specific optimizations
-const fetchFromTMDB = async (endpoint) => {
+const fetchFromTMDB = async (endpoint, page = 1) => { // Added page parameter with default value
   try {
-    const url = `${BASE_URL}${endpoint}${endpoint.includes('?') ? '&' : '?'}api_key=${API_KEY}`;
-    
+    const separator = endpoint.includes('?') ? '&' : '?';
+    const url = `${BASE_URL}${endpoint}${separator}api_key=${API_KEY}&page=${page}`; // Append page to the URL
+
     // Use mobile-optimized API handler
     const data = await mobileApiHandler.call(url, {
       method: 'GET',
@@ -32,7 +33,7 @@ const fetchFromTMDB = async (endpoint) => {
         'Accept': 'application/json'
       }
     });
-    
+
     return data;
   } catch (error) {
     // Enhanced fallback for mobile devices
@@ -59,11 +60,11 @@ const fetchFromTMDB = async (endpoint) => {
         };
       }
     }
-    
+
     // Standard fallback for desktop or unknown content
-    return { 
-      results: [], 
-      total_results: 0, 
+    return {
+      results: [],
+      total_results: 0,
       error: error.message,
       isFallback: true
     };
@@ -71,23 +72,23 @@ const fetchFromTMDB = async (endpoint) => {
 };
 
 // Fetch trending movies
-export const fetchTrendingMovies = async () => {
-  return fetchFromTMDB('/trending/movie/week');
+export const fetchTrendingMovies = async (page = 1) => { 
+  return fetchFromTMDB('/trending/movie/week', page); 
 };
 
 // Fetch popular movies
-export const fetchPopularMovies = async () => {
-  return fetchFromTMDB('/movie/popular');
+export const fetchPopularMovies = async (page = 1) => { 
+  return fetchFromTMDB('/movie/popular', page); 
 };
 
 // Fetch top rated movies
-export const fetchTopRatedMovies = async () => {
-  return fetchFromTMDB('/movie/top_rated');
+export const fetchTopRatedMovies = async (page = 1) => { 
+  return fetchFromTMDB('/movie/top_rated', page); 
 };
 
 // Fetch upcoming movies
-export const fetchUpcomingMovies = async () => {
-  return fetchFromTMDB('/movie/upcoming');
+export const fetchUpcomingMovies = async (page = 1) => { 
+  return fetchFromTMDB('/movie/upcoming', page); 
 };
 
 // Fetch movie details
@@ -106,29 +107,29 @@ export const getMovieCredits = async (movieId) => {
 };
 
 // Fetch movie recommendations
-export const getMovieRecommendations = async (movieId) => {
-  return fetchFromTMDB(`/movie/${movieId}/recommendations`);
+export const getMovieRecommendations = async (movieId, page = 1) => { 
+  return fetchFromTMDB(`/movie/${movieId}/recommendations`, page); 
 };
 
 // Fetch trending TV shows
-export const fetchTrendingTVShows = async () => {
-  return fetchFromTMDB('/trending/tv/week');
+export const fetchTrendingTVShows = async (page = 1) => { 
+  return fetchFromTMDB('/trending/tv/week', page); 
 };
 
 // Alias for fetchTrendingTVShows
 export const fetchTrendingTV = fetchTrendingTVShows;
 
 // Fetch popular TV shows
-export const fetchPopularTVShows = async () => {
-  return fetchFromTMDB('/tv/popular');
+export const fetchPopularTVShows = async (page = 1) => { 
+  return fetchFromTMDB('/tv/popular', page); 
 };
 
 // Alias for fetchPopularTVShows
 export const fetchPopularTV = fetchPopularTVShows;
 
 // Fetch top rated TV shows
-export const fetchTopRatedTVShows = async () => {
-  return fetchFromTMDB('/tv/top_rated');
+export const fetchTopRatedTVShows = async (page = 1) => { 
+  return fetchFromTMDB('/tv/top_rated', page); 
 };
 
 // Alias for fetchTopRatedTVShows
@@ -153,13 +154,13 @@ export const getTVSeasonDetails = async (tvId, seasonNumber) => {
 };
 
 // Search movies
-export const searchMovies = async (query) => {
-  return fetchFromTMDB(`/search/movie?query=${encodeURIComponent(query)}`);
+export const searchMovies = async (query, page = 1) => { 
+  return fetchFromTMDB(`/search/movie?query=${encodeURIComponent(query)}`, page); 
 };
 
 // Search TV shows
-export const searchTVShows = async (query) => {
-  return fetchFromTMDB(`/search/tv?query=${encodeURIComponent(query)}`);
+export const searchTVShows = async (query, page = 1) => { 
+  return fetchFromTMDB(`/search/tv?query=${encodeURIComponent(query)}`, page); 
 };
 
 // Combined search function
@@ -168,7 +169,7 @@ export const searchContent = async (query) => {
     searchMovies(query),
     searchTVShows(query)
   ]);
-  
+
   return [
     ...(movieResults.results || []).map(item => ({ ...item, media_type: 'movie' })),
     ...(tvResults.results || []).map(item => ({ ...item, media_type: 'tv' }))
@@ -225,47 +226,49 @@ const setCachedData = (key, data) => {
 };
 
 // Enhanced fetch functions with simple caching
-export const fetchTrendingMoviesCached = async () => {
-  const cacheKey = 'trending-movies';
+export const fetchTrendingMoviesCached = async (page = 1) => { 
+  const cacheKey = `trending-movies-page-${page}`; 
   const cached = getCachedData(cacheKey);
   if (cached) return cached;
-  
-  const data = await fetchTrendingMovies();
+
+  const data = await fetchTrendingMovies(page); 
   setCachedData(cacheKey, data);
   return data;
 };
 
-export const fetchPopularMoviesCached = async () => {
-  const cacheKey = 'popular-movies';
+export const fetchPopularMoviesCached = async (page = 1) => { 
+  const cacheKey = `popular-movies-page-${page}`; 
   const cached = getCachedData(cacheKey);
   if (cached) return cached;
-  
-  const data = await fetchPopularMovies();
+
+  const data = await fetchPopularMovies(page); 
   setCachedData(cacheKey, data);
   return data;
 };
 
-export const fetchTrendingTVShowsCached = async () => {
-  const cacheKey = 'trending-tv';
+export const fetchTrendingTVShowsCached = async (page = 1) => { 
+  const cacheKey = `trending-tv-page-${page}`; 
   const cached = getCachedData(cacheKey);
   if (cached) return cached;
-  
-  const data = await fetchTrendingTVShows();
+
+  const data = await fetchTrendingTVShows(page); 
   setCachedData(cacheKey, data);
   return data;
 };
 
-export const fetchPopularTVShowsCached = async () => {
-  const cacheKey = 'popular-tv';
+export const fetchPopularTVShowsCached = async (page = 1) => { 
+  const cacheKey = `popular-tv-page-${page}`; 
   const cached = getCachedData(cacheKey);
   if (cached) return cached;
-  
-  const data = await fetchPopularTVShows();
+
+  const data = await fetchPopularTVShows(page); 
   setCachedData(cacheKey, data);
   return data;
 };
 
-// Watch progress functions (simple localStorage implementation)
+// --- REST OF THE FILE REMAINS UNCHANGED ---
+// (Watch progress functions, VidSrc integration, etc. are not touched)
+
 export const initializeWatchProgress = (contentId, contentType) => {
   const key = `watch_progress_${contentType}_${contentId}`;
   if (!localStorage.getItem(key)) {
@@ -297,13 +300,13 @@ export const saveWatchProgress = (contentId, contentType, progress) => {
 // Player event listener setup (placeholder)
 export const setupPlayerEventListener = (iframe, contentId, contentType) => {
   // Simple implementation - in a real app you'd set up postMessage listeners
-  return () => {}; // Return cleanup function
+  return () => { }; // Return cleanup function
 };
 
 // Get continue watching content from localStorage
 export const getContinueWatching = () => {
   const watchedItems = [];
-  
+
   // Scan localStorage for watch progress items
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
@@ -318,10 +321,10 @@ export const getContinueWatching = () => {
       }
     }
   }
-  
+
   // Sort by last watched time (most recent first)
   watchedItems.sort((a, b) => b.lastWatched - a.lastWatched);
-  
+
   return watchedItems.slice(0, 10); // Return max 10 items
 };
 

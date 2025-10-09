@@ -1,8 +1,27 @@
-import React, { useRef, memo, useCallback } from 'react';
+import React, { useRef, memo, useCallback, useEffect } from 'react'; // Import useEffect
+import { useInView } from 'react-intersection-observer'; // Import the hook
 import MovieCard from './MovieCard';
 
-const ContentCarousel = memo(({ title, content = [], onItemClick, isTV = false, loading = false }) => {
+// --- MODIFICATION: Accept hasMore and loadMore props ---
+const ContentCarousel = memo(({ title, content = [], onItemClick, isTV = false, loading = false, hasMore, loadMore }) => {
   const scrollRef = useRef(null);
+
+  // --- NEW: Set up the Intersection Observer ---
+  // This hook gives us a `ref` to attach to an element.
+  // `inView` will be true when that element is in the viewport.
+  const { ref, inView } = useInView({
+    threshold: 0.5, // Trigger when 50% of the sentinel is visible
+    triggerOnce: false,
+  });
+
+  // --- NEW: useEffect to trigger loading more content ---
+  useEffect(() => {
+    // If the sentinel element is in view, and there's more content to load,
+    // and we are not in the initial loading state, then call loadMore.
+    if (inView && hasMore && !loading && loadMore) {
+      loadMore();
+    }
+  }, [inView, hasMore, loading, loadMore]);
   
   const scroll = useCallback((direction) => {
     if (scrollRef.current) {
@@ -100,6 +119,16 @@ const ContentCarousel = memo(({ title, content = [], onItemClick, isTV = false, 
                 />
               </div>
             ))}
+            
+            {/* --- NEW: Sentinel element for triggering infinite scroll --- */}
+            {/* This element is only rendered if there is more content to fetch.
+                We attach the `ref` from our useInView hook to it. */}
+            {hasMore && (
+              <div ref={ref} className="flex-shrink-0 w-36 xs:w-40 sm:w-44 md:w-48 lg:w-52 flex items-center justify-center">
+                {/* Visual indicator that more content is loading */}
+                <div className="w-8 h-8 border-4 border-gray-700 border-t-red-500 rounded-full animate-spin"></div>
+              </div>
+            )}
           </div>
           
           {/* Simplified fade gradients */}
