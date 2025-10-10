@@ -244,7 +244,7 @@ Give them amazing movie suggestions that match what they want!`;
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -259,7 +259,8 @@ Give them amazing movie suggestions that match what they want!`;
   };
 
   return (
-    <div className="h-screen relative text-white overflow-hidden flex flex-col">
+    <div className="h-[100dvh] min-h-screen relative text-white overflow-hidden flex flex-col">
+      {/* Background image and overlays */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
@@ -272,7 +273,8 @@ Give them amazing movie suggestions that match what they want!`;
       
       <div className="fixed inset-0 bg-gradient-to-br from-black/80 via-red-900/20 to-black/80"></div>
       
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      {/* Decorative emojis hidden on very small screens to avoid overlap */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none hidden sm:block">
         {["🎬", "🍿", "🎭", "🎪", "🎨", "⭐"].map((icon, i) => (
           <div
             key={i}
@@ -289,30 +291,45 @@ Give them amazing movie suggestions that match what they want!`;
         ))}
       </div>
 
-      <div className="relative z-10 h-full flex flex-col pt-16">
-        <div className="container mx-auto px-4 max-w-7xl h-full flex flex-col">
+      <div className="relative z-10 h-full flex flex-col pt-6 md:pt-16">
+        <div className="container mx-auto px-3 sm:px-4 max-w-7xl h-full flex flex-col">
           
-          {/* Fixed Header */}
-          <div className="flex-shrink-0 text-center py-4">
-            <div className="inline-flex items-center gap-3 bg-black/60 backdrop-blur-lg rounded-full px-6 py-2 border border-red-500/30">
+          {/* Header */}
+          <div className="flex-shrink-0 text-center py-2 md:py-4">
+            <div className="inline-flex items-center gap-3 bg-black/60 backdrop-blur-lg rounded-full px-5 md:px-6 py-2 border border-red-500/30">
               <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-lg">🎬</span>
               </div>
-              <div>
-                <h1 className="text-lg font-bold bg-gradient-to-r from-red-400 to-purple-400 bg-clip-text text-transparent">
+              <div className="text-left">
+                <h1 className="text-base md:text-lg font-bold bg-gradient-to-r from-red-400 to-purple-400 bg-clip-text text-transparent leading-tight">
                   NEXUS Movie AI
                 </h1>
-                <p className="text-xs text-gray-300">Your Personal Film Finder</p>
+                <p className="text-[10px] md:text-xs text-gray-300">Your Personal Film Finder</p>
               </div>
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             </div>
           </div>
 
-          {/* Main Layout - Left Sidebar + Right Chat */}
-          <div className="flex gap-6 flex-1 min-h-0">
+          {/* Mobile quick prompts (chips) */}
+          <div className="md:hidden -mx-1 mb-3 px-1">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
+              {moviePrompts.map((prompt, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleQuickPrompt(prompt)}
+                  className="shrink-0 bg-black/40 hover:bg-red-900/30 border border-red-700/40 rounded-full px-3 py-2 text-xs transition-all duration-200 hover:border-red-400/60"
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Main Layout - Sidebar + Chat */}
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 flex-1 min-h-0">
             
-            {/* Left Sidebar - Movie Prompts */}
-            <div className="w-72 flex-shrink-0">
+            {/* Left Sidebar - Movie Prompts (desktop/tablet) */}
+            <div className="hidden md:block md:w-72 md:flex-shrink-0">
               <div className="bg-black/50 backdrop-blur-lg rounded-2xl border border-red-500/30 p-4 h-full flex flex-col">
                 <h3 className="text-base font-semibold mb-3 text-red-300 text-center flex items-center justify-center gap-2">
                   🍿 Quick Requests
@@ -337,7 +354,9 @@ Give them amazing movie suggestions that match what they want!`;
                 
                 {/* Chat Messages */}
                 <div 
-                  className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-red-500/50 scrollbar-track-gray-800/50"
+                  className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4 scrollbar-thin scrollbar-thumb-red-500/50 scrollbar-track-gray-800/50"
+                  role="log"
+                  aria-live="polite"
                 >
                   {messages.map((message, index) => (
                     <div
@@ -347,20 +366,20 @@ Give them amazing movie suggestions that match what they want!`;
                       }`}
                     >
                       <div
-                        className={`max-w-md px-4 py-3 rounded-2xl relative ${
+                        className={`max-w-[85%] md:max-w-md px-4 md:px-5 py-3 md:py-3.5 rounded-2xl relative ${
                           message.isBot
                             ? "bg-gradient-to-r from-red-600/30 to-purple-600/30 border border-red-500/40"
                             : "bg-gradient-to-r from-gray-600/50 to-gray-700/50 border border-gray-500/40"
                         }`}
                       >
                         {message.isBot && (
-                          <div className="text-xs text-red-300 mb-1 flex items-center gap-1">
+                          <div className="text-[11px] md:text-xs text-red-300 mb-1 flex items-center gap-1">
                             <span>🤖</span>
                             Movie AI
                           </div>
                         )}
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.text}</p>
-                        <p className="text-xs opacity-70 mt-2">{message.timestamp}</p>
+                        <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{message.text}</p>
+                        <p className="text-[10px] md:text-xs opacity-70 mt-2">{message.timestamp}</p>
                       </div>
                     </div>
                   ))}
@@ -383,34 +402,36 @@ Give them amazing movie suggestions that match what they want!`;
                 </div>
 
                 {/* Chat Input */}
-                <div className="border-t border-red-500/30 bg-black/50 p-3 flex-shrink-0">
-                  <div className="flex space-x-3">
+                <div className="border-t border-red-500/30 bg-black/50 p-3 md:p-4 flex-shrink-0" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 0.75rem)' }}>
+                  <div className="flex gap-2 md:gap-3">
                     <input
                       type="text"
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      onKeyPress={handleKeyPress}
+                      onKeyDown={handleKeyDown}
                       placeholder="Tell me what movie mood you're in..."
-                      className="flex-1 bg-gray-800/50 border border-gray-600/40 rounded-xl px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/60 focus:border-red-400/60"
+                      className="flex-1 bg-gray-800/50 border border-gray-600/40 rounded-xl px-3 md:px-4 py-2.5 md:py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/60 focus:border-red-400/60 text-sm md:text-base"
                       disabled={isLoading}
+                      aria-label="Type your message"
                     />
                     <button
                       onClick={handleSendMessage}
                       disabled={isLoading || !input.trim()}
-                      className={`px-5 py-2 rounded-xl font-semibold transition-all duration-300 ${
+                      className={`px-4 md:px-5 py-2.5 md:py-3 rounded-xl font-semibold transition-all duration-300 aria-disabled:opacity-60 ${
                         isLoading 
                           ? "bg-gray-600/50 border border-gray-500/40" 
                           : "bg-gradient-to-r from-red-600 to-purple-600 border border-red-400/60 hover:shadow-lg hover:scale-105"
                       }`}
+                      aria-label="Send message"
                     >
                       {isLoading ? (
-                        <div className="w-4 h-4 border-2 border-gray-300 border-t-red-400 rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border-2 border-gray-300 border-t-red-400 rounded-full animate-spin" aria-hidden="true"></div>
                       ) : (
-                        "🚀"
+                        <span role="img" aria-label="Send">🚀</span>
                       )}
                     </button>
                   </div>
-                  <div className="text-xs text-gray-400 mt-1 text-center">
+                  <div className="text-[11px] md:text-xs text-gray-400 mt-2 text-center">
                     Ask me anything like "funny movies" or "best action films" 🍿
                   </div>
                 </div>
@@ -448,6 +469,9 @@ Give them amazing movie suggestions that match what they want!`;
         .scrollbar-thin::-webkit-scrollbar-thumb:hover {
           background: linear-gradient(to bottom, rgba(239, 68, 68, 0.9), rgba(147, 51, 234, 0.9));
         }
+        /* Hide horizontal scrollbar for mobile chips */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
     </div>
   );
