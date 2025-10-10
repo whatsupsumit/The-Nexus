@@ -258,7 +258,7 @@ const Header = () => {
               <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-blue-400 rounded-full"></div>
               
               {/* Scan Line */}
-              <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-nexus-text-light to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
+              <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
             </button>
 
             {/* Responsive Dropdown Menu - Fixed Background */}
@@ -273,7 +273,7 @@ const Header = () => {
                   <p className="relative font-['Arvo',serif] text-gray-300 text-xs mt-1">
                     {user.email}
                   </p>
-                  <div className="absolute top-0 right-4 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <div className="absolute top-0 mt-[23px] right-4 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 </div>
                 
                 <div className="py-2">
@@ -317,9 +317,7 @@ const Header = () => {
                       <svg className="w-4 h-4 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
-                      <span>Disconnect Neural Link</span>
-                      <div className="ml-auto w-1 h-1 bg-red-500 rounded-full animate-pulse"></div>
-                    </div>
+                      <span>Disconnect Neural Link</span>                    </div>
                   </button>
                 </div>
               </div>
