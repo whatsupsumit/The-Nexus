@@ -196,7 +196,8 @@ src/
 - **Episode Navigation**: Browse all episodes
 - **Auto-play**: Automatic next episode
 - **Progress Tracking**: Resume where you left off
-
+- **in-app voice control**: Helps a better accessable environment for confortable watching experience
+ 
 ## 🚀 **Deployment**
 
 ### **Vercel Deployment**
