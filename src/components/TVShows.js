@@ -20,6 +20,11 @@ const TVShows = () => {
   const [selectedEpisode, setSelectedEpisode] = useState(1);
   const [mobileStatus, setMobileStatus] = useState({ isMobile: false, connectionType: 'unknown', isOffline: false });
 
+  // --- NEW: State for pagination ---
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
   // Initialize mobile detection and network monitoring
   useEffect(() => {
     const device = detectDevice();
@@ -68,35 +73,43 @@ const TVShows = () => {
     }
   }, []);
 
+  // --- MODIFICATION: Updated to handle initial load and filter changes for pagination ---
   useEffect(() => {
     const loadShows = async () => {
       setLoading(true);
+      setShows([]); // Clear previous results on filter change
+      setFilteredShows([]);
+      
       try {
-        let showData = [];
         let response = {};
         
-        // Mobile-optimized loading with enhanced error handling for TV shows
+        // Always fetch the first page for a new filter selection
         switch (activeFilter) {
           case 'trending':
-            response = await fetchTrendingTV();
-            showData = response.results || [];
+            response = await fetchTrendingTV(1);
             break;
           case 'top_rated':
-            response = await fetchTopRatedTV();
-            showData = response.results || [];
+            response = await fetchTopRatedTV(1);
             break;
           default:
-            response = await fetchPopularTV();
-            showData = response.results || [];
+            response = await fetchPopularTV(1);
         }
+
+        const showData = response.results || [];
+        setShows(showData);
+        setFilteredShows(showData);
+        setPage(2); // Set the next page to be fetched to 2
+        setHasMore(response.page < response.total_pages); // Check if there are more pages
 
         // Show user feedback for mobile fallback data
         if (response.isMockData && mobileStatus.isMobile) {
           logger.mobileEvent('using_offline_content', { filter: activeFilter });
         }
 
+
         setShows(showData);
         setFilteredShows(showData);
+
 
         // Cache data for mobile devices
         if (mobileStatus.isMobile && showData.length > 0) {
@@ -104,7 +117,13 @@ const TVShows = () => {
         }
 
       } catch (error) {
+
         logger.error('Failed to load TV shows', error, true);
+
+
+        console.error('Error loading TV shows:', error);
+        setHasMore(false); // Disable load more on error
+        
 
         // Mobile fallback - try to use any cached data
         if (mobileStatus.isMobile) {
@@ -141,6 +160,40 @@ const TVShows = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+  
+  // --- NEW: Function to handle loading more content ---
+  const handleLoadMore = async () => {
+    if (loadingMore || !hasMore) return; // Prevent multiple fetches
+
+    setLoadingMore(true);
+    try {
+      let response = {};
+      // Fetch the current page
+      switch (activeFilter) {
+        case 'trending':
+          response = await fetchTrendingTV(page);
+          break;
+        case 'top_rated':
+          response = await fetchTopRatedTV(page);
+          break;
+        default:
+          response = await fetchPopularTV(page);
+      }
+
+      const newShows = response.results || [];
+      // Append new shows to the existing list
+      setShows(prev => [...prev, ...newShows]);
+      setFilteredShows(prev => [...prev, ...newShows]);
+      setPage(prev => prev + 1); // Increment page for the next fetch
+      setHasMore(response.page < response.total_pages);
+
+    } catch (error) {
+      console.error('Error loading more TV shows:', error);
+      setHasMore(false); // Stop trying if there's an error
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   const handleSearch = async (query) => {
     setSearchQuery(query);
@@ -356,6 +409,26 @@ const TVShows = () => {
               {searchQuery ? `No results for "${searchQuery}"` : 'Unable to load shows from the neural database'}
             </p>
           </div>
+        )}
+      </div>
+
+      {/* --- NEW: Load More Button Section --- */}
+      <div className="mt-12 text-center px-8">
+        {!loading && hasMore && (
+          <button
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            className="font-['JetBrains_Mono',monospace] bg-blue-600/20 hover:bg-blue-600/40 border-2 border-blue-500 text-white font-bold py-3 px-8 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
+          >
+            {loadingMore ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                <span>Loading...</span>
+              </>
+            ) : (
+              <span>Load More Shows</span>
+            )}
+          </button>
         )}
       </div>
 
