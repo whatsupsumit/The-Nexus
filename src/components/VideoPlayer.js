@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addWatchedItem } from '../utils/userSlice';
 import { getMovieEmbedUrl, getTVEmbedUrl, setupPlayerEventListener, initializeWatchProgress, getWatchProgress, getMovieRecommendations, fetchTrendingMovies, fetchTrendingTV } from '../utils/vidsrcApi';
 
 // Mock TV shows data for testing when TMDB API is not available
@@ -238,6 +240,7 @@ const addToWatchHistory = (movie, isTV = false, season = null, episode = null) =
 
 const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, onContentSelect, onSeasonEpisodeChange }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [currentEmbedUrl, setCurrentEmbedUrl] = useState('');
@@ -478,7 +481,11 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
         switch (eventType) {
           case 'play':
             if (movie && movie.id) {
-              addToWatchHistory(movie, isTV, currentSeason, currentEpisode);
+              dispatch(addWatchedItem({
+                ...movie,
+                media_type: isTV ? 'tv' : 'movie',
+                ...(isTV && { season: currentSeason, episode: currentEpisode })
+              }));
             }
             break;
           case 'progress_update':
