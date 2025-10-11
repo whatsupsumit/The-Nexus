@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ThemeProvider } from "./context/ThemeContext";
+
 
 // Global error suppression for third-party video player errors
 const originalConsoleError = console.error;
@@ -96,7 +98,9 @@ window.addEventListener('error', (event) => {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <ThemeProvider>
     <App />
+    </ThemeProvider>
   </React.StrictMode>
 );
 
