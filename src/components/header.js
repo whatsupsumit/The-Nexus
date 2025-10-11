@@ -4,6 +4,8 @@ import { auth } from "../utils/firebase";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { removeUser } from "../utils/userSlice";
+import ThemeToggle from "./ThemeToggle";
+
 
 const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -215,6 +217,7 @@ const Header = () => {
 
       {/* Profile Section */}
       <div className="flex items-center space-x-2 sm:space-x-4 z-10">
+        <ThemeToggle />
         {user ? (
           <div className="relative" ref={dropdownRef}>
             {/* Responsive Profile Icon */}
