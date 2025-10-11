@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import Markdown from "markdown-to-jsx";
 
 const NeuralChat = () => {
   const [messages, setMessages] = useState([]);
@@ -359,7 +360,11 @@ Give them amazing movie suggestions that match what they want!`;
                             Movie AI
                           </div>
                         )}
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.text}</p>
+                        <Markdown
+                          className="text-sm leading-relaxed whitespace-pre-wrap prose prose-invert max-w-none"
+                        >
+                          {message.text}
+                        </Markdown>
                         <p className="text-xs opacity-70 mt-2">{message.timestamp}</p>
                       </div>
                     </div>
