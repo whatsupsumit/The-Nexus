@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchPopularTV, fetchTopRatedTV, fetchTrendingTV, searchContent } from '../utils/vidsrcApi';
 import { detectDevice, mobileCache } from '../utils/mobileApiHelper';
+import { logger } from '../utils/logger';
 import MovieCard from './MovieCard';
 import VideoPlayer from './VideoPlayer';
 
@@ -37,21 +38,21 @@ const TVShows = () => {
     if (device.isMobile) {
       const handleOnline = () => {
         setMobileStatus(prev => ({ ...prev, isOffline: false }));
-        console.log('📱 Mobile device came online, refreshing TV show data...');
+        logger.mobileEvent('device_online', { action: 'refreshing_tv_data' });
       };
 
       const handleOffline = () => {
         setMobileStatus(prev => ({ ...prev, isOffline: true }));
-        console.log('📱 Mobile device went offline, using cached TV show data...');
+        logger.mobileEvent('device_offline', { action: 'using_cached_data' });
       };
 
       const handleConnectionChange = () => {
         if (navigator.connection) {
-          setMobileStatus(prev => ({ 
-            ...prev, 
-            connectionType: navigator.connection.effectiveType 
+          setMobileStatus(prev => ({
+            ...prev,
+            connectionType: navigator.connection.effectiveType
           }));
-          console.log('📱 Mobile TV connection changed to:', navigator.connection.effectiveType);
+          logger.mobileEvent('connection_change', { type: navigator.connection.effectiveType });
         }
       };
 
@@ -102,23 +103,33 @@ const TVShows = () => {
 
         // Show user feedback for mobile fallback data
         if (response.isMockData && mobileStatus.isMobile) {
-          console.log('📱 Using offline TV show content for mobile device');
+          logger.mobileEvent('using_offline_content', { filter: activeFilter });
         }
-        
+
+
+        setShows(showData);
+        setFilteredShows(showData);
+
+
         // Cache data for mobile devices
         if (mobileStatus.isMobile && showData.length > 0) {
           mobileCache.set(`tvshows_${activeFilter}`, showData, 600000); // 10 minutes
         }
-        
+
       } catch (error) {
+
+        logger.error('Failed to load TV shows', error, true);
+
+
         console.error('Error loading TV shows:', error);
         setHasMore(false); // Disable load more on error
         
+
         // Mobile fallback - try to use any cached data
         if (mobileStatus.isMobile) {
           const cachedData = mobileCache.get(`tvshows_${activeFilter}`);
           if (cachedData && cachedData.length > 0) {
-            console.log('📱 Using emergency TV show cache for mobile');
+            logger.mobileEvent('using_emergency_cache', { filter: activeFilter });
             setShows(cachedData);
             setFilteredShows(cachedData);
           } else {
@@ -200,7 +211,7 @@ const TVShows = () => {
         : [];
       setFilteredShows(tvResults);
     } catch (error) {
-      console.error('Search error:', error);
+      logger.error('TV show search failed', error, true);
       setFilteredShows([]);
     } finally {
       setIsSearching(false);

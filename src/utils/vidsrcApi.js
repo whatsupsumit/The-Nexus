@@ -6,6 +6,7 @@ import {
   generateMockTVData,
   initializeMobileOptimizations
 } from './mobileApiHelper.js';
+import { logger } from './logger.js';
 
 // Use environment variables for security
 const API_KEY = process.env.REACT_APP_TMDB_API_KEY;
@@ -16,7 +17,7 @@ const BACKDROP_BASE_URL = 'https://image.tmdb.org/t/p/w1280';
 
 // Initialize mobile optimizations on module load
 const deviceInfo = initializeMobileOptimizations();
-console.log('TMDB API initialized for device:', deviceInfo);
+logger.info('TMDB API initialized for device:', deviceInfo);
 
 // Enhanced fetch wrapper with mobile-specific optimizations
 const fetchFromTMDB = async (endpoint, page = 1) => { // Added page parameter with default value
@@ -361,7 +362,7 @@ export const fetchLatestMoviesFromVidSrc = async (page = 1) => {
     }
     return await response.json();
   } catch (error) {
-    console.error('VidSrc Latest Movies Error:', error);
+    logger.error('VidSrc Latest Movies Error', error);
     return { movies: [], error: error.message };
   }
 };
@@ -375,7 +376,7 @@ export const fetchLatestTVShowsFromVidSrc = async (page = 1) => {
     }
     return await response.json();
   } catch (error) {
-    console.error('VidSrc Latest TV Shows Error:', error);
+    logger.error('VidSrc Latest TV Shows Error', error);
     return { tvshows: [], error: error.message };
   }
 };
@@ -389,7 +390,7 @@ export const fetchLatestEpisodesFromVidSrc = async (page = 1) => {
     }
     return await response.json();
   } catch (error) {
-    console.error('VidSrc Latest Episodes Error:', error);
+    logger.error('VidSrc Latest Episodes Error', error);
     return { episodes: [], error: error.message };
   }
 };
@@ -397,12 +398,12 @@ export const fetchLatestEpisodesFromVidSrc = async (page = 1) => {
 // Test TMDB API connection
 export const testTMDBConnection = async () => {
   try {
-    console.log('Testing TMDB API connection...');
+    logger.info('Testing TMDB API connection...');
     const response = await fetchFromTMDB('/configuration');
-    console.log('TMDB API Connection Successful:', response);
+    logger.info('TMDB API Connection Successful:', response);
     return { success: true, data: response };
   } catch (error) {
-    console.error('TMDB API Connection Failed:', error);
+    logger.error('TMDB API Connection Failed', error);
     return { success: false, error: error.message };
   }
 };
@@ -410,12 +411,12 @@ export const testTMDBConnection = async () => {
 // Test VidSrc API connection
 export const testVidSrcConnection = async () => {
   try {
-    console.log('Testing VidSrc API connection...');
+    logger.info('Testing VidSrc API connection...');
     const response = await fetchLatestMoviesFromVidSrc(1);
-    console.log('VidSrc API Connection Successful:', response);
+    logger.info('VidSrc API Connection Successful:', response);
     return { success: true, data: response };
   } catch (error) {
-    console.error('VidSrc API Connection Failed:', error);
+    logger.error('VidSrc API Connection Failed', error);
     return { success: false, error: error.message };
   }
 };

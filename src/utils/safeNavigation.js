@@ -1,4 +1,5 @@
 // Utility functions for safe navigation and error handling
+import { logger } from './logger.js';
 export const safeOpenExternal = (url, options = {}) => {
   try {
     // Validate URL
@@ -6,7 +7,7 @@ export const safeOpenExternal = (url, options = {}) => {
     const allowedHosts = ['www.youtube.com', 'youtube.com', 'youtu.be'];
     
     if (!allowedHosts.includes(urlObj.hostname)) {
-      console.warn('Blocked unsafe external URL:', url);
+      logger.warn('Blocked unsafe external URL:', url);
       return false;
     }
     
@@ -21,7 +22,7 @@ export const safeOpenExternal = (url, options = {}) => {
     
     return false;
   } catch (error) {
-    console.warn('Failed to open external URL:', error);
+    logger.warn('Failed to open external URL', error);
     return false;
   }
 };
@@ -30,20 +31,20 @@ export const safeNavigate = (path) => {
   try {
     // Validate internal path
     if (typeof path !== 'string' || !path.startsWith('/')) {
-      console.warn('Invalid navigation path:', path);
+      logger.warn('Invalid navigation path:', path);
       return false;
     }
     
     window.location.href = path;
     return true;
   } catch (error) {
-    console.warn('Navigation failed, using fallback:', error);
+    logger.warn('Navigation failed, using fallback', error);
     try {
       window.history.pushState({}, '', path);
       window.location.reload();
       return true;
     } catch (fallbackError) {
-      console.error('All navigation methods failed:', fallbackError);
+      logger.error('All navigation methods failed', fallbackError);
       return false;
     }
   }
@@ -59,7 +60,7 @@ export const suppressRuntimeErrors = () => {
   }
   window.googletag.cmd = window.googletag.cmd || [];
   window.googletag.destroySlots = window.googletag.destroySlots || function(slots) {
-    console.log('[NEXUS] Runtime googletag.destroySlots intercepted');
+    logger.info('Runtime googletag.destroySlots intercepted');
     return slots || [];
   };
   
@@ -82,24 +83,24 @@ export const suppressRuntimeErrors = () => {
   console.error = function(...args) {
     const message = args.join(' ');
     const stack = (new Error()).stack || '';
-    
-    const shouldSuppress = runtimePatterns.some(pattern => 
+
+    const shouldSuppress = runtimePatterns.some(pattern =>
       message.includes(pattern) || stack.includes(pattern)
     );
-    
+
     if (shouldSuppress) {
-      console.log('[NEXUS] Runtime error suppressed:', message);
+      logger.info('Runtime error suppressed:', message);
       return;
     }
-    
-    originalError.apply(console, args);
+
+    logger.error(message, { args }, false);
   };
   
   // Additional window error handler
   window.addEventListener('error', function(event) {
     const message = event.message || '';
     if (message.includes('googletag') || message.includes('destroySlots')) {
-      console.log('[NEXUS] Runtime window error suppressed:', message);
+      logger.info('Runtime window error suppressed:', message);
       event.preventDefault();
       event.stopPropagation();
       return false;

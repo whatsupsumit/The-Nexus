@@ -1,8 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { initSentry, logger } from './utils/logger';
+
+// Initialize Sentry for error tracking
+initSentry();
 
 // Global error suppression for third-party video player errors
 const originalConsoleError = console.error;
@@ -32,71 +38,73 @@ const suppressedErrorPatterns = [
 
 console.error = (...args) => {
   const message = args.join(' ');
-  
+
   // Check if this is a suppressed error
-  const shouldSuppress = suppressedErrorPatterns.some(pattern => 
+  const shouldSuppress = suppressedErrorPatterns.some(pattern =>
     message.includes(pattern)
   );
-  
+
   if (shouldSuppress) {
     // Log to NEXUS internal logging instead
-    console.log('%c[NEXUS SYSTEM]%c Third-party service internal operation - no action required', 
-      'color: #ef4444; font-weight: bold;', 
-      'color: #888888;'
-    );
+    logger.info('Third-party service internal operation - no action required');
     return;
   }
-  
-  // Allow other errors through
-  originalConsoleError.apply(console, args);
+
+  // Log other errors through logger
+  logger.error(message, { args }, false);
 };
 
 console.warn = (...args) => {
   const message = args.join(' ');
-  
-  const shouldSuppress = suppressedErrorPatterns.some(pattern => 
+
+  const shouldSuppress = suppressedErrorPatterns.some(pattern =>
     message.includes(pattern)
   );
-  
+
   if (shouldSuppress) {
     return; // Suppress video player warnings
   }
-  
-  originalConsoleWarn.apply(console, args);
+
+  logger.warn(message, { args });
 };
 
 // Global error handler for unhandled promise rejections
 window.addEventListener('unhandledrejection', (event) => {
   const message = event.reason?.toString() || '';
-  
-  const shouldSuppress = suppressedErrorPatterns.some(pattern => 
+
+  const shouldSuppress = suppressedErrorPatterns.some(pattern =>
     message.includes(pattern)
   );
-  
+
   if (shouldSuppress) {
     event.preventDefault(); // Prevent the error from being logged
     return;
   }
+
+  logger.error('Unhandled promise rejection', event.reason, false);
 });
 
 // Global error handler for runtime errors
 window.addEventListener('error', (event) => {
   const message = event.message || '';
-  
-  const shouldSuppress = suppressedErrorPatterns.some(pattern => 
+
+  const shouldSuppress = suppressedErrorPatterns.some(pattern =>
     message.includes(pattern)
   );
-  
+
   if (shouldSuppress) {
     event.preventDefault(); // Prevent the error from being logged
     return;
   }
+
+  logger.error('Runtime error', event.message, false);
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <App />
+    <ToastContainer />
   </React.StrictMode>
 );
 

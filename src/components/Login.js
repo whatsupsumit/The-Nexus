@@ -9,6 +9,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { useNavigate, useLocation } from "react-router-dom";
+import { logger } from "../utils/logger";
 
 // Enhanced Login component with better responsiveness and animations
 const Login = () => {
@@ -66,8 +67,8 @@ const Login = () => {
       } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.error("Sign up error:", errorCode, errorMessage);
-        
+        logger.error(`Sign up failed: ${errorCode}`, { errorCode, errorMessage }, true);
+
         // Provide user-friendly error messages
         let friendlyMessage = "";
         switch (errorCode) {
@@ -111,8 +112,8 @@ const Login = () => {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          console.error("Sign In error:", errorCode, errorMessage);
-          
+          logger.error(`Sign in failed: ${errorCode}`, { errorCode, errorMessage }, true);
+
           // Provide user-friendly error messages
           let friendlyMessage = "";
           switch (errorCode) {
