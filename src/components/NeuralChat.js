@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { logger } from "../utils/logger";
 
 const NeuralChat = () => {
   const [messages, setMessages] = useState([]);
@@ -114,11 +115,11 @@ const NeuralChat = () => {
     try {
       const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
       if (!apiKey) {
-        console.log('❌ No Gemini API key found, using fallback');
+        logger.info('No Gemini API key found, using fallback');
         return getSmartMovieRecommendation(userMessage);
       }
 
-      console.log('🤖 Calling Gemini API for real AI recommendations...');
+      logger.info('Calling Gemini API for real AI recommendations');
 
       const moviePrompt = `You are the NEXUS Movie Recommendation AI, the coolest movie buddy on the planet! You LOVE movies and get super excited about helping people find their next favorite film.
 
@@ -149,8 +150,8 @@ Give them amazing movie suggestions that match what they want!`;
 
       for (const attempt of apiAttempts) {
         try {
-          console.log(`🔄 Trying: ${attempt.name}`);
-          
+          logger.debug(`Trying Gemini model: ${attempt.name}`);
+
           const response = await fetch(attempt.url, {
             method: "POST",
             headers: {
@@ -174,32 +175,32 @@ Give them amazing movie suggestions that match what they want!`;
           if (response.ok) {
             const data = await response.json();
             if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
-              console.log(`✅ SUCCESS with: ${attempt.name}`);
+              logger.info(`SUCCESS with: ${attempt.name}`);
               return data.candidates[0].content.parts[0].text;
             }
           } else {
-            console.log(`❌ ${attempt.name} failed: ${response.status}`);
+            logger.warn(`${attempt.name} failed: ${response.status}`);
             if (response.status === 503) {
-              console.log('   → Service temporarily unavailable');
+              logger.debug('Service temporarily unavailable');
             } else if (response.status === 404) {
-              console.log('   → Model not found');
+              logger.debug('Model not found');
             } else if (response.status === 429) {
-              console.log('   → Rate limit exceeded');
+              logger.debug('Rate limit exceeded');
             } else if (response.status === 400) {
-              console.log('   → Bad request - check API key');
+              logger.debug('Bad request - check API key');
             }
           }
         } catch (modelError) {
-          console.log(`❌ ${attempt.name} error:`, modelError.message);
+          logger.warn(`${attempt.name} error: ${modelError.message}`);
         }
       }
 
       // If all API attempts fail, use smart fallback
-      console.log('🔄 All Gemini APIs failed, using intelligent fallback system');
+      logger.warn('All Gemini APIs failed, using intelligent fallback system');
       return getSmartMovieRecommendation(userMessage);
 
     } catch (error) {
-      console.error("Movie AI Error:", error);
+      logger.error('Movie AI Error', error, true);
       return getSmartMovieRecommendation(userMessage);
     }
   };
@@ -231,7 +232,7 @@ Give them amazing movie suggestions that match what they want!`;
       setMessages(prev => [...prev, newBotMessage]);
       
     } catch (error) {
-      console.error("Error:", error);
+      logger.error('Error in NeuralChat', error, true);
       const errorMessage = {
         text: "🎬 Something went wrong with my movie magic! Try asking me about movies again - I love talking about films! 🍿",
         isBot: true,

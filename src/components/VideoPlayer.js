@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addWatchedItem } from '../utils/userSlice';
+import { logger } from '../utils/logger';
 import { getMovieEmbedUrl, getTVEmbedUrl, setupPlayerEventListener, initializeWatchProgress, getWatchProgress, getMovieRecommendations, fetchTrendingMovies, fetchTrendingTV } from '../utils/vidsrcApi';
 
 // Mock TV shows data for testing when TMDB API is not available
@@ -234,7 +235,7 @@ const addToWatchHistory = (movie, isTV = false, season = null, episode = null) =
       
     }
   } catch (error) {
-    
+    logger.error('Error adding to watch history', error);
   }
 };
 
@@ -315,7 +316,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
         if (!seasonData || !seasonData.episodes || seasonData.episodes.length === 0) {
           // Try to fetch episodes from season 1 if current season fails
           if (targetSeason !== 1) {
-            console.log('[NEXUS] Trying season 1 as fallback...');
+            logger.info('[NEXUS] Trying season 1 as fallback...');
             const fallbackSeasonData = await fetchSeasonDetails(movie.id, 1);
             if (fallbackSeasonData && fallbackSeasonData.episodes && fallbackSeasonData.episodes.length > 0) {
               setNextEpisodes(fallbackSeasonData.episodes);
@@ -409,7 +410,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
         
         setRecommendations(recommendedContent);
       } catch (error) {
-        console.error('Error loading recommendations:', error);
+        logger.error('Error loading recommendations', error);
         // Fallback to trending content
         try {
           const trendingMovies = await fetchTrendingMovies();
@@ -419,7 +420,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
             .slice(0, 15);
           setRecommendations(allTrending);
         } catch (fallbackError) {
-          console.error('Fallback error:', fallbackError);
+          logger.error('Fallback error', fallbackError);
         }
       } finally {
         setLoadingRecommendations(false);
@@ -435,7 +436,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
   useEffect(() => {
     const loadUrl = async () => {
       if (!movie || !movie.id) {
-        console.warn('VideoPlayer: Movie data is incomplete');
+        logger.warn('VideoPlayer: Movie data is incomplete');
         return;
       }
 
@@ -450,11 +451,11 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
         if (url && url.trim() !== '') {
           setCurrentEmbedUrl(url);
         } else {
-          console.warn('VideoPlayer: Generated URL is empty or invalid');
+          logger.warn('VideoPlayer: Generated URL is empty or invalid');
           setHasError(true);
         }
       } catch (error) {
-        console.error('VideoPlayer: Error generating embed URL:', error);
+        logger.error('VideoPlayer: Error generating embed URL', error);
         setHasError(true);
       }
     };
@@ -467,17 +468,17 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
     const cleanup = setupPlayerEventListener((eventData) => {
       try {
         if (!eventData || typeof eventData !== 'object') {
-          console.warn('VideoPlayer: Invalid event data received');
+          logger.warn('VideoPlayer: Invalid event data received');
           return;
         }
 
         const { eventType, mediaData } = eventData;
-        
+
         if (!eventType) {
-          console.warn('VideoPlayer: Event type missing');
+          logger.warn('VideoPlayer: Event type missing');
           return;
         }
-        
+
         switch (eventType) {
           case 'play':
             if (movie && movie.id) {
@@ -494,7 +495,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
             }
             break;
           case 'ended':
-            console.log('VideoPlayer: Video ended');
+            logger.info('VideoPlayer: Video ended');
             break;
           case 'timeupdate':
             if (mediaData) {
@@ -506,10 +507,10 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
             break;
         }
       } catch (error) {
-        console.warn('VideoPlayer: Error handling player event:', error.message);
+        logger.warn('VideoPlayer: Error handling player event', error);
       }
     });
-    
+
     return () => {
       if (cleanup && typeof cleanup === 'function') {
         cleanup();
@@ -581,7 +582,7 @@ const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, on
   };
 
   const handleSeasonSelect = async (seasonNumber) => {
-    console.log('[NEXUS] Season selected:', seasonNumber);
+    logger.info('[NEXUS] Season selected', seasonNumber);
     
     if (onSeasonEpisodeChange) {
       setCurrentSeason(seasonNumber);

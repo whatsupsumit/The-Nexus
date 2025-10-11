@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import { getImageUrl, getYear, getBackupImageUrl } from '../utils/vidsrcApi';
+import { logger } from '../utils/logger';
 
 const MovieCard = memo(({ movie, onClick, isTV = false, customBadge = null }) => {
   const title = isTV ? movie.name : movie.title;
@@ -8,11 +9,11 @@ const MovieCard = memo(({ movie, onClick, isTV = false, customBadge = null }) =>
   
   // Debug logging to see what data we're getting
   if (!title) {
-    console.log('🔍 MovieCard Debug - Movie data:', movie);
+    logger.debug('MovieCard: Missing title', { movie });
   }
   
   const handleImageError = (e) => {
-    console.log('🖼️ Image failed to load:', e.target.src);
+    logger.debug('MovieCard: Image failed to load', { src: e.target.src });
     // Try alternative poster sizes first
     if (e.target.src.includes('w500')) {
       e.target.src = getImageUrl(posterPath, 'w342');
