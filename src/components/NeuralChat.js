@@ -360,9 +360,11 @@ Give them amazing movie suggestions that match what they want!`;
                             Movie AI
                           </div>
                         )}
-                        <ReactMarkdown className="text-sm leading-relaxed prose prose-invert max-w-none">
-                          {message.text}
-                        </ReactMarkdown>
+                        <div className="text-sm leading-relaxed prose prose-invert max-w-none">
+                          <ReactMarkdown>
+                            {message.text}
+                          </ReactMarkdown>
+                        </div>
                         <p className="text-xs opacity-70 mt-2">{message.timestamp}</p>
                       </div>
                     </div>
