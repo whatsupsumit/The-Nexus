@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { X, x } from "lucide-react"
 import { ArrowRightToLine } from 'lucide-react';
 
@@ -374,7 +375,11 @@ Give them amazing movie suggestions that match what they want!`;
                             Movie AI
                           </div>
                         )}
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.text}</p>
+                        <div className="text-sm leading-relaxed prose prose-invert max-w-none">
+                          <ReactMarkdown>
+                            {message.text}
+                          </ReactMarkdown>
+                        </div>
                         <p className="text-xs opacity-70 mt-2">{message.timestamp}</p>
                       </div>
                     </div>
