@@ -389,7 +389,7 @@ const Browse = () => {
         </div>
 
         {/* ... (Footer remains unchanged) ... */}
-        <div className="relative z-40 mt-12 sm:mt-16 md:mt-20 text-center pb-12 sm:pb-16 px-4 sm:px-6 md:px-8">
+        <div className="relative z-40 mt-12 sm:mt-16 md:mt-20 text-center pb-12 sm:pb-4 px-4 sm:px-6 md:px-8">
           <div className="font-['Arvo',serif] text-xs sm:text-sm text-nexus-text-dark space-y-2">
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4">
               <div className="flex items-center space-x-2">
@@ -401,9 +401,9 @@ const Browse = () => {
               <span className="hidden sm:inline text-nexus-red">●</span>
               <span className="hidden sm:inline">PLATFORM: SYNCHRONIZED</span>
             </div>
-            <div className="text-xs text-nexus-grey">
+            {/* <div className="text-xs text-nexus-grey">
               NEXUS v2.1.0 | Entertainment Platform Active | VidSrc Integration Enabled
-            </div>
+            </div> */}
           </div>
         </div>
 
