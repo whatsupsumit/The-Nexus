@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import { X, x } from "lucide-react"
+import { ArrowRightToLine } from 'lucide-react';
 
 const NeuralChat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [istoggle, setIsToggle] = useState(true);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -22,7 +25,7 @@ const NeuralChat = () => {
       timestamp: new Date().toLocaleTimeString(),
       animated: true
     };
-    
+
     setTimeout(() => {
       setMessages([welcomeMessage]);
     }, 500);
@@ -31,7 +34,7 @@ const NeuralChat = () => {
   const moviePrompts = [
     "🌙 What should I watch tonight?",
     "💕 Something romantic and sweet",
-    "👻 Scary movie that's actually good", 
+    "👻 Scary movie that's actually good",
     "😂 Make me laugh with a comedy",
     "💥 High action and explosions",
     "🧠 Smart movie that makes me think"
@@ -39,7 +42,7 @@ const NeuralChat = () => {
 
   const getSmartMovieRecommendation = (userMessage) => {
     const message = userMessage.toLowerCase();
-    
+
     // Enhanced movie recommendations with more variety
     if (message.includes('10') || message.includes('list') || message.includes('many')) {
       // User wants multiple movies
@@ -61,7 +64,7 @@ const NeuralChat = () => {
       const movies = categories[selectedCategory];
       const count = message.includes('10') ? 10 : Math.min(movies.length, 8);
       const selectedMovies = movies.slice(0, count);
-      
+
       return `🎬 Here are ${count} amazing ${selectedCategory} movies for you:\n\n${selectedMovies.map((movie, i) => `${i + 1}. **${movie}**`).join('\n')}\n\n🍿 Each one of these is absolutely fantastic! Which one catches your eye? I can tell you more about any of them!`;
     }
 
@@ -107,7 +110,7 @@ const NeuralChat = () => {
       "🎭 **Knives Out (2019)** - Daniel Craig's detective work in a modern murder mystery masterpiece!",
       "🌟 **Dune (2021)** - Denis Villeneuve's epic space opera with incredible visuals and Hans Zimmer's score!"
     ];
-    
+
     return defaults[Math.floor(Math.random() * defaults.length)] + " 🍿 What genre excites you most? I've got endless recommendations!";
   };
 
@@ -151,7 +154,7 @@ Give them amazing movie suggestions that match what they want!`;
       for (const attempt of apiAttempts) {
         try {
           console.log(`🔄 Trying: ${attempt.name}`);
-          
+
           const response = await fetch(attempt.url, {
             method: "POST",
             headers: {
@@ -222,7 +225,7 @@ Give them amazing movie suggestions that match what they want!`;
 
     try {
       const movieResponse = await callMovieAPI(userMessage);
-      
+
       const newBotMessage = {
         text: movieResponse,
         isBot: true,
@@ -230,7 +233,7 @@ Give them amazing movie suggestions that match what they want!`;
         animated: true
       };
       setMessages(prev => [...prev, newBotMessage]);
-      
+
     } catch (error) {
       console.error("Error:", error);
       const errorMessage = {
@@ -254,6 +257,7 @@ Give them amazing movie suggestions that match what they want!`;
 
   const handleQuickPrompt = (prompt) => {
     setInput(prompt);
+ 
     setTimeout(() => {
       handleSendMessage();
     }, 100);
@@ -261,7 +265,7 @@ Give them amazing movie suggestions that match what they want!`;
 
   return (
     <div className="h-screen relative text-white overflow-hidden flex flex-col">
-      <div 
+      <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `url("/astro.jpg")`,
@@ -270,9 +274,9 @@ Give them amazing movie suggestions that match what they want!`;
           filter: "brightness(0.3)",
         }}
       ></div>
-      
+
       <div className="fixed inset-0 bg-gradient-to-br from-black/80 via-red-900/20 to-black/80"></div>
-      
+
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {["🎬", "🍿", "🎭", "🎪", "🎨", "⭐"].map((icon, i) => (
           <div
@@ -292,7 +296,7 @@ Give them amazing movie suggestions that match what they want!`;
 
       <div className="relative z-10 h-full flex flex-col pt-16">
         <div className="container mx-auto px-4 max-w-7xl h-full flex flex-col">
-          
+
           {/* Fixed Header */}
           <div className="flex-shrink-0 text-center py-4">
             <div className="inline-flex items-center gap-3 bg-black/60 backdrop-blur-lg rounded-full px-6 py-2 border border-red-500/30">
@@ -308,16 +312,28 @@ Give them amazing movie suggestions that match what they want!`;
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             </div>
           </div>
+          <button onClick={() => setIsToggle(true)} className={`${istoggle?"opacity-0":"opacity-100"} bg-white/30 backdrop-blur-sm mb-2 sm:hidden border w-8 px-4 py-2 flex flex-col justify-center items-center ml-4 rounded-lg`}>
+
+            <ArrowRightToLine className="w-5 h-5"/>
+          </button>
 
           {/* Main Layout - Left Sidebar + Right Chat */}
           <div className="flex gap-6 flex-1 min-h-0">
-            
+
             {/* Left Sidebar - Movie Prompts */}
-            <div className="w-72 flex-shrink-0">
-              <div className="bg-black/50 backdrop-blur-lg rounded-2xl border border-red-500/30 p-4 h-full flex flex-col">
-                <h3 className="text-base font-semibold mb-3 text-red-300 text-center flex items-center justify-center gap-2">
-                  🍿 Quick Requests
-                </h3>
+
+            <div className={` w-72 flex-shrink-0 ${istoggle ? "block" : "hidden"}`}>
+              <div className="bg-black/50 backdrop-blur-lg rounded-2xl  border-red-500/30 p-4 h-full flex flex-col">
+                <div className="flex py-2 justify-between">
+                  <h3 className="text-base font-semibold sm:mb-3 text-red-300 text-center flex items-center justify-center gap-2">
+                    🍿 Quick Requests
+                  </h3>
+                  <button className="sm:hidden" onClick={() => setIsToggle(false)}>
+                    <X className="w-5 h-5" />
+                  </button>
+
+                </div>
+
                 <div className="space-y-2 flex-1 overflow-y-auto">
                   {moviePrompts.map((prompt, index) => (
                     <button
@@ -333,26 +349,25 @@ Give them amazing movie suggestions that match what they want!`;
             </div>
 
             {/* Right Side - Chat Interface */}
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1 ">
+
               <div className="bg-black/70 backdrop-blur-xl rounded-2xl border border-red-500/30 shadow-2xl h-full flex flex-col overflow-hidden">
-                
+
                 {/* Chat Messages */}
-                <div 
+                <div
                   className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-red-500/50 scrollbar-track-gray-800/50"
                 >
                   {messages.map((message, index) => (
                     <div
                       key={index}
-                      className={`flex ${message.isBot ? "justify-start" : "justify-end"} ${
-                        message.animated ? "animate-fadeInUp" : ""
-                      }`}
+                      className={`flex ${message.isBot ? "justify-start" : "justify-end"} ${message.animated ? "animate-fadeInUp" : ""
+                        }`}
                     >
                       <div
-                        className={`max-w-md px-4 py-3 rounded-2xl relative ${
-                          message.isBot
-                            ? "bg-gradient-to-r from-red-600/30 to-purple-600/30 border border-red-500/40"
-                            : "bg-gradient-to-r from-gray-600/50 to-gray-700/50 border border-gray-500/40"
-                        }`}
+                        className={`max-w-md px-4 py-3 rounded-2xl relative ${message.isBot
+                          ? "bg-gradient-to-r from-red-600/30 to-purple-600/30 border border-red-500/40"
+                          : "bg-gradient-to-r from-gray-600/50 to-gray-700/50 border border-gray-500/40"
+                          }`}
                       >
                         {message.isBot && (
                           <div className="text-xs text-red-300 mb-1 flex items-center gap-1">
@@ -369,7 +384,7 @@ Give them amazing movie suggestions that match what they want!`;
                       </div>
                     </div>
                   ))}
-                  
+
                   {isLoading && (
                     <div className="flex justify-start animate-fadeInUp">
                       <div className="bg-gradient-to-r from-red-600/30 to-purple-600/30 border border-red-500/40 px-4 py-3 rounded-2xl">
@@ -402,11 +417,10 @@ Give them amazing movie suggestions that match what they want!`;
                     <button
                       onClick={handleSendMessage}
                       disabled={isLoading || !input.trim()}
-                      className={`px-5 py-2 rounded-xl font-semibold transition-all duration-300 ${
-                        isLoading 
-                          ? "bg-gray-600/50 border border-gray-500/40" 
-                          : "bg-gradient-to-r from-red-600 to-purple-600 border border-red-400/60 hover:shadow-lg hover:scale-105"
-                      }`}
+                      className={`px-5 py-2 rounded-xl font-semibold transition-all duration-300 ${isLoading
+                        ? "bg-gray-600/50 border border-gray-500/40"
+                        : "bg-gradient-to-r from-red-600 to-purple-600 border border-red-400/60 hover:shadow-lg hover:scale-105"
+                        }`}
                     >
                       {isLoading ? (
                         <div className="w-4 h-4 border-2 border-gray-300 border-t-red-400 rounded-full animate-spin"></div>
