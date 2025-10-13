@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
+
+import { logger } from "../utils/logger";
+
 import { X, x } from "lucide-react"
 import { ArrowRightToLine } from 'lucide-react';
+
 
 // Simple markdown parser component for chat messages
 const MarkdownRenderer = ({ content }) => {
@@ -85,6 +89,7 @@ const MarkdownRenderer = ({ content }) => {
 
   return <div className="space-y-1">{parseMarkdown(content)}</div>;
 };
+
 
 const NeuralChat = () => {
   const [messages, setMessages] = useState([]);
@@ -214,11 +219,11 @@ ${selectedMovies.map((movie, i) => `${i + 1}. **${movie}**`).join('\n')}
     try {
       const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
       if (!apiKey) {
-        console.log('❌ No Gemini API key found, using fallback');
+        logger.info('No Gemini API key found, using fallback');
         return getSmartMovieRecommendation(userMessage);
       }
 
-      console.log('🤖 Calling Gemini API for real AI recommendations...');
+      logger.info('Calling Gemini API for real AI recommendations');
 
       const moviePrompt = `You are the NEXUS Movie Recommendation AI, the coolest movie buddy on the planet! You LOVE movies and get super excited about helping people find their next favorite film.
 
@@ -246,7 +251,11 @@ Give them amazing movie suggestions that match what they want!`;
 
       for (const attempt of apiAttempts) {
         try {
+
+          logger.debug(`Trying Gemini model: ${attempt.name}`);
+
           console.log(`🔄 Trying: ${attempt.name}`);
+
 
           const response = await fetch(attempt.url, {
             method: "POST",
@@ -271,22 +280,40 @@ Give them amazing movie suggestions that match what they want!`;
           if (response.ok) {
             const data = await response.json();
             if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
-              console.log(`✅ SUCCESS with: ${attempt.name}`);
+              logger.info(`SUCCESS with: ${attempt.name}`);
               return data.candidates[0].content.parts[0].text;
             }
           } else {
+
+            logger.warn(`${attempt.name} failed: ${response.status}`);
+            if (response.status === 503) {
+              logger.debug('Service temporarily unavailable');
+            } else if (response.status === 404) {
+              logger.debug('Model not found');
+            } else if (response.status === 429) {
+              logger.debug('Rate limit exceeded');
+            } else if (response.status === 400) {
+              logger.debug('Bad request - check API key');
+            }
+
             console.log(`❌ ${attempt.name} failed: ${response.status}`);
+
           }
         } catch (modelError) {
-          console.log(`❌ ${attempt.name} error:`, modelError.message);
+          logger.warn(`${attempt.name} error: ${modelError.message}`);
         }
       }
 
+
+      // If all API attempts fail, use smart fallback
+      logger.warn('All Gemini APIs failed, using intelligent fallback system');
+
       console.log('🔄 All Gemini APIs failed, using intelligent fallback system');
+
       return getSmartMovieRecommendation(userMessage);
 
     } catch (error) {
-      console.error("Movie AI Error:", error);
+      logger.error('Movie AI Error', error, true);
       return getSmartMovieRecommendation(userMessage);
     }
   };
@@ -318,7 +345,7 @@ Give them amazing movie suggestions that match what they want!`;
       setMessages(prev => [...prev, newBotMessage]);
 
     } catch (error) {
-      console.error("Error:", error);
+      logger.error('Error in NeuralChat', error, true);
       const errorMessage = {
         text: "## 🎬 Oops! Movie Magic Glitch!\n\nSomething went wrong with my movie magic! Try asking me about movies again - **I love talking about films!** 🍿\n\n*Try asking:* \"What's a good comedy?\" or \"Best action movies\"",
         isBot: true,

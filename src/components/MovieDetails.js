@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getMovieDetails, getMovieCredits, getMovieVideos, getMovieRecommendations } from '../utils/vidsrcApi';
 import { safeOpenExternal } from '../utils/safeNavigation';
 import VideoPlayer from './VideoPlayer';
+import { logger } from '../utils/logger';
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -58,7 +59,7 @@ const MovieDetails = () => {
           }, 300);
         }
       } catch (error) {
-        console.error('Error loading movie details:', error);
+        logger.error('Error loading movie details', error, true);
         setCredits({ cast: [], crew: [] });
         setVideos([]);
         setRecommendations([]);
@@ -335,7 +336,7 @@ const MovieDetails = () => {
                         const url = `https://www.youtube.com/watch?v=${encodeURIComponent(trailer.key)}`;
                         const success = safeOpenExternal(url);
                         if (!success) {
-                          console.warn('Failed to open trailer safely');
+                          logger.warn('Failed to open trailer safely');
                         }
                       }}
                       className="border-2 border-gray-500 text-gray-300 hover:border-red-500 hover:text-red-400 px-6 sm:px-8 py-4 sm:py-3 rounded-lg font-['JetBrains_Mono',monospace] font-bold flex items-center justify-center transition-all duration-300 w-full sm:w-auto order-3"
@@ -409,7 +410,7 @@ const MovieDetails = () => {
                   className="bg-gray-900/50 rounded-lg p-4 text-center cursor-pointer hover:bg-gray-800/50 transition-all duration-300 transform hover:scale-105"
                   onClick={() => {
                     // You can add navigation to actor details page here if you have one
-                    console.log('Navigate to actor:', actor.name);
+                    logger.debug('Navigate to actor:', actor.name);
                   }}
                 >
                   <div className="relative mb-3">

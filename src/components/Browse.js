@@ -10,6 +10,7 @@ import {
   searchMovies,
   searchTVShows
 } from '../utils/vidsrcApi';
+import { logger } from '../utils/logger';
 
 // --- NEW: We will create this new component in the next step ---
 import LazyLoadCarousel from './LazyLoadCarousel';
@@ -74,7 +75,7 @@ const Browse = () => {
           }
         }));
       } catch (error) {
-        console.error('Error loading priority content:', error);
+        logger.error('Failed to load priority content', error, true);
       } finally {
         setInitialPageLoad(false); // The main page is now ready
       }
@@ -110,7 +111,7 @@ const Browse = () => {
         }
       }));
     } catch (error) {
-      console.error(`Error loading initial data for ${categoryKey}:`, error);
+      logger.error(`Failed to load initial data for ${categoryKey}`, error, true);
       // Mark as loaded to prevent retrying on error
       setContent(prev => ({ ...prev, [categoryKey]: { ...prev[categoryKey], loaded: true } }));
     }
@@ -147,7 +148,7 @@ const Browse = () => {
       }));
 
     } catch (error) {
-      console.error(`Error loading more ${categoryKey}:`, error);
+      logger.error(`Failed to load more ${categoryKey}`, error, true);
       setContent(prev => ({ ...prev, [categoryKey]: { ...prev[categoryKey], loadingMore: false, hasMore: false } }));
     }
   }, [content]);
@@ -170,7 +171,7 @@ const Browse = () => {
 
         setSearchResults(combinedResults);
       } catch (error) {
-        console.error('Search error:', error);
+        logger.error('Search failed', error, true);
         setSearchResults([]);
       } finally {
         setIsSearching(false);

@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 // import { getAnalytics, isSupported } from "firebase/analytics"; // Disabled to prevent GTM conflicts
 import { getAuth } from "firebase/auth";
+import { logger } from './logger.js';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -24,9 +25,9 @@ let analytics = null;
 // Analytics disabled to prevent Google Tag Manager conflicts and related errors
 // Firebase Analytics was causing googletag.destroySlots errors and ERR_UNSAFE_REDIRECT issues
 try {
-  console.log('[NEXUS] Firebase Analytics disabled to prevent GTM conflicts');
+  logger.info('Firebase Analytics disabled to prevent GTM conflicts');
 } catch (error) {
-  console.log('[NEXUS] Firebase Analytics error caught:', error);
+  logger.info('Firebase Analytics error caught:', error);
 }
 
 export const auth = getAuth(app);
