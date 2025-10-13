@@ -159,6 +159,7 @@ This is the recommended path for a zero-effort setup:
 ### 🧩 Manual Build
 ```bash
 npm run build
+```
 ---
 
 ## 🤝 Contributing (Pull Up!)
