@@ -2,6 +2,90 @@ import React, { useState, useRef, useEffect } from "react";
 import { X, x } from "lucide-react"
 import { ArrowRightToLine } from 'lucide-react';
 
+// Simple markdown parser component for chat messages
+const MarkdownRenderer = ({ content }) => {
+  const parseMarkdown = (text) => {
+    if (!text) return [];
+    
+    const lines = text.split('\n');
+    const elements = [];
+    let currentIndex = 0;
+
+    lines.forEach((line, index) => {
+      let element = null;
+      const key = `line-${index}`;
+
+      // Handle headers (# ## ###)
+      if (line.startsWith('### ')) {
+        element = <h3 key={key} className="text-lg font-bold text-red-300 mt-3 mb-2">{line.slice(4)}</h3>;
+      } else if (line.startsWith('## ')) {
+        element = <h2 key={key} className="text-xl font-bold text-red-400 mt-4 mb-2">{line.slice(3)}</h2>;
+      } else if (line.startsWith('# ')) {
+        element = <h1 key={key} className="text-2xl font-bold text-red-500 mt-4 mb-3">{line.slice(2)}</h1>;
+      }
+      // Handle numbered lists
+      else if (/^\d+\.\s/.test(line)) {
+        const content = line.replace(/^\d+\.\s/, '');
+        const formattedContent = formatInlineMarkdown(content);
+        element = (
+          <div key={key} className="flex items-start gap-2 mb-1">
+            <span className="text-red-400 font-bold text-sm mt-0.5">{line.match(/^\d+/)[0]}.</span>
+            <span className="flex-1" dangerouslySetInnerHTML={{ __html: formattedContent }} />
+          </div>
+        );
+      }
+      // Handle bullet points
+      else if (line.startsWith('- ') || line.startsWith('* ')) {
+        const content = line.slice(2);
+        const formattedContent = formatInlineMarkdown(content);
+        element = (
+          <div key={key} className="flex items-start gap-2 mb-1">
+            <span className="text-red-400 mt-1">•</span>
+            <span className="flex-1" dangerouslySetInnerHTML={{ __html: formattedContent }} />
+          </div>
+        );
+      }
+      // Handle empty lines
+      else if (line.trim() === '') {
+        element = <div key={key} className="h-2"></div>;
+      }
+      // Handle regular paragraphs
+      else {
+        const formattedContent = formatInlineMarkdown(line);
+        element = <p key={key} className="mb-2 leading-relaxed" dangerouslySetInnerHTML={{ __html: formattedContent }} />;
+      }
+
+      if (element) {
+        elements.push(element);
+      }
+    });
+
+    return elements;
+  };
+
+  const formatInlineMarkdown = (text) => {
+    if (!text) return '';
+    
+    return text
+      // Bold **text** or __text__
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')
+      .replace(/__(.*?)__/g, '<strong class="text-white font-bold">$1</strong>')
+      // Italic *text* or _text_
+      .replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em class="text-gray-200 italic">$1</em>')
+      .replace(/(?<!_)_([^_]+)_(?!_)/g, '<em class="text-gray-200 italic">$1</em>')
+      // Code `text`
+      .replace(/`([^`]+)`/g, '<code class="bg-gray-800 text-green-400 px-1 py-0.5 rounded text-sm font-mono">$1</code>')
+      // Links [text](url)
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-400 hover:text-blue-300 underline" target="_blank" rel="noopener noreferrer">$1</a>')
+      // Movie titles in parentheses get special styling
+      .replace(/\((\d{4})\)/g, '<span class="text-yellow-400 font-semibold">($1)</span>')
+      // Emojis and special characters preservation
+      .replace(/([🎬🍿🎭🎪🎨⭐🤣😂🎯💥🔫🚗🥊💣👻😱🩸🔪👹🌙💕🧠😈✅❌🔄🤖🚀])/g, '<span class="text-lg">$1</span>');
+  };
+
+  return <div className="space-y-1">{parseMarkdown(content)}</div>;
+};
+
 const NeuralChat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -19,7 +103,18 @@ const NeuralChat = () => {
 
   useEffect(() => {
     const welcomeMessage = {
-      text: "🎬 Hey there! I'm your NEXUS movie buddy! Tell me what you're in the mood for and I'll find you the perfect film. Want something funny? Scary? Romantic? Just ask me anything like 'I want a good action movie' or 'something to make me cry' - I got you covered! 🍿",
+      text: `# 🎬 Welcome to NEXUS Movie AI!
+
+Hey there! I'm your **NEXUS movie buddy**! Tell me what you're in the mood for and I'll find you the perfect film.
+
+## What I can help with:
+- **Comedy** - Something to make you laugh 😂
+- **Action** - High-octane thrills 💥  
+- **Horror** - Spine-chilling scares 👻
+- **Romance** - Heart-warming stories 💕
+- **Sci-Fi** - Mind-bending adventures 🚀
+
+Just ask me anything like *"I want a good action movie"* or *"something to make me cry"* - I got you covered! 🍿`,
       isBot: true,
       timestamp: new Date().toLocaleTimeString(),
       animated: true
@@ -64,51 +159,55 @@ const NeuralChat = () => {
       const count = message.includes('10') ? 10 : Math.min(movies.length, 8);
       const selectedMovies = movies.slice(0, count);
 
-      return `🎬 Here are ${count} amazing ${selectedCategory} movies for you:\n\n${selectedMovies.map((movie, i) => `${i + 1}. **${movie}**`).join('\n')}\n\n🍿 Each one of these is absolutely fantastic! Which one catches your eye? I can tell you more about any of them!`;
+      return `## 🎬 Top ${count} ${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Movies
+
+${selectedMovies.map((movie, i) => `${i + 1}. **${movie}**`).join('\n')}
+
+🍿 **Each one of these is absolutely fantastic!** Which one catches your eye? I can tell you more about any of them!`;
     }
 
     if (message.includes('comedy') || message.includes('funny') || message.includes('laugh')) {
       const comedies = [
-        "🤣 **Superbad (2007)** - Absolute comedy gold! Michael Cera and Jonah Hill's chemistry is hilarious!",
-        "😂 **The Grand Budapest Hotel (2014)** - Wes Anderson's quirky masterpiece with Ralph Fiennes being delightfully absurd!",
-        "🎭 **Game Night (2018)** - Jason Bateman and Rachel McAdams in a hilarious mystery comedy that keeps surprising you!",
-        "🤪 **What We Do in the Shadows (2014)** - Vampire flatmates being awkward? Pure comedic genius!",
-        "😆 **The Nice Guys (2016)** - Ryan Gosling and Russell Crowe's buddy cop comedy is criminally underrated!"
+        "## 🤣 Comedy Gold!\n\n**Superbad (2007)** - Absolute comedy gold! Michael Cera and Jonah Hill's chemistry is hilarious!\n\n*Perfect for:* Late night laughs",
+        "## 😂 Wes Anderson Magic!\n\n**The Grand Budapest Hotel (2014)** - Wes Anderson's quirky masterpiece with Ralph Fiennes being delightfully absurd!\n\n*Perfect for:* Sophisticated humor lovers",
+        "## 🎭 Mystery Comedy!\n\n**Game Night (2018)** - Jason Bateman and Rachel McAdams in a hilarious mystery comedy that keeps surprising you!\n\n*Perfect for:* Date night laughs",
+        "## 🤪 Vampire Comedy!\n\n**What We Do in the Shadows (2014)** - Vampire flatmates being awkward? Pure comedic genius!\n\n*Perfect for:* Something totally unique",
+        "## 😆 Buddy Comedy!\n\n**The Nice Guys (2016)** - Ryan Gosling and Russell Crowe's buddy cop comedy is criminally underrated!\n\n*Perfect for:* Action-comedy fans"
       ];
-      return comedies[Math.floor(Math.random() * comedies.length)] + " 🍿 Want more laughs? Just ask!";
+      return comedies[Math.floor(Math.random() * comedies.length)] + "\n\n🍿 **Want more laughs?** Just ask!";
     }
 
     if (message.includes('action') || message.includes('explosion') || message.includes('fight')) {
       const actions = [
-        "💥 **Mad Max: Fury Road (2015)** - Charlize Theron kicks butt in the most insane car chase movie ever made!",
-        "🔫 **John Wick (2014)** - Keanu Reeves + incredible choreography = pure action poetry!",
-        "🚗 **Baby Driver (2017)** - Edgar Wright's action musical with car chases synced to amazing music!",
-        "🥊 **Nobody (2021)** - Bob Odenkirk going full action hero? It's better than it sounds!",
-        "💣 **Atomic Blonde (2017)** - Charlize Theron doing brutal 80s spy action with an amazing soundtrack!"
+        "## 💥 Pure Action Perfection!\n\n**Mad Max: Fury Road (2015)** - Charlize Theron kicks butt in the most insane car chase movie ever made!\n\n*Why it's amazing:* Non-stop practical effects and stunts",
+        "## 🔫 Action Poetry!\n\n**John Wick (2014)** - Keanu Reeves + incredible choreography = pure action poetry!\n\n*Why it's amazing:* Every fight scene is a masterclass",
+        "## 🚗 Musical Action!\n\n**Baby Driver (2017)** - Edgar Wright's action musical with car chases synced to amazing music!\n\n*Why it's amazing:* Unique blend of music and mayhem",
+        "## 🥊 Unexpected Hero!\n\n**Nobody (2021)** - Bob Odenkirk going full action hero? It's better than it sounds!\n\n*Why it's amazing:* Surprising and brutal",
+        "## 💣 80s Spy Action!\n\n**Atomic Blonde (2017)** - Charlize Theron doing brutal 80s spy action with an amazing soundtrack!\n\n*Why it's amazing:* Stylish and intense"
       ];
-      return actions[Math.floor(Math.random() * actions.length)] + " 🎬 Ready for adrenaline? These deliver!";
+      return actions[Math.floor(Math.random() * actions.length)] + "\n\n🎬 **Ready for adrenaline?** These deliver!";
     }
 
     if (message.includes('horror') || message.includes('scary')) {
       const horrors = [
-        "👻 **Hereditary (2018)** - Toni Collette's performance will haunt you! Psychological horror perfection!",
-        "😱 **The Conjuring (2013)** - Classic ghost story done absolutely right by James Wan!",
-        "🩸 **Get Out (2017)** - Jordan Peele's genius thriller that's scary AND brilliantly written!",
-        "🔪 **A Quiet Place (2018)** - The tension is unreal! Emily Blunt and John Krasinski's monster masterpiece!",
-        "👹 **The Witch (2015)** - Period horror that feels authentically terrifying and beautifully crafted!"
+        "## 👻 Psychological Horror Masterpiece!\n\n**Hereditary (2018)** - Toni Collette's performance will haunt you! Psychological horror perfection!\n\n*Scare level:* 🔥🔥🔥🔥🔥",
+        "## 😱 Classic Ghost Story!\n\n**The Conjuring (2013)** - Classic ghost story done absolutely right by James Wan!\n\n*Scare level:* 🔥🔥🔥🔥",
+        "## 🩸 Smart Thriller!\n\n**Get Out (2017)** - Jordan Peele's genius thriller that's scary AND brilliantly written!\n\n*Scare level:* 🔥🔥🔥",
+        "## 🔪 Tense Monster Movie!\n\n**A Quiet Place (2018)** - The tension is unreal! Emily Blunt and John Krasinski's monster masterpiece!\n\n*Scare level:* 🔥🔥🔥🔥",
+        "## 👹 Period Horror!\n\n**The Witch (2015)** - Period horror that feels authentically terrifying and beautifully crafted!\n\n*Scare level:* 🔥🔥🔥🔥"
       ];
-      return horrors[Math.floor(Math.random() * horrors.length)] + " Sweet dreams... 😈 Need more scares?";
+      return horrors[Math.floor(Math.random() * horrors.length)] + "\n\n**Sweet dreams...** 😈 Need more scares?";
     }
 
     const defaults = [
-      "🎬 **Everything Everywhere All at Once (2022)** - The most creative movie ever made! Michelle Yeoh jumping through multiverses!",
-      "🏆 **Parasite (2019)** - Bong Joon-ho's masterpiece that will keep you guessing until the very end!",
-      "🕷️ **Spider-Man: Into the Spider-Verse (2018)** - Animation revolution! Every frame is pure art!",
-      "🎭 **Knives Out (2019)** - Daniel Craig's detective work in a modern murder mystery masterpiece!",
-      "🌟 **Dune (2021)** - Denis Villeneuve's epic space opera with incredible visuals and Hans Zimmer's score!"
+      "## 🎬 Mind-Bending Masterpiece!\n\n**Everything Everywhere All at Once (2022)** - The most creative movie ever made! Michelle Yeoh jumping through multiverses!\n\n*Why it's perfect:* Comedy + Drama + Action + Philosophy",
+      "## 🏆 Social Thriller!\n\n**Parasite (2019)** - Bong Joon-ho's masterpiece that will keep you guessing until the very end!\n\n*Why it's perfect:* Unpredictable and brilliant",
+      "## 🕷️ Animation Revolution!\n\n**Spider-Man: Into the Spider-Verse (2018)** - Animation revolution! Every frame is pure art!\n\n*Why it's perfect:* Visual feast + great story",
+      "## 🎭 Modern Mystery!\n\n**Knives Out (2019)** - Daniel Craig's detective work in a modern murder mystery masterpiece!\n\n*Why it's perfect:* Clever and entertaining",
+      "## 🌟 Epic Space Opera!\n\n**Dune (2021)** - Denis Villeneuve's epic space opera with incredible visuals and Hans Zimmer's score!\n\n*Why it's perfect:* Stunning cinematography"
     ];
 
-    return defaults[Math.floor(Math.random() * defaults.length)] + " 🍿 What genre excites you most? I've got endless recommendations!";
+    return defaults[Math.floor(Math.random() * defaults.length)] + "\n\n🍿 **What genre excites you most?** I've got endless recommendations!";
   };
 
   const callMovieAPI = async (userMessage) => {
@@ -221,7 +320,7 @@ Give them amazing movie suggestions that match what they want!`;
     } catch (error) {
       console.error("Error:", error);
       const errorMessage = {
-        text: "🎬 Something went wrong with my movie magic! Try asking me about movies again - I love talking about films! 🍿",
+        text: "## 🎬 Oops! Movie Magic Glitch!\n\nSomething went wrong with my movie magic! Try asking me about movies again - **I love talking about films!** 🍿\n\n*Try asking:* \"What's a good comedy?\" or \"Best action movies\"",
         isBot: true,
         timestamp: new Date().toLocaleTimeString(),
         animated: true
@@ -405,7 +504,7 @@ Give them amazing movie suggestions that match what they want!`;
                         }`}
                     >
                       <div
-                        className={`max-w-md px-4 py-3 rounded-2xl relative ${message.isBot
+                        className={`max-w-[800px] px-4 py-3 rounded-2xl relative ${message.isBot
                           ? "bg-gradient-to-r from-red-600/30 to-purple-600/30 border border-red-500/40"
                           : "bg-gradient-to-r from-gray-600/50 to-gray-700/50 border border-gray-500/40"
                           }`}
@@ -417,6 +516,14 @@ Give them amazing movie suggestions that match what they want!`;
                             <span>Movie AI</span>
                           </div>
                         )}
+                        <div className="text-sm leading-relaxed">
+                          {message.isBot ? (
+                            <MarkdownRenderer content={message.text} />
+                          ) : (
+                            <p className="whitespace-pre-wrap">{message.text}</p>
+                          )}
+                        </div>
+                        <p className="text-xs opacity-70 mt-2">{message.timestamp}</p>
                         <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
                           {message.text}
                         </p>
