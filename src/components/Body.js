@@ -13,8 +13,8 @@ import { createBrowserRouter, RouterProvider, Navigate, useLocation } from 'reac
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '../utils/firebase';
 import { addUser, removeUser } from '../utils/userSlice';
-import ProtectedRoute from './ProtectedRoute';
 import Header from './header';
+import ProtectedRoute from './ProtectedRoute';
 
 const Body = () => {
   const dispatch = useDispatch();

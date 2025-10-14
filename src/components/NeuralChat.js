@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X, x } from "lucide-react"
+import { X } from "lucide-react"
 import { ArrowRightToLine } from 'lucide-react';
 
 // Simple markdown parser component for chat messages
@@ -9,7 +9,6 @@ const MarkdownRenderer = ({ content }) => {
     
     const lines = text.split('\n');
     const elements = [];
-    let currentIndex = 0;
 
     lines.forEach((line, index) => {
       let element = null;

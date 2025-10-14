@@ -10,10 +10,21 @@
 
 body { 
   font-family: 'JetBrains Mono', monospace;
-  background: #090a0a !important;
-  color: #e5e5e5;
+  background: var(--nexus-bg) !important;
+  color: var(--nexus-text);
   overflow-x: hidden;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light theme body adjustments */
+body.light {
+  background: linear-gradient(135deg, var(--nexus-gradient-from) 0%, var(--nexus-gradient-via) 50%, var(--nexus-gradient-to) 100%) !important;
+}
+
+/* Dark theme body (default) */
+body.dark, body {
+  background: #090a0a !important;
 }
 
 /* Override all font families to use JetBrains Mono */
@@ -60,6 +71,7 @@ body, html, div, span, h1, h2, h3, h4, h5, h6, p, a, button, input, textarea, se
 /* CSS Variables for Design System */
 :root {
   --radius: 0.625rem;
+  /* Dark theme (default) */
   --nexus-red: #ff1423;
   --nexus-red-hover: #ff2a35;
   --nexus-bg: #090a0a;
@@ -68,6 +80,24 @@ body, html, div, span, h1, h2, h3, h4, h5, h6, p, a, button, input, textarea, se
   --nexus-border: rgba(255, 255, 255, 0.1);
   --nexus-text: #e5e5e5;
   --nexus-text-muted: #a1a1aa;
+  --nexus-gradient-from: #0a0a0a;
+  --nexus-gradient-via: #1a1a1a;
+  --nexus-gradient-to: #0f0f0f;
+}
+
+/* Light theme variables */
+:root.light {
+  --nexus-red: #dc2626;
+  --nexus-red-hover: #b91c1c;
+  --nexus-bg: #f8fafc;
+  --nexus-card: #ffffff;
+  --nexus-card-hover: #f1f5f9;
+  --nexus-border: rgba(0, 0, 0, 0.15);
+  --nexus-text: #1f2937;
+  --nexus-text-muted: #6b7280;
+  --nexus-gradient-from: #ffffff;
+  --nexus-gradient-via: #f8fafc;
+  --nexus-gradient-to: #f1f5f9;
 }
 
 /* Enhanced Responsive Animations */

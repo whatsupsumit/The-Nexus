@@ -205,38 +205,38 @@ const fetchSeasonDetails = async (tvId, seasonNumber) => {
 };
 
 // Watch history tracking function
-const addToWatchHistory = (movie, isTV = false, season = null, episode = null) => {
-  try {
-    const watchHistory = JSON.parse(localStorage.getItem('nexus_watch_history') || '[]');
+// const addToWatchHistory = (movie, isTV = false, season = null, episode = null) => {
+//   try {
+//     const watchHistory = JSON.parse(localStorage.getItem('nexus_watch_history') || '[]');
     
-    // Check if this item is already in recent history (last 5 items)
-    const recentHistory = watchHistory.slice(-5);
-    const mediaType = isTV ? 'tv' : 'movie';
-    const isRecent = recentHistory.some(item => 
-      item.id === movie.id && 
-      item.media_type === mediaType
-    );
+//     // Check if this item is already in recent history (last 5 items)
+//     const recentHistory = watchHistory.slice(-5);
+//     const mediaType = isTV ? 'tv' : 'movie';
+//     const isRecent = recentHistory.some(item => 
+//       item.id === movie.id && 
+//       item.media_type === mediaType
+//     );
     
-    if (!isRecent) {
-      const historyItem = {
-        ...movie,
-        media_type: mediaType,
-        watchedAt: new Date().toISOString(),
-        progress: 0,
-        ...(isTV && { season, episode })
-      };
+//     if (!isRecent) {
+//       const historyItem = {
+//         ...movie,
+//         media_type: mediaType,
+//         watchedAt: new Date().toISOString(),
+//         progress: 0,
+//         ...(isTV && { season, episode })
+//       };
       
-      // Add to history and keep only last 50 items
-      watchHistory.push(historyItem);
-      const limitedHistory = watchHistory.slice(-50);
+//       // Add to history and keep only last 50 items
+//       watchHistory.push(historyItem);
+//       const limitedHistory = watchHistory.slice(-50);
       
-      localStorage.setItem('nexus_watch_history', JSON.stringify(limitedHistory));
+//       localStorage.setItem('nexus_watch_history', JSON.stringify(limitedHistory));
       
-    }
-  } catch (error) {
+//     }
+//   } catch (error) {
     
-  }
-};
+//   }
+// };
 
 const VideoPlayer = ({ movie, isTV = false, season = 1, episode = 1, onClose, onContentSelect, onSeasonEpisodeChange }) => {
   const navigate = useNavigate();
