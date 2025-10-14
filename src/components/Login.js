@@ -185,7 +185,7 @@ const Login = () => {
       {/* Ultra Responsive Main Content Area - Account for header height */}
       <div className="relative flex flex-col lg:flex-row h-full z-20 pt-16 sm:pt-20 md:pt-24 lg:pt-20 xl:pt-24">
         {/* Left Side - Ultra Responsive Hero Content */}
-        <div className="flex-1 flex flex-col justify-center px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 py-2 sm:py-4 lg:py-6 overflow-y-auto">
+        <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 lg:px-6 xl:px-8 py-2 sm:py-4 lg:py-6 overflow-y-auto">
           <div className="max-w-lg lg:max-w-xl mx-auto lg:mx-0 lg:mr-4">
             {/* Ultra Responsive Main Headline */}
             <div className="mb-3 sm:mb-4 lg:mb-6 text-center lg:text-left">
@@ -270,32 +270,37 @@ const Login = () => {
         </div>
 
         {/* Right Side - Ultra Responsive Login Form */}
-        <div className="w-full lg:w-2/5 xl:w-1/3 flex items-start lg:items-center justify-center p-2 sm:p-4 md:p-4 lg:p-4 overflow-y-auto pt-4 sm:pt-6 lg:pt-8">
-          <div className="relative w-full max-w-xs sm:max-w-sm lg:ml-4">
+        <div className="w-full lg:w-2/5 xl:w-1/2 flex items-center justify-center p-2 sm:p-4 md:p-4 lg:p-4 overflow-y-auto pt-2 sm:pt-4 lg:pt-2 pb-4 sm:pb-6 lg:pb-8">
+          <div className="relative w-full max-w-xs sm:max-w-sm lg:ml-4 my-auto">
             {/* Ultra Responsive Animated Background Elements */}
             <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600 to-red-800 rounded-xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
 
             <form
               onSubmit={(e) => e.preventDefault()}
-              className="relative bg-black/70 sm:bg-black/80 backdrop-blur-2xl p-3 sm:p-4 md:p-5 lg:p-6 rounded-xl shadow-2xl border border-red-900/30 hover:border-red-500/50 transition-all duration-500 animate-fade-in-delayed-2"
+              className={`relative bg-black/70 sm:bg-black/80 backdrop-blur-2xl p-3 sm:p-4 md:p-5 lg:p-6 rounded-xl shadow-2xl border border-red-900/30 hover:border-red-500/50 transition-all duration-500 animate-fade-in-delayed-2 flex flex-col ${
+                isSignInForm 
+                  ? 'min-h-[450px] sm:min-h-[480px] lg:min-h-[500px]' 
+                  : 'min-h-[650px] sm:min-h-[700px] lg:min-h-[750px]'
+              }`}
             >
               {/* Ultra Responsive Header */}
-              <div className="relative z-10 mb-3 sm:mb-4">
-                <div className="text-center mb-2 sm:mb-3">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-red-600 rounded-xl flex items-center justify-center mx-auto mb-1 sm:mb-2 shadow-lg shadow-red-500/25">
+              <div className="relative z-10 mb-4 sm:mb-6 flex-shrink-0">
+                <div className="text-center mb-3 sm:mb-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-red-600 rounded-xl flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-lg shadow-red-500/25">
                     <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h2 className="text-white text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-center tracking-wider mb-1">
+                  <h2 className="text-white text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-center tracking-wider mb-2">
                     {isSignInForm ? "SIGN IN" : "CREATE ACCOUNT"}
                   </h2>
-                  <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-red-400 to-transparent mb-1 sm:mb-2"></div>
+                  <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-red-400 to-transparent mb-2 sm:mb-3"></div>
                   <p className="text-gray-400 text-center text-xs sm:text-sm">
                     {isSignInForm ? "Enter your credentials to continue" : "Join the streaming revolution"}
                   </p>
                 </div>
               </div>
+
 
               {/* Ultra Responsive Form Fields */}
               <div className="relative z-10 flex flex-col gap-2 sm:gap-2.5 lg:gap-3">
@@ -311,12 +316,28 @@ const Login = () => {
                   </div>
                 )}
 
+
+              {/* Ultra Responsive Form Fields - Scrollable Content */}
+              <div className="relative z-10 flex flex-col gap-3 sm:gap-4 flex-grow">
+                {/* Full Name Field - Always reserve space for smooth transition */}
+                <div className={`relative group transition-all duration-300 ${isSignInForm ? 'h-0 overflow-hidden opacity-0 pointer-events-none' : 'h-auto opacity-100'}`}>
+                  <input
+                    ref={nameRef}
+                    type="text"
+                    placeholder="Full Name"
+                    className="w-full p-3 sm:p-3.5 lg:p-4 bg-gray-900/90 backdrop-blur-sm rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
+                    disabled={isSignInForm}
+                  />
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                </div>
+                
+
                 <div className="relative group">
                   <input
                     ref={emailRef}
                     type="email"
                     placeholder="Email Address"
-                    className="w-full p-2 sm:p-2.5 lg:p-3 bg-gray-900/90 backdrop-blur-sm rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
+                    className="w-full p-3 sm:p-3.5 lg:p-4 bg-gray-900/90 backdrop-blur-sm rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
                   />
                   <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
@@ -326,7 +347,7 @@ const Login = () => {
                     ref={passwordRef}
                     type={iseyeToggle ? "text" : "password"}
                     placeholder="Password"
-                    className="w-full p-2 sm:p-2.5 lg:p-3 bg-gray-900/90 backdrop-blur-sm rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
+                    className="w-full p-3 sm:p-3.5 lg:p-4 bg-gray-900/90 backdrop-blur-sm rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
                   />
                   <button type="button" className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700" onClick={() => setIseyeToggle((prev) => !prev)}>
                     {iseyeToggle ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -335,33 +356,46 @@ const Login = () => {
                   <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
 
+
                 {/* Password Requirements for Sign Up - Updated validation display */}
                 {!isSignInForm && (
                   <div className="bg-gray-900/50 border border-gray-700/30 rounded-lg p-2 sm:p-3 backdrop-blur-sm">
                     <p className="text-gray-400 text-xs sm:text-sm font-medium mb-1 sm:mb-2">Password Requirements:</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                       <div className="flex items-center space-x-1.5">
+
+                
+                {/* Password Requirements - Always reserve space for smooth transition */}
+                <div className={`transition-all duration-300 ${isSignInForm ? 'h-0 overflow-hidden opacity-0 pointer-events-none' : 'h-auto opacity-100'}`}>
+                  <div className="bg-gray-900/50 border border-gray-700/30 rounded-lg p-3 sm:p-4 backdrop-blur-sm">
+                    <p className="text-gray-400 text-xs sm:text-sm font-medium mb-2 sm:mb-3">Password Requirements:</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div className="flex items-center space-x-2">
+
                         <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
                         <span className="text-gray-400 text-xs">8-32 characters</span>
                       </div>
-                      <div className="flex items-center space-x-1.5">
+                      <div className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
                         <span className="text-gray-400 text-xs">One number (0-9)</span>
                       </div>
-                      <div className="flex items-center space-x-1.5">
+                      <div className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
                         <span className="text-gray-400 text-xs">One lowercase (a-z)</span>
                       </div>
-                      <div className="flex items-center space-x-1.5">
+                      <div className="flex items-center space-x-2">
                         <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
                         <span className="text-gray-400 text-xs">One uppercase (A-Z)</span>
                       </div>
                     </div>
                   </div>
+
                 )}
 
+                </div>
+
                 {errorMessage && (
-                  <div className="relative p-2 sm:p-2.5 lg:p-3 bg-red-900/30 border border-red-500/50 rounded-lg backdrop-blur-sm animate-fade-in">
+                  <div className="relative p-3 sm:p-4 bg-red-900/30 border border-red-500/50 rounded-lg backdrop-blur-sm animate-fade-in">
                     <div className="flex items-start space-x-2">
                       <svg className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 18.5c-.77.833.192 2.5 1.732 2.5z" />
@@ -373,10 +407,29 @@ const Login = () => {
                   </div>
                 )}
 
+                
+                {/* Sign Up Instructions - Always reserve space for smooth transition */}
+                <div className={`transition-all duration-300 ${isSignInForm ? 'h-0 overflow-hidden opacity-0 pointer-events-none' : 'h-auto opacity-100'}`}>
+                  <div className="p-3 sm:p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                    <div className="flex items-start space-x-2">
+                      <svg className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <div className="text-xs text-blue-300">
+                        <p className="font-medium mb-1">Demo Account Info:</p>
+                        <p className="text-blue-200/80">
+                          You can use any random email and password for testing. No real verification required!
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
                 {/* Ultra Responsive Action Button */}
-                <div className="relative mt-2 sm:mt-3">
+                <div className="relative">
                   <button
-                    className="w-full p-2 sm:p-2.5 lg:p-3 bg-red-600 hover:bg-red-700 rounded-lg text-white font-bold text-sm sm:text-base transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-500/25 hover:shadow-red-500/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    className="w-full p-3 sm:p-3.5 lg:p-4 bg-red-600 hover:bg-red-700 rounded-lg text-white font-bold text-sm sm:text-base transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-red-500/25 hover:shadow-red-500/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                     onClick={handleButtonClick}
                     disabled={isLoading}
                   >
@@ -397,64 +450,49 @@ const Login = () => {
                 </div>
               </div>
 
-              {/* Ultra Responsive Footer Options */}
-              <div className="relative z-10 flex flex-col xs:flex-row justify-between items-center text-xs mt-2 sm:mt-3 space-y-1 xs:space-y-0">
-                <label className="flex items-center text-gray-400 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    className="form-checkbox h-3 w-3 text-red-600 rounded border-gray-600 focus:ring-red-500 mr-2 bg-gray-800 transition-colors duration-300"
-                  />
-                  <span className="group-hover:text-red-400 transition-colors duration-300">
-                    Remember me
-                  </span>
-                </label>
-                <button
-                  type="button"
-                  className="text-gray-400 hover:text-red-400 bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
-                >
-                  Need Help?
-                </button>
-              </div>
-
-              {/* Sign Up Instructions */}
-              {!isSignInForm && (
-                <div className="relative z-10 mt-2 sm:mt-3 p-2 sm:p-2.5 bg-blue-900/20 border border-blue-500/30 rounded-lg">
-                  <div className="flex items-start space-x-2">
-                    <svg className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div className="text-xs text-blue-300">
-                      <p className="font-medium mb-1">Demo Account Info:</p>
-                      <p className="text-blue-200/80">
-                        You can use any random email and password for testing. No real verification required!
-                      </p>
-                    </div>
-                  </div>
+              {/* Bottom Fixed Section */}
+              <div className="relative z-10 mt-4 pt-3 flex-shrink-0 border-t border-gray-700/30">
+                {/* Ultra Responsive Footer Options */}
+                <div className="flex flex-col xs:flex-row justify-between items-center text-xs mb-3 space-y-2 xs:space-y-0">
+                  <label className="flex items-center text-gray-400 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-3 w-3 text-red-600 rounded border-gray-600 focus:ring-red-500 mr-2 bg-gray-800 transition-colors duration-300"
+                    />
+                    <span className="group-hover:text-red-400 transition-colors duration-300">
+                      Remember me
+                    </span>
+                  </label>
+                  <button
+                    type="button"
+                    className="text-gray-400 hover:text-red-400 bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
+                  >
+                    Need Help?
+                  </button>
                 </div>
-              )}
 
-              {/* Ultra Responsive Toggle Section */}
-              <div className="relative z-10 mt-3 sm:mt-4 text-center">
-                <div className="w-full h-px bg-gray-700/50 mb-2 sm:mb-3"></div>
-                <p className="text-gray-400 mb-1 sm:mb-2 text-xs">
-                  {isSignInForm ? "Don't have an account?" : "Already have an account?"}{" "}
-                  <button
-                    type="button"
-                    className="text-red-400 hover:text-red-300 font-bold bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
-                    onClick={toggleSignInForm}
-                  >
-                    {isSignInForm ? "Sign Up" : "Sign In"}
-                  </button>
-                </p>
-                <p className="text-xs text-gray-500">
-                  Secure & encrypted.{" "}
-                  <button
-                    type="button"
-                    className="text-red-400 hover:text-red-300 bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
-                  >
-                    Privacy
-                  </button>
-                </p>
+                {/* Ultra Responsive Toggle Section */}
+                <div className="text-center">
+                  <p className="text-gray-400 mb-2 text-xs">
+                    {isSignInForm ? "Don't have an account?" : "Already have an account?"}{" "}
+                    <button
+                      type="button"
+                      className="text-red-400 hover:text-red-300 font-bold bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
+                      onClick={toggleSignInForm}
+                    >
+                      {isSignInForm ? "Sign Up" : "Sign In"}
+                    </button>
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Secure & encrypted.{" "}
+                    <button
+                      type="button"
+                      className="text-red-400 hover:text-red-300 bg-transparent border-none p-0 cursor-pointer transition-colors duration-300 hover:underline"
+                    >
+                      Privacy
+                    </button>
+                  </p>
+                </div>
               </div>
             </form>
           </div>
