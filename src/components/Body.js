@@ -15,6 +15,8 @@ import { auth } from '../utils/firebase';
 import { addUser, removeUser } from '../utils/userSlice';
 import Header from './header';
 import ProtectedRoute from './ProtectedRoute';
+import Header from './header';
+import Footer from './Footer';
 
 const Body = () => {
   const dispatch = useDispatch();
@@ -378,11 +380,16 @@ const Body = () => {
     return () => unsubscribe();
   }, [dispatch]);
 
-  return (
-    <div>
+    return (
+  <div className="flex flex-col min-h-screen">
+    <div className="flex-grow">
       <RouterProvider router={appRouter} />
     </div>
-  );
+    <Footer />
+  </div>
+);
+
+
 };
 
 export default Body;
