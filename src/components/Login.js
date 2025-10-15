@@ -3,6 +3,8 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { checkValidatedata } from "../utils/validate";
 import { auth } from "../utils/firebase";
+import { Eye, EyeOff } from "lucide-react";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -12,6 +14,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 // Enhanced Login component with better responsiveness and animations
 const Login = () => {
+  const [iseyeToggle, setIseyeToggle] = useState(false);
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +30,7 @@ const Login = () => {
 
   const handleButtonClick = async () => {
     setIsLoading(true);
-    
+
     // Validate the user credentials
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
@@ -67,7 +70,7 @@ const Login = () => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.error("Sign up error:", errorCode, errorMessage);
-        
+
         // Provide user-friendly error messages
         let friendlyMessage = "";
         switch (errorCode) {
@@ -91,7 +94,7 @@ const Login = () => {
           default:
             friendlyMessage = `Sign Up Failed: ${errorMessage}`;
         }
-        
+
         setErrorMessage(friendlyMessage);
       }
     } else {
@@ -112,7 +115,7 @@ const Login = () => {
           const errorCode = error.code;
           const errorMessage = error.message;
           console.error("Sign In error:", errorCode, errorMessage);
-          
+
           // Provide user-friendly error messages
           let friendlyMessage = "";
           switch (errorCode) {
@@ -137,11 +140,11 @@ const Login = () => {
             default:
               friendlyMessage = `Sign In Failed: ${errorMessage}`;
           }
-          
+
           setErrorMessage(friendlyMessage);
         });
     }
-    
+
     setIsLoading(false);
   };
 
@@ -187,9 +190,9 @@ const Login = () => {
             {/* Ultra Responsive Main Headline */}
             <div className="mb-3 sm:mb-4 lg:mb-6 text-center lg:text-left">
               <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-2 sm:mb-4 leading-tight tracking-wider animate-fade-in"
-                  style={{
-                    textShadow: "0 0 30px rgba(255, 20, 35, 0.5), 0 0 60px rgba(255, 20, 35, 0.3)"
-                  }}>
+                style={{
+                  textShadow: "0 0 30px rgba(255, 20, 35, 0.5), 0 0 60px rgba(255, 20, 35, 0.3)"
+                }}>
                 STREAM THE
                 <span className="text-red-400 block mt-1 animate-fade-in-delayed">FUTURE</span>
               </h1>
@@ -238,7 +241,7 @@ const Login = () => {
                   desc: "Watch anywhere, anytime"
                 }
               ].map((feature, index) => (
-                <div 
+                <div
                   key={index}
                   className="bg-black/40 backdrop-blur-xl border border-red-900/30 rounded-lg p-2 sm:p-3 lg:p-4 hover:bg-black/60 hover:border-red-500/50 transition-all duration-300 group animate-fade-in-delayed-3"
                   style={{ animationDelay: `${0.1 * index}s` }}
@@ -271,7 +274,7 @@ const Login = () => {
           <div className="relative w-full max-w-xs sm:max-w-sm lg:ml-4 my-auto">
             {/* Ultra Responsive Animated Background Elements */}
             <div className="absolute -inset-0.5 bg-gradient-to-r from-red-600 to-red-800 rounded-xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
-            
+
             <form
               onSubmit={(e) => e.preventDefault()}
               className={`relative bg-black/70 sm:bg-black/80 backdrop-blur-2xl p-3 sm:p-4 md:p-5 lg:p-6 rounded-xl shadow-2xl border border-red-900/30 hover:border-red-500/50 transition-all duration-500 animate-fade-in-delayed-2 flex flex-col ${
@@ -298,6 +301,22 @@ const Login = () => {
                 </div>
               </div>
 
+
+              {/* Ultra Responsive Form Fields */}
+              <div className="relative z-10 flex flex-col gap-2 sm:gap-2.5 lg:gap-3">
+                {!isSignInForm && (
+                  <div className="relative group">
+                    <input
+                      ref={nameRef}
+                      type="text"
+                      placeholder="Full Name"
+                      className="w-full p-2 sm:p-2.5 lg:p-3 bg-gray-900/90 backdrop-blur-sm rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
+                    />
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  </div>
+                )}
+
+
               {/* Ultra Responsive Form Fields - Scrollable Content */}
               <div className="relative z-10 flex flex-col gap-3 sm:gap-4 flex-grow">
                 {/* Full Name Field - Always reserve space for smooth transition */}
@@ -312,6 +331,7 @@ const Login = () => {
                   <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
                 
+
                 <div className="relative group">
                   <input
                     ref={emailRef}
@@ -321,16 +341,29 @@ const Login = () => {
                   />
                   <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
-                
+
                 <div className="relative group">
                   <input
                     ref={passwordRef}
-                    type="password"
+                    type={iseyeToggle ? "text" : "password"}
                     placeholder="Password"
                     className="w-full p-3 sm:p-3.5 lg:p-4 bg-gray-900/90 backdrop-blur-sm rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
                   />
+                  <button type="button" className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700" onClick={() => setIseyeToggle((prev) => !prev)}>
+                    {iseyeToggle ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+
                   <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
+
+
+                {/* Password Requirements for Sign Up - Updated validation display */}
+                {!isSignInForm && (
+                  <div className="bg-gray-900/50 border border-gray-700/30 rounded-lg p-2 sm:p-3 backdrop-blur-sm">
+                    <p className="text-gray-400 text-xs sm:text-sm font-medium mb-1 sm:mb-2">Password Requirements:</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                      <div className="flex items-center space-x-1.5">
+
                 
                 {/* Password Requirements - Always reserve space for smooth transition */}
                 <div className={`transition-all duration-300 ${isSignInForm ? 'h-0 overflow-hidden opacity-0 pointer-events-none' : 'h-auto opacity-100'}`}>
@@ -338,6 +371,7 @@ const Login = () => {
                     <p className="text-gray-400 text-xs sm:text-sm font-medium mb-2 sm:mb-3">Password Requirements:</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="flex items-center space-x-2">
+
                         <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
                         <span className="text-gray-400 text-xs">8-32 characters</span>
                       </div>
@@ -355,8 +389,11 @@ const Login = () => {
                       </div>
                     </div>
                   </div>
+
+                )}
+
                 </div>
-                
+
                 {errorMessage && (
                   <div className="relative p-3 sm:p-4 bg-red-900/30 border border-red-500/50 rounded-lg backdrop-blur-sm animate-fade-in">
                     <div className="flex items-start space-x-2">
@@ -369,6 +406,7 @@ const Login = () => {
                     </div>
                   </div>
                 )}
+
                 
                 {/* Sign Up Instructions - Always reserve space for smooth transition */}
                 <div className={`transition-all duration-300 ${isSignInForm ? 'h-0 overflow-hidden opacity-0 pointer-events-none' : 'h-auto opacity-100'}`}>
@@ -386,6 +424,7 @@ const Login = () => {
                     </div>
                   </div>
                 </div>
+
 
                 {/* Ultra Responsive Action Button */}
                 <div className="relative">
