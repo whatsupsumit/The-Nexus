@@ -195,7 +195,7 @@ const Header = () => {
         <button
           className="md:hidden flex items-center justify-center w-10 h-10 text-nexus-text hover:text-nexus-red transition-all duration-300 z-10 rounded-lg hover:bg-red-500/10"
           onClick={() => {
-            setMobileMenuOpen(!mobileMenuOpen);
+            setMobileMenuOpen(prev => !prev);
             setDropdownOpen(false); 
           }}
           aria-label="Toggle Mobile Menu"
