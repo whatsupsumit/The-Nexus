@@ -91,9 +91,8 @@ const Header = () => {
         <nav className="hidden lg:flex items-center space-x-1 xl:space-x-2 2xl:space-x-4 z-10">
           <button
             onClick={() => handleNavigation("/browse")}
-            className={`relative font-['Arvo',serif] hover:text-orange-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
-              isActive("/browse") ? "text-orange-400" : "text-nexus-text"
-            }`}
+            className={`relative font-['Arvo',serif] hover:text-orange-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${isActive("/browse") ? "text-orange-400" : "text-nexus-text"
+              }`}
           >
             <span className="relative z-10">HOME</span>
             <div className="absolute inset-0 bg-orange-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
@@ -102,12 +101,11 @@ const Header = () => {
             )}
             <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-orange-400 group-hover:w-full transition-all duration-300"></div>
           </button>
-          
+
           <button
             onClick={() => handleNavigation("/movies")}
-            className={`relative font-['Arvo',serif] hover:text-yellow-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
-              isActive("/movies") ? "text-yellow-400" : "text-nexus-text"
-            }`}
+            className={`relative font-['Arvo',serif] hover:text-yellow-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${isActive("/movies") ? "text-yellow-400" : "text-nexus-text"
+              }`}
           >
             <span className="relative z-10">MOVIES</span>
             <div className="absolute inset-0 bg-yellow-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
@@ -116,12 +114,11 @@ const Header = () => {
             )}
             <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-yellow-400 group-hover:w-full transition-all duration-300"></div>
           </button>
-          
+
           <button
             onClick={() => handleNavigation("/tv-shows")}
-            className={`relative font-['Arvo',serif] hover:text-green-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
-              isActive("/tv-shows") ? "text-green-400" : "text-nexus-text"
-            }`}
+            className={`relative font-['Arvo',serif] hover:text-green-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${isActive("/tv-shows") ? "text-green-400" : "text-nexus-text"
+              }`}
           >
             <span className="relative z-10">SERIES</span>
             <div className="absolute inset-0 bg-green-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
@@ -130,12 +127,11 @@ const Header = () => {
             )}
             <div className="absolute -bottom-2 left-0 w-0 h-0.5 bg-green-400 group-hover:w-full transition-all duration-300"></div>
           </button>
-          
+
           <button
             onClick={() => handleNavigation("/vault")}
-            className={`relative font-['Arvo',serif] hover:text-pink-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
-              isActive("/vault") || isActive("/my-list") ? "text-pink-400" : "text-nexus-text"
-            }`}
+            className={`relative font-['Arvo',serif] hover:text-pink-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${isActive("/vault") || isActive("/my-list") ? "text-pink-400" : "text-nexus-text"
+              }`}
           >
             <span className="relative z-10">VAULT</span>
             <div className="absolute inset-0 bg-pink-500/10 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></div>
@@ -148,9 +144,8 @@ const Header = () => {
           {/* AI Chat Tab - Fixed Responsive Alignment */}
           <button
             onClick={() => handleNavigation("/neural-chat")}
-            className={`relative font-['Arvo',serif] hover:text-cyan-400 transition-all duration-300 font-medium flex items-center justify-center space-x-1 lg:space-x-2 group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg min-w-fit ${
-              isActive("/neural-chat") ? "text-cyan-400" : "text-nexus-text"
-            }`}
+            className={`relative font-['Arvo',serif] hover:text-cyan-400 transition-all duration-300 font-medium flex items-center justify-center space-x-1 lg:space-x-2 group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg min-w-fit ${isActive("/neural-chat") ? "text-cyan-400" : "text-nexus-text"
+              }`}
           >
             <div className="relative flex-shrink-0">
               <svg className="w-3 h-3 lg:w-4 lg:h-4 xl:w-5 xl:h-5 group-hover:animate-spin transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,9 +177,8 @@ const Header = () => {
             <button
               key={item.path}
               onClick={() => handleNavigation(item.path)}
-              className={`relative p-2 rounded-lg transition-all duration-300 hover:scale-110 ${
-                isActive(item.path) ? `text-${item.color}-400 bg-${item.color}-500/20` : "text-nexus-text hover:text-white"
-              }`}
+              className={`relative p-2 rounded-lg transition-all duration-300 hover:scale-110 ${isActive(item.path) ? `text-${item.color}-400 bg-${item.color}-500/20` : "text-nexus-text hover:text-white"
+                }`}
               title={item.path.replace("/", "").replace("-", " ").toUpperCase()}
             >
               <span className="text-lg">{item.icon}</span>
@@ -200,7 +194,10 @@ const Header = () => {
       {user && (
         <button
           className="md:hidden flex items-center justify-center w-10 h-10 text-nexus-text hover:text-nexus-red transition-all duration-300 z-10 rounded-lg hover:bg-red-500/10"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          onClick={() => {
+            setMobileMenuOpen(!mobileMenuOpen);
+            setDropdownOpen(false); 
+          }}
           aria-label="Toggle Mobile Menu"
         >
           <svg className={`w-6 h-6 transition-transform duration-300 ${mobileMenuOpen ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,22 +222,22 @@ const Header = () => {
             >
               {/* Animated Holographic Overlay */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400/30 via-purple-500/30 to-pink-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
-              
+
               {/* Matrix Grid Pattern */}
-              <div 
+              <div
                 className="absolute inset-0 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-300"
                 style={{
                   backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)`,
                   backgroundSize: '8px 8px'
                 }}
               ></div>
-              
+
               {/* User Icon or Profile Image */}
               <div className="relative z-20 flex items-center justify-center w-full h-full overflow-hidden">
                 {profileImage ? (
-                  <img 
-                    src={profileImage} 
-                    alt="Profile" 
+                  <img
+                    src={profileImage}
+                    alt="Profile"
                     className="w-full h-full object-cover rounded-full"
                   />
                 ) : (
@@ -249,14 +246,14 @@ const Header = () => {
                   </svg>
                 )}
               </div>
-              
+
               {/* Rotating Ring */}
               <div className="absolute inset-0 rounded-full border border-nexus-red-light/30 group-hover:animate-spin transition-all duration-1000"></div>
-              
+
               {/* Pulse indicators */}
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-nexus-black"></div>
               <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-blue-400 rounded-full"></div>
-              
+
               {/* Scan Line */}
               <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-nexus-text-light to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
             </button>
@@ -275,7 +272,7 @@ const Header = () => {
                   </p>
                   <div className="absolute top-0 right-4 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                 </div>
-                
+
                 <div className="py-2">
                   <button
                     className="group relative block w-full text-left px-6 py-3 font-['Arvo',serif] text-gray-200 hover:bg-red-900/20 hover:text-red-300 transition-all duration-300 overflow-hidden"
@@ -290,7 +287,7 @@ const Header = () => {
                       <div className="ml-auto w-1 h-1 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                   </button>
-                  
+
                   <button
                     className="group relative block w-full text-left px-6 py-3 font-['Arvo',serif] text-gray-200 hover:bg-red-900/20 hover:text-red-300 transition-all duration-300 overflow-hidden"
                     onClick={() => handleNavigation("/account")}
@@ -306,7 +303,7 @@ const Header = () => {
                     </div>
                   </button>
                 </div>
-                
+
                 <div className="border-t border-red-800/40 bg-gradient-to-r from-red-900/20 to-transparent">
                   <button
                     onClick={handleSignOut}
@@ -340,7 +337,7 @@ const Header = () => {
 
       {/* Enhanced Mobile Navigation Menu - Fixed Background */}
       {user && mobileMenuOpen && (
-        <div 
+        <div
           ref={mobileMenuRef}
           className="absolute top-full left-0 right-0 bg-black/95 backdrop-blur-2xl border-b border-red-800/50 md:hidden z-40 transform transition-all duration-300 ease-out shadow-2xl"
           style={{
@@ -361,11 +358,10 @@ const Header = () => {
                   handleNavigation(item.path);
                   setMobileMenuOpen(false);
                 }}
-                className={`px-4 py-4 text-left font-['Arvo',serif] transition-all duration-300 flex items-center space-x-3 hover:scale-105 transform ${
-                  isActive(item.path) 
-                    ? `text-${item.color}-400 bg-black/80 border-l-4 border-${item.color}-400` 
+                className={`px-4 py-4 text-left font-['Arvo',serif] transition-all duration-300 flex items-center space-x-3 hover:scale-105 transform ${isActive(item.path)
+                    ? `text-${item.color}-400 bg-black/80 border-l-4 border-${item.color}-400`
                     : `text-nexus-text hover:text-${item.color}-400 hover:bg-black/60 hover:border-l-4 hover:border-${item.color}-400/50`
-                }`}
+                  }`}
                 style={{
                   animationDelay: `${index * 0.1}s`,
                   animation: 'slideInLeft 0.3s ease-out forwards'
