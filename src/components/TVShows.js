@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { fetchPopularTV, fetchTopRatedTV, fetchTrendingTV, searchContent } from '../utils/vidsrcApi';
-import { detectDevice, mobileCache } from '../utils/mobileApiHelper';
-import MovieCard from './MovieCard';
-import VideoPlayer from './VideoPlayer';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  fetchPopularTV,
+  fetchTopRatedTV,
+  fetchTrendingTV,
+  searchContent,
+} from "../utils/vidsrcApi";
+import { detectDevice, mobileCache } from "../utils/mobileApiHelper";
+import MovieCard from "./MovieCard";
+import VideoPlayer from "./VideoPlayer";
 
 const TVShows = () => {
   const navigate = useNavigate();
@@ -12,12 +17,17 @@ const TVShows = () => {
   const [loading, setLoading] = useState(true);
   const [selectedShow, setSelectedShow] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [activeFilter, setActiveFilter] = useState('popular');
+  const [activeFilter, setActiveFilter] = useState("popular");
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [selectedEpisode, setSelectedEpisode] = useState(1);
-  const [mobileStatus, setMobileStatus] = useState({ isMobile: false, connectionType: 'unknown', isOffline: false });
+  const [mobileStatus, setMobileStatus] = useState({
+    isMobile: false,
+    connectionType: "unknown",
+    isOffline: false,
+  });
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   // --- NEW: State for pagination ---
   const [page, setPage] = useState(1);
@@ -30,43 +40,51 @@ const TVShows = () => {
     setMobileStatus({
       isMobile: device.isMobile,
       connectionType: device.connectionType,
-      isOffline: !navigator.onLine
+      isOffline: !navigator.onLine,
     });
 
     // Mobile-specific network listeners for TV shows
     if (device.isMobile) {
       const handleOnline = () => {
-        setMobileStatus(prev => ({ ...prev, isOffline: false }));
-        console.log('📱 Mobile device came online, refreshing TV show data...');
+        setMobileStatus((prev) => ({ ...prev, isOffline: false }));
+        console.log("📱 Mobile device came online, refreshing TV show data...");
       };
 
       const handleOffline = () => {
-        setMobileStatus(prev => ({ ...prev, isOffline: true }));
-        console.log('📱 Mobile device went offline, using cached TV show data...');
+        setMobileStatus((prev) => ({ ...prev, isOffline: true }));
+        console.log(
+          "📱 Mobile device went offline, using cached TV show data..."
+        );
       };
 
       const handleConnectionChange = () => {
         if (navigator.connection) {
-          setMobileStatus(prev => ({ 
-            ...prev, 
-            connectionType: navigator.connection.effectiveType 
+          setMobileStatus((prev) => ({
+            ...prev,
+            connectionType: navigator.connection.effectiveType,
           }));
-          console.log('📱 Mobile TV connection changed to:', navigator.connection.effectiveType);
+          console.log(
+            "📱 Mobile TV connection changed to:",
+            navigator.connection.effectiveType
+          );
         }
       };
 
-      window.addEventListener('online', handleOnline);
-      window.addEventListener('offline', handleOffline);
-      
+      window.addEventListener("online", handleOnline);
+      window.addEventListener("offline", handleOffline);
+
       if (navigator.connection) {
-        navigator.connection.addEventListener('change', handleConnectionChange);
+        navigator.connection.addEventListener("change", handleConnectionChange);
       }
 
       return () => {
-        window.removeEventListener('online', handleOnline);
-        window.removeEventListener('offline', handleOffline);
+        window.removeEventListener("online", handleOnline);
+        window.removeEventListener("offline", handleOffline);
         if (navigator.connection) {
-          navigator.connection.removeEventListener('change', handleConnectionChange);
+          navigator.connection.removeEventListener(
+            "change",
+            handleConnectionChange
+          );
         }
       };
     }
@@ -78,16 +96,16 @@ const TVShows = () => {
       setLoading(true);
       setShows([]); // Clear previous results on filter change
       setFilteredShows([]);
-      
+
       try {
         let response = {};
-        
+
         // Always fetch the first page for a new filter selection
         switch (activeFilter) {
-          case 'trending':
+          case "trending":
             response = await fetchTrendingTV(1);
             break;
-          case 'top_rated':
+          case "top_rated":
             response = await fetchTopRatedTV(1);
             break;
           default:
@@ -102,23 +120,22 @@ const TVShows = () => {
 
         // Show user feedback for mobile fallback data
         if (response.isMockData && mobileStatus.isMobile) {
-          console.log('📱 Using offline TV show content for mobile device');
+          console.log("📱 Using offline TV show content for mobile device");
         }
-        
+
         // Cache data for mobile devices
         if (mobileStatus.isMobile && showData.length > 0) {
           mobileCache.set(`tvshows_${activeFilter}`, showData, 600000); // 10 minutes
         }
-        
       } catch (error) {
-        console.error('Error loading TV shows:', error);
+        console.error("Error loading TV shows:", error);
         setHasMore(false); // Disable load more on error
-        
+
         // Mobile fallback - try to use any cached data
         if (mobileStatus.isMobile) {
           const cachedData = mobileCache.get(`tvshows_${activeFilter}`);
           if (cachedData && cachedData.length > 0) {
-            console.log('📱 Using emergency TV show cache for mobile');
+            console.log("📱 Using emergency TV show cache for mobile");
             setShows(cachedData);
             setFilteredShows(cachedData);
           } else {
@@ -133,23 +150,36 @@ const TVShows = () => {
         setLoading(false);
       }
     };
-    
+
     loadShows();
   }, [activeFilter, mobileStatus.isMobile]);
 
   // Add keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.ctrlKey && e.key === 'g') {
+      if (e.ctrlKey && e.key === "g") {
         e.preventDefault();
         document.querySelector('input[type="text"]')?.focus();
       }
     };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
-  
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 200) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   // --- NEW: Function to handle loading more content ---
   const handleLoadMore = async () => {
     if (loadingMore || !hasMore) return; // Prevent multiple fetches
@@ -159,10 +189,10 @@ const TVShows = () => {
       let response = {};
       // Fetch the current page
       switch (activeFilter) {
-        case 'trending':
+        case "trending":
           response = await fetchTrendingTV(page);
           break;
-        case 'top_rated':
+        case "top_rated":
           response = await fetchTopRatedTV(page);
           break;
         default:
@@ -171,13 +201,12 @@ const TVShows = () => {
 
       const newShows = response.results || [];
       // Append new shows to the existing list
-      setShows(prev => [...prev, ...newShows]);
-      setFilteredShows(prev => [...prev, ...newShows]);
-      setPage(prev => prev + 1); // Increment page for the next fetch
+      setShows((prev) => [...prev, ...newShows]);
+      setFilteredShows((prev) => [...prev, ...newShows]);
+      setPage((prev) => prev + 1); // Increment page for the next fetch
       setHasMore(response.page < response.total_pages);
-
     } catch (error) {
-      console.error('Error loading more TV shows:', error);
+      console.error("Error loading more TV shows:", error);
       setHasMore(false); // Stop trying if there's an error
     } finally {
       setLoadingMore(false);
@@ -195,12 +224,12 @@ const TVShows = () => {
     try {
       const searchResults = await searchContent(query);
       // Ensure we only get TV shows from search results
-      const tvResults = Array.isArray(searchResults) 
-        ? searchResults.filter(item => item.media_type === 'tv')
+      const tvResults = Array.isArray(searchResults)
+        ? searchResults.filter((item) => item.media_type === "tv")
         : [];
       setFilteredShows(tvResults);
     } catch (error) {
-      console.error('Search error:', error);
+      console.error("Search error:", error);
       setFilteredShows([]);
     } finally {
       setIsSearching(false);
@@ -208,21 +237,43 @@ const TVShows = () => {
   };
 
   const filterButtons = [
-    { key: 'trending', label: 'TRENDING', icon: '🔥', description: 'Hottest shows capturing audiences' },
-    { key: 'popular', label: 'POPULAR', icon: '⭐', description: 'Fan-favorite series of all time' },
-    { key: 'top_rated', label: 'TOP RATED', icon: '👑', description: 'Critically acclaimed masterpieces' }
+    {
+      key: "trending",
+      label: "TRENDING",
+      icon: "🔥",
+      description: "Hottest shows capturing audiences",
+    },
+    {
+      key: "popular",
+      label: "POPULAR",
+      icon: "⭐",
+      description: "Fan-favorite series of all time",
+    },
+    {
+      key: "top_rated",
+      label: "TOP RATED",
+      icon: "👑",
+      description: "Critically acclaimed masterpieces",
+    },
   ];
 
   // Stats calculation
   const showsArray = Array.isArray(filteredShows) ? filteredShows : [];
   const stats = {
     totalShows: showsArray.length,
-    avgRating: showsArray.length > 0 ? (showsArray.reduce((sum, s) => sum + (s.vote_average || 0), 0) / showsArray.length).toFixed(1) : 0,
-    recentShows: showsArray.filter(s => {
+    avgRating:
+      showsArray.length > 0
+        ? (
+            showsArray.reduce((sum, s) => sum + (s.vote_average || 0), 0) /
+            showsArray.length
+          ).toFixed(1)
+        : 0,
+    recentShows: showsArray.filter((s) => {
       const firstAirYear = new Date(s.first_air_date).getFullYear();
       return firstAirYear >= new Date().getFullYear() - 1;
     }).length,
-    longRunning: showsArray.filter(s => (s.number_of_seasons || 0) > 5).length
+    longRunning: showsArray.filter((s) => (s.number_of_seasons || 0) > 5)
+      .length,
   };
 
   const closePlayer = () => {
@@ -231,7 +282,7 @@ const TVShows = () => {
     setSelectedSeason(1);
     setSelectedEpisode(1);
     // Navigate back to home page (Browse)
-    navigate('/browse');
+    navigate("/browse");
   };
 
   const handleShowClick = (show) => {
@@ -285,19 +336,31 @@ const TVShows = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-1">
-                    <div className={`w-2 h-2 rounded-full ${mobileStatus.isOffline ? 'bg-red-400' : 'bg-green-400'}`}></div>
-                    <span className={mobileStatus.isOffline ? 'text-red-400' : 'text-green-400'}>
-                      {mobileStatus.isOffline ? 'Offline' : 'Online'}
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        mobileStatus.isOffline ? "bg-red-400" : "bg-green-400"
+                      }`}
+                    ></div>
+                    <span
+                      className={
+                        mobileStatus.isOffline
+                          ? "text-red-400"
+                          : "text-green-400"
+                      }
+                    >
+                      {mobileStatus.isOffline ? "Offline" : "Online"}
                     </span>
                   </div>
                   {!mobileStatus.isOffline && (
-                    <span className="text-purple-400">{mobileStatus.connectionType}</span>
+                    <span className="text-purple-400">
+                      {mobileStatus.connectionType}
+                    </span>
                   )}
                 </div>
               </div>
             </div>
           )}
-          
+
           <div className="relative group">
             <input
               type="text"
@@ -311,10 +374,22 @@ const TVShows = () => {
                 <div className="w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>
-                  <svg className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    className="w-6 h-6 text-gray-400 group-hover:text-blue-400 transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
-                  <div className="text-xs text-gray-500 hidden md:block">⌘G</div>
+                  <div className="text-xs text-gray-500 hidden md:block">
+                    ⌘G
+                  </div>
                 </>
               )}
             </div>
@@ -329,8 +404,8 @@ const TVShows = () => {
               onClick={() => setActiveFilter(filter.key)}
               className={`group relative font-['JetBrains_Mono',monospace] p-4 rounded-xl border-2 transition-all duration-300 overflow-hidden ${
                 activeFilter === filter.key
-                  ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-blue-500 text-white shadow-lg shadow-blue-500/25'
-                  : 'bg-black/30 border-blue-800/30 text-gray-300 hover:border-blue-500/60 hover:bg-black/50 hover:text-white'
+                  ? "bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-blue-500 text-white shadow-lg shadow-blue-500/25"
+                  : "bg-black/30 border-blue-800/30 text-gray-300 hover:border-blue-500/60 hover:bg-black/50 hover:text-white"
               }`}
             >
               <div className="relative z-10">
@@ -350,19 +425,27 @@ const TVShows = () => {
         {/* Stats Dashboard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-black/40 backdrop-blur-sm border border-blue-800/30 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-blue-400">{stats.totalShows}</div>
+            <div className="text-2xl font-bold text-blue-400">
+              {stats.totalShows}
+            </div>
             <div className="text-sm text-gray-400">Total Shows</div>
           </div>
           <div className="bg-black/40 backdrop-blur-sm border border-purple-800/30 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-purple-400">{stats.avgRating}</div>
+            <div className="text-2xl font-bold text-purple-400">
+              {stats.avgRating}
+            </div>
             <div className="text-sm text-gray-400">Avg Rating</div>
           </div>
           <div className="bg-black/40 backdrop-blur-sm border border-cyan-800/30 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-cyan-400">{stats.recentShows}</div>
+            <div className="text-2xl font-bold text-cyan-400">
+              {stats.recentShows}
+            </div>
             <div className="text-sm text-gray-400">Recent</div>
           </div>
           <div className="bg-black/40 backdrop-blur-sm border border-green-800/30 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-green-400">{stats.longRunning}</div>
+            <div className="text-2xl font-bold text-green-400">
+              {stats.longRunning}
+            </div>
             <div className="text-sm text-gray-400">Long Running</div>
           </div>
         </div>
@@ -373,18 +456,20 @@ const TVShows = () => {
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {[...Array(12)].map((_, i) => (
-              <div key={i} className="aspect-[2/3] bg-gray-800 rounded-lg animate-pulse"></div>
+              <div
+                key={i}
+                className="aspect-[2/3] bg-gray-800 rounded-lg animate-pulse"
+              ></div>
             ))}
           </div>
         ) : showsArray.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {showsArray.map((show, index) => (
-              <div key={show.id} className="transition-all duration-300 hover:scale-105">
-                <MovieCard
-                  movie={show}
-                  onClick={handleShowClick}
-                  isTV={true}
-                />
+              <div
+                key={show.id}
+                className="transition-all duration-300 hover:scale-105"
+              >
+                <MovieCard movie={show} onClick={handleShowClick} isTV={true} />
               </div>
             ))}
           </div>
@@ -395,7 +480,9 @@ const TVShows = () => {
               No TV Shows Found
             </h3>
             <p className="font-['JetBrains_Mono',monospace] text-gray-400">
-              {searchQuery ? `No results for "${searchQuery}"` : 'Unable to load shows from the neural database'}
+              {searchQuery
+                ? `No results for "${searchQuery}"`
+                : "Unable to load shows from the neural database"}
             </p>
           </div>
         )}
@@ -430,16 +517,28 @@ const TVShows = () => {
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="text-gray-300">
-                <span className="text-blue-400 font-bold">{stats.totalShows}</span> Shows Available
+                <span className="text-blue-400 font-bold">
+                  {stats.totalShows}
+                </span>{" "}
+                Shows Available
               </div>
               <div className="text-gray-300">
-                <span className="text-purple-400 font-bold">{stats.avgRating}</span> Average Rating
+                <span className="text-purple-400 font-bold">
+                  {stats.avgRating}
+                </span>{" "}
+                Average Rating
               </div>
               <div className="text-gray-300">
-                <span className="text-cyan-400 font-bold">{stats.recentShows}</span> Recent Shows
+                <span className="text-cyan-400 font-bold">
+                  {stats.recentShows}
+                </span>{" "}
+                Recent Shows
               </div>
               <div className="text-gray-300">
-                <span className="text-green-400 font-bold">{stats.longRunning}</span> Long Running
+                <span className="text-green-400 font-bold">
+                  {stats.longRunning}
+                </span>{" "}
+                Long Running
               </div>
             </div>
             <p className="text-gray-400 text-xs mt-4 font-['JetBrains_Mono',monospace]">
@@ -448,6 +547,31 @@ const TVShows = () => {
           </div>
         </div>
       </div>
+
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className={`fixed bottom-6 right-6 z-[9999] p-3 rounded-full bg-nexus-red text-nexus-text-light shadow-lg hover:bg-nexus-red-light transition-all duration-300 ${
+          showBackToTop
+            ? "opacity-100 scale-100"
+            : "opacity-0 scale-0 pointer-events-none"
+        }`}
+        aria-label="Back to top"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5 15l7-7 7 7"
+          />
+        </svg>
+      </button>
     </div>
   );
 };
