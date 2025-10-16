@@ -27,16 +27,16 @@ const MovieCard = memo(({ movie, onClick, isTV = false, customBadge = null }) =>
       const parent = e.target.parentElement;
       if (parent && !parent.querySelector('.fallback-image')) {
         const fallback = document.createElement('div');
-        fallback.className = 'fallback-image w-full h-full flex items-center justify-center bg-gray-800 rounded-lg';
+        fallback.className = 'fallback-image w-full h-full flex items-center justify-center bg-theme-card-hover rounded-lg';
         fallback.innerHTML = `
           <div class="text-center p-4">
             <div class="text-3xl sm:text-4xl mb-2">
               ${isTV ? '📺' : '🎬'}
             </div>
-            <p class="font-['JetBrains_Mono',monospace] text-xs text-gray-400 truncate">
+            <p class="font-['JetBrains_Mono',monospace] text-xs text-theme-muted truncate">
               ${title || 'No Title'}
             </p>
-            <p class="font-['JetBrains_Mono',monospace] text-xs text-gray-500 mt-1">
+            <p class="font-['JetBrains_Mono',monospace] text-xs text-theme-muted mt-1">
               No Image
             </p>
           </div>
@@ -48,7 +48,7 @@ const MovieCard = memo(({ movie, onClick, isTV = false, customBadge = null }) =>
   
   return (
     <div 
-      className="movie-card relative aspect-[2/3] bg-gray-900 rounded-lg border border-red-800/50 cursor-pointer overflow-hidden will-change-transform min-h-[200px] sm:min-h-[240px] md:min-h-[280px]"
+      className="movie-card relative aspect-[2/3] bg-theme-card rounded-lg border border-theme cursor-pointer overflow-hidden will-change-transform min-h-[200px] sm:min-h-[240px] md:min-h-[280px] hover:border-red-500/50 transition-all duration-300"
       onClick={() => onClick(movie)}
       style={{ transform: 'translateZ(0)' }}
     >
@@ -63,15 +63,15 @@ const MovieCard = memo(({ movie, onClick, isTV = false, customBadge = null }) =>
           style={{ transform: 'translateZ(0)' }}
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gray-800 rounded-lg">
+        <div className="w-full h-full flex items-center justify-center bg-theme-card-hover rounded-lg">
           <div className="text-center p-4">
             <div className="text-3xl sm:text-4xl mb-2">
               {isTV ? '📺' : '🎬'}
             </div>
-            <p className="font-['JetBrains_Mono',monospace] text-xs text-gray-400 truncate">
+            <p className="font-['JetBrains_Mono',monospace] text-xs text-theme-muted truncate">
               {title || 'No Title'}
             </p>
-            <p className="font-['JetBrains_Mono',monospace] text-xs text-gray-500 mt-1">
+            <p className="font-['JetBrains_Mono',monospace] text-xs text-theme-muted mt-1">
               No Image
             </p>
           </div>

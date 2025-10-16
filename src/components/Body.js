@@ -13,6 +13,7 @@ import { createBrowserRouter, RouterProvider, Navigate, useLocation } from 'reac
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '../utils/firebase';
 import { addUser, removeUser } from '../utils/userSlice';
+import Header from './header';
 import ProtectedRoute from './ProtectedRoute';
 import Header from './header';
 import Footer from './Footer';

@@ -4,6 +4,7 @@ import { auth } from "../utils/firebase";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { removeUser } from "../utils/userSlice";
+import ThemeToggle from "./ThemeToggle";
 
 const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -75,7 +76,12 @@ const Header = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="fixed top-0 left-0 w-full flex items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-3 md:py-4 z-50 bg-black/95 border-b border-red-800/30 backdrop-blur-md">
+    <header className="fixed top-0 left-0 w-full flex items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-3 md:py-4 z-50 bg-theme backdrop-blur-md border-b border-theme"
+      style={{ 
+        backgroundColor: 'rgba(var(--nexus-bg), 0.95)',
+        borderColor: 'var(--nexus-border)'
+      }}
+    >
 
       {/* Logo - Responsive sizing */}
       <div
@@ -92,7 +98,7 @@ const Header = () => {
           <button
             onClick={() => handleNavigation("/browse")}
             className={`relative font-['Arvo',serif] hover:text-orange-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
-              isActive("/browse") ? "text-orange-400" : "text-nexus-text"
+              isActive("/browse") ? "text-orange-400" : "text-theme"
             }`}
           >
             <span className="relative z-10">HOME</span>
@@ -106,7 +112,7 @@ const Header = () => {
           <button
             onClick={() => handleNavigation("/movies")}
             className={`relative font-['Arvo',serif] hover:text-yellow-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
-              isActive("/movies") ? "text-yellow-400" : "text-nexus-text"
+              isActive("/movies") ? "text-yellow-400" : "text-theme"
             }`}
           >
             <span className="relative z-10">MOVIES</span>
@@ -120,7 +126,7 @@ const Header = () => {
           <button
             onClick={() => handleNavigation("/tv-shows")}
             className={`relative font-['Arvo',serif] hover:text-green-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
-              isActive("/tv-shows") ? "text-green-400" : "text-nexus-text"
+              isActive("/tv-shows") ? "text-green-400" : "text-theme"
             }`}
           >
             <span className="relative z-10">SERIES</span>
@@ -134,7 +140,7 @@ const Header = () => {
           <button
             onClick={() => handleNavigation("/vault")}
             className={`relative font-['Arvo',serif] hover:text-pink-400 transition-all duration-300 font-medium group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg ${
-              isActive("/vault") || isActive("/my-list") ? "text-pink-400" : "text-nexus-text"
+              isActive("/vault") || isActive("/my-list") ? "text-pink-400" : "text-theme"
             }`}
           >
             <span className="relative z-10">VAULT</span>
@@ -149,7 +155,7 @@ const Header = () => {
           <button
             onClick={() => handleNavigation("/neural-chat")}
             className={`relative font-['Arvo',serif] hover:text-cyan-400 transition-all duration-300 font-medium flex items-center justify-center space-x-1 lg:space-x-2 group text-xs lg:text-sm xl:text-base px-2 py-1 rounded-lg min-w-fit ${
-              isActive("/neural-chat") ? "text-cyan-400" : "text-nexus-text"
+              isActive("/neural-chat") ? "text-cyan-400" : "text-theme"
             }`}
           >
             <div className="relative flex-shrink-0">
@@ -183,7 +189,7 @@ const Header = () => {
               key={item.path}
               onClick={() => handleNavigation(item.path)}
               className={`relative p-2 rounded-lg transition-all duration-300 hover:scale-110 ${
-                isActive(item.path) ? `text-${item.color}-400 bg-${item.color}-500/20` : "text-nexus-text hover:text-white"
+                isActive(item.path) ? `text-${item.color}-400 bg-${item.color}-500/20` : "text-theme hover:text-white"
               }`}
               title={item.path.replace("/", "").replace("-", " ").toUpperCase()}
             >
@@ -199,7 +205,7 @@ const Header = () => {
       {/* Mobile Menu Button - Enhanced */}
       {user && (
         <button
-          className="md:hidden flex items-center justify-center w-10 h-10 text-nexus-text hover:text-nexus-red transition-all duration-300 z-10 rounded-lg hover:bg-red-500/10"
+          className="md:hidden flex items-center justify-center w-10 h-10 text-theme hover:text-nexus-red transition-all duration-300 z-10 rounded-lg hover:bg-red-500/10"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle Mobile Menu"
         >
@@ -214,7 +220,10 @@ const Header = () => {
       )}
 
       {/* Profile Section */}
-      <div className="flex items-center space-x-2 sm:space-x-4 z-10">
+      <div className="flex items-center space-x-2 sm:space-x-3 z-10">
+        {/* Theme Toggle Button */}
+        <ThemeToggle />
+        
         {user ? (
           <div className="relative" ref={dropdownRef}>
             {/* Responsive Profile Icon */}
@@ -263,14 +272,14 @@ const Header = () => {
 
             {/* Responsive Dropdown Menu - Fixed Background */}
             {dropdownOpen && (
-              <div className="absolute right-0 mt-3 w-56 sm:w-64 bg-black/95 backdrop-blur-xl rounded-xl shadow-2xl border border-red-800/50 animate-fade-in z-50 overflow-hidden">
+              <div className="absolute right-0 mt-3 w-56 sm:w-64 bg-theme-card backdrop-blur-xl rounded-xl shadow-2xl border border-theme animate-fade-in z-50 overflow-hidden">
                 {/* Glowing Header */}
-                <div className="relative px-6 py-4 border-b border-red-800/40 bg-gradient-to-r from-red-900/30 to-black/50">
+                <div className="relative px-6 py-4 border-b border-theme bg-gradient-to-r from-red-900/30 to-black/50">
                   <div className="absolute inset-0 bg-gradient-to-r from-red-900/20 to-transparent"></div>
-                  <p className="relative font-['Arvo',serif] text-white text-sm font-bold">
+                  <p className="relative font-['Arvo',serif] text-theme text-sm font-bold">
                     {user.displayName || user.email || "Neural User"}
                   </p>
-                  <p className="relative font-['Arvo',serif] text-gray-300 text-xs mt-1">
+                  <p className="relative font-['Arvo',serif] text-theme-muted text-xs mt-1">
                     {user.email}
                   </p>
                   <div className="absolute top-0 mt-[23px] right-4 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -327,7 +336,7 @@ const Header = () => {
           location.pathname !== "/" && (
             <button
               onClick={() => handleNavigation("/")}
-              className="relative font-['Arvo',serif] text-nexus-text hover:text-nexus-red-light transition-all duration-500 font-medium px-6 py-2 border border-nexus-red/40 rounded-lg hover:border-nexus-red hover:shadow-lg hover:shadow-nexus-red/25 group overflow-hidden"
+              className="relative font-['Arvo',serif] text-theme hover:text-nexus-red-light transition-all duration-500 font-medium px-6 py-2 border border-nexus-red/40 rounded-lg hover:border-nexus-red hover:shadow-lg hover:shadow-nexus-red/25 group overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-nexus-red/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <span className="relative z-10">Neural Access</span>
@@ -340,7 +349,7 @@ const Header = () => {
       {user && mobileMenuOpen && (
         <div 
           ref={mobileMenuRef}
-          className="absolute top-full left-0 right-0 bg-black/95 backdrop-blur-2xl border-b border-red-800/50 md:hidden z-40 transform transition-all duration-300 ease-out shadow-2xl"
+          className="absolute top-full left-0 right-0 bg-theme-card backdrop-blur-2xl border-b border-theme md:hidden z-40 transform transition-all duration-300 ease-out shadow-2xl"
           style={{
             animation: 'slideDown 0.3s ease-out'
           }}
@@ -361,8 +370,8 @@ const Header = () => {
                 }}
                 className={`px-4 py-4 text-left font-['Arvo',serif] transition-all duration-300 flex items-center space-x-3 hover:scale-105 transform ${
                   isActive(item.path) 
-                    ? `text-${item.color}-400 bg-black/80 border-l-4 border-${item.color}-400` 
-                    : `text-nexus-text hover:text-${item.color}-400 hover:bg-black/60 hover:border-l-4 hover:border-${item.color}-400/50`
+                    ? `text-${item.color}-400 bg-theme-card border-l-4 border-${item.color}-400` 
+                    : `text-theme hover:text-${item.color}-400 hover:bg-theme-card hover:border-l-4 hover:border-${item.color}-400/50`
                 }`}
                 style={{
                   animationDelay: `${index * 0.1}s`,
@@ -379,8 +388,8 @@ const Header = () => {
           </nav>
 
           {/* Mobile Menu Footer - Enhanced Background */}
-          <div className="border-t border-red-800/40 p-4 text-center bg-black/70">
-            <div className="text-xs text-gray-400 font-['JetBrains_Mono',monospace]">
+          <div className="border-t border-theme p-4 text-center bg-theme-card">
+            <div className="text-xs text-theme-muted font-['JetBrains_Mono',monospace]">
               NEXUS Mobile Interface v2.0
             </div>
           </div>
