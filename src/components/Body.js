@@ -15,6 +15,7 @@ import { auth } from '../utils/firebase';
 import { addUser, removeUser } from '../utils/userSlice';
 import ProtectedRoute from './ProtectedRoute';
 import Header from './header';
+import Faq from './Faq';
 
 const Body = () => {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ const Body = () => {
         <div>
           <Header />
           <Login />
+          <Faq/>
         </div>
       );
     }
