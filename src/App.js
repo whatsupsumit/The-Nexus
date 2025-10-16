@@ -1,12 +1,15 @@
 import Body from './components/Body';
 import { Provider } from 'react-redux';
 import appStore from './utils/apptore';
+import ThemeProvider from './components/ThemeProvider';
 
 function App() {
   return (
-    <div className="bg-black">
+    <div className="bg-theme">
       <Provider store={appStore}> 
-        <Body/>
+        <ThemeProvider>
+          <Body/>
+        </ThemeProvider>
       </Provider>
     </div>
   );

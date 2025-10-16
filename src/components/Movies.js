@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { fetchPopularMovies, fetchTopRatedMovies, fetchTrendingMovies, searchContent } from '../utils/vidsrcApi';
-import { detectDevice, mobileCache } from '../utils/mobileApiHelper';
-import MovieCard from './MovieCard';
-import VideoPlayer from './VideoPlayer';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  fetchPopularMovies,
+  fetchTopRatedMovies,
+  fetchTrendingMovies,
+  searchContent,
+} from "../utils/vidsrcApi";
+import { detectDevice, mobileCache } from "../utils/mobileApiHelper";
+import MovieCard from "./MovieCard";
+import VideoPlayer from "./VideoPlayer";
 
 const Movies = () => {
   const navigate = useNavigate();
@@ -12,10 +17,20 @@ const Movies = () => {
   const [loading, setLoading] = useState(true);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [showPlayer, setShowPlayer] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [currentFilter, setCurrentFilter] = useState('popular');
-  const [mobileStatus, setMobileStatus] = useState({ isMobile: false, connectionType: 'unknown', isOffline: false });
+  const [currentFilter, setCurrentFilter] = useState("popular");
+  const [mobileStatus, setMobileStatus] = useState({
+    isMobile: false,
+    connectionType: "unknown",
+    isOffline: false,
+  });
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  // --- NEW: State for pagination ---
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   // Initialize mobile detection and network monitoring
   useEffect(() => {
@@ -23,91 +38,102 @@ const Movies = () => {
     setMobileStatus({
       isMobile: device.isMobile,
       connectionType: device.connectionType,
-      isOffline: !navigator.onLine
+      isOffline: !navigator.onLine,
     });
 
     // Mobile-specific network listeners
     if (device.isMobile) {
       const handleOnline = () => {
-        setMobileStatus(prev => ({ ...prev, isOffline: false }));
-        console.log('📱 Mobile device came online, refreshing movie data...');
+        setMobileStatus((prev) => ({ ...prev, isOffline: false }));
+        console.log("📱 Mobile device came online, refreshing movie data...");
       };
 
       const handleOffline = () => {
-        setMobileStatus(prev => ({ ...prev, isOffline: true }));
-        console.log('📱 Mobile device went offline, using cached movie data...');
+        setMobileStatus((prev) => ({ ...prev, isOffline: true }));
+        console.log(
+          "📱 Mobile device went offline, using cached movie data..."
+        );
       };
 
       const handleConnectionChange = () => {
         if (navigator.connection) {
-          setMobileStatus(prev => ({ 
-            ...prev, 
-            connectionType: navigator.connection.effectiveType 
+          setMobileStatus((prev) => ({
+            ...prev,
+            connectionType: navigator.connection.effectiveType,
           }));
-          console.log('📱 Mobile connection changed to:', navigator.connection.effectiveType);
+          console.log(
+            "📱 Mobile connection changed to:",
+            navigator.connection.effectiveType
+          );
         }
       };
 
-      window.addEventListener('online', handleOnline);
-      window.addEventListener('offline', handleOffline);
-      
+      window.addEventListener("online", handleOnline);
+      window.addEventListener("offline", handleOffline);
+
       if (navigator.connection) {
-        navigator.connection.addEventListener('change', handleConnectionChange);
+        navigator.connection.addEventListener("change", handleConnectionChange);
       }
 
       return () => {
-        window.removeEventListener('online', handleOnline);
-        window.removeEventListener('offline', handleOffline);
+        window.removeEventListener("online", handleOnline);
+        window.removeEventListener("offline", handleOffline);
         if (navigator.connection) {
-          navigator.connection.removeEventListener('change', handleConnectionChange);
+          navigator.connection.removeEventListener(
+            "change",
+            handleConnectionChange
+          );
         }
       };
     }
   }, []);
 
+  // --- MODIFICATION: Updated to handle initial load and filter changes for pagination ---
   useEffect(() => {
     const loadMovies = async () => {
       setLoading(true);
+      setMovies([]); // Clear previous results on filter change
+      setFilteredMovies([]);
+
       try {
-        let movieData = [];
         let response = {};
-        
-        // Mobile-optimized loading with enhanced error handling
+
+        // Always fetch the first page for a new filter selection
         switch (currentFilter) {
-          case 'trending':
-            response = await fetchTrendingMovies();
-            movieData = response.results || [];
+          case "trending":
+            response = await fetchTrendingMovies(1);
             break;
-          case 'top_rated':
-            response = await fetchTopRatedMovies();
-            movieData = response.results || [];
+          case "top_rated":
+            response = await fetchTopRatedMovies(1);
             break;
           default:
-            response = await fetchPopularMovies();
-            movieData = response.results || [];
+            response = await fetchPopularMovies(1);
         }
+
+        const movieData = response.results || [];
+        setMovies(movieData);
+        setFilteredMovies(movieData);
+        setPage(2); // Set the next page to be fetched to 2
+        setHasMore(response.page < response.total_pages); // Check if there are more pages
 
         // Show user feedback for mobile fallback data
         if (response.isMockData && mobileStatus.isMobile) {
-          console.log('📱 Using offline movie content for mobile device');
+          console.log("📱 Using offline movie content for mobile device");
         }
-        
-        setMovies(movieData);
-        setFilteredMovies(movieData);
 
         // Cache data for mobile devices
         if (mobileStatus.isMobile && movieData.length > 0) {
           mobileCache.set(`movies_${currentFilter}`, movieData, 600000); // 10 minutes
         }
-        
       } catch (error) {
-        console.error('Error loading movies:', error);
-        
+        console.error("Error loading movies:", error);
+        setHasMore(false); // Disable load more on error
+
         // Mobile fallback - try to use any cached data
         if (mobileStatus.isMobile) {
           const cachedData = mobileCache.get(`movies_${currentFilter}`);
           if (cachedData && cachedData.length > 0) {
-            console.log('📱 Using emergency movie cache for mobile');
+            console.log("📱 Using emergency movie cache for mobile");
             setMovies(cachedData);
             setFilteredMovies(cachedData);
           } else {
@@ -122,22 +148,68 @@ const Movies = () => {
         setLoading(false);
       }
     };
-    
+
     loadMovies();
   }, [currentFilter, mobileStatus.isMobile]);
 
   // Add keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.ctrlKey && e.key === 'g') {
+      if (e.ctrlKey && e.key === "g") {
         e.preventDefault();
         document.querySelector('input[type="text"]')?.focus();
       }
     };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 200) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // --- NEW: Function to handle loading more content ---
+  const handleLoadMore = async () => {
+    if (loadingMore || !hasMore) return; // Prevent multiple fetches
+
+    setLoadingMore(true);
+    try {
+      let response = {};
+      // Fetch the current page
+      switch (currentFilter) {
+        case "trending":
+          response = await fetchTrendingMovies(page);
+          break;
+        case "top_rated":
+          response = await fetchTopRatedMovies(page);
+          break;
+        default:
+          response = await fetchPopularMovies(page);
+      }
+
+      const newMovies = response.results || [];
+      // Append new movies to the existing list
+      setMovies((prev) => [...prev, ...newMovies]);
+      setFilteredMovies((prev) => [...prev, ...newMovies]);
+      setPage((prev) => prev + 1); // Increment page for the next fetch
+      setHasMore(response.page < response.total_pages);
+    } catch (error) {
+      console.error("Error loading more movies:", error);
+      setHasMore(false); // Stop trying if there's an error
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   const handleSearch = async (query) => {
     setSearchQuery(query);
@@ -150,12 +222,12 @@ const Movies = () => {
     try {
       const searchResults = await searchContent(query);
       // Ensure we only get movies from search results
-      const movieResults = Array.isArray(searchResults) 
-        ? searchResults.filter(item => item.media_type === 'movie')
+      const movieResults = Array.isArray(searchResults)
+        ? searchResults.filter((item) => item.media_type === "movie")
         : [];
       setFilteredMovies(movieResults);
     } catch (error) {
-      console.error('Search error:', error);
+      console.error("Search error:", error);
       setFilteredMovies([]);
     } finally {
       setIsSearching(false);
@@ -170,34 +242,51 @@ const Movies = () => {
     setShowPlayer(false);
     setSelectedMovie(null);
     // Navigate back to home page (Browse)
-    navigate('/browse');
+    navigate("/browse");
   };
 
   const filterButtons = [
-    { key: 'trending', label: 'TRENDING', icon: '🔥', description: 'Hot movies dominating the charts' },
-    { key: 'popular', label: 'POPULAR', icon: '⭐', description: 'Fan favorites across all time' },
-    { key: 'top_rated', label: 'TOP RATED', icon: '👑', description: 'Highest rated cinematic masterpieces' }
+    {
+      key: "trending",
+      label: "TRENDING",
+      icon: "🔥",
+      description: "Hot movies dominating the charts",
+    },
+    {
+      key: "popular",
+      label: "POPULAR",
+      icon: "⭐",
+      description: "Fan favorites across all time",
+    },
+    {
+      key: "top_rated",
+      label: "TOP RATED",
+      icon: "👑",
+      description: "Highest rated cinematic masterpieces",
+    },
   ];
 
   // Stats calculation - ensure filteredMovies is always an array
   const moviesArray = Array.isArray(filteredMovies) ? filteredMovies : [];
   const stats = {
     totalMovies: moviesArray.length,
-    avgRating: moviesArray.length > 0 ? (moviesArray.reduce((sum, m) => sum + (m.vote_average || 0), 0) / moviesArray.length).toFixed(1) : 0,
-    recentReleases: moviesArray.filter(m => {
+    avgRating:
+      moviesArray.length > 0
+        ? (
+            moviesArray.reduce((sum, m) => sum + (m.vote_average || 0), 0) /
+            moviesArray.length
+          ).toFixed(1)
+        : 0,
+    recentReleases: moviesArray.filter((m) => {
       const releaseYear = new Date(m.release_date).getFullYear();
       return releaseYear >= new Date().getFullYear() - 1;
     }).length,
-    blockbusters: moviesArray.filter(m => m.popularity > 100).length
+    blockbusters: moviesArray.filter((m) => m.popularity > 100).length,
   };
 
   if (showPlayer && selectedMovie) {
     return (
-      <VideoPlayer
-        movie={selectedMovie}
-        isTV={false}
-        onClose={closePlayer}
-      />
+      <VideoPlayer movie={selectedMovie} isTV={false} onClose={closePlayer} />
     );
   }
 
@@ -236,19 +325,31 @@ const Movies = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-1">
-                    <div className={`w-2 h-2 rounded-full ${mobileStatus.isOffline ? 'bg-red-400' : 'bg-green-400'}`}></div>
-                    <span className={mobileStatus.isOffline ? 'text-red-400' : 'text-green-400'}>
-                      {mobileStatus.isOffline ? 'Offline' : 'Online'}
+                    <div
+                      className={`w-2 h-2 rounded-full ${
+                        mobileStatus.isOffline ? "bg-red-400" : "bg-green-400"
+                      }`}
+                    ></div>
+                    <span
+                      className={
+                        mobileStatus.isOffline
+                          ? "text-red-400"
+                          : "text-green-400"
+                      }
+                    >
+                      {mobileStatus.isOffline ? "Offline" : "Online"}
                     </span>
                   </div>
                   {!mobileStatus.isOffline && (
-                    <span className="text-blue-400">{mobileStatus.connectionType}</span>
+                    <span className="text-blue-400">
+                      {mobileStatus.connectionType}
+                    </span>
                   )}
                 </div>
               </div>
             </div>
           )}
-          
+
           <div className="relative group">
             <input
               type="text"
@@ -262,10 +363,22 @@ const Movies = () => {
                 <div className="w-6 h-6 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
               ) : (
                 <>
-                  <svg className="w-6 h-6 text-gray-400 group-hover:text-red-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    className="w-6 h-6 text-gray-400 group-hover:text-red-400 transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
-                  <div className="text-xs text-gray-500 hidden md:block">⌘G</div>
+                  <div className="text-xs text-gray-500 hidden md:block">
+                    ⌘G
+                  </div>
                 </>
               )}
             </div>
@@ -279,12 +392,12 @@ const Movies = () => {
               key={filter.key}
               onClick={() => {
                 setCurrentFilter(filter.key);
-                setSearchQuery('');
+                setSearchQuery("");
               }}
               className={`group relative font-['JetBrains_Mono',monospace] p-4 rounded-xl border-2 transition-all duration-300 overflow-hidden ${
                 currentFilter === filter.key
-                  ? 'bg-gradient-to-r from-red-600/20 to-orange-600/20 border-red-500 text-white shadow-lg shadow-red-500/25'
-                  : 'bg-black/30 border-red-800/30 text-gray-300 hover:border-red-500/60 hover:bg-black/50 hover:text-white'
+                  ? "bg-gradient-to-r from-red-600/20 to-orange-600/20 border-red-500 text-white shadow-lg shadow-red-500/25"
+                  : "bg-black/30 border-red-800/30 text-gray-300 hover:border-red-500/60 hover:bg-black/50 hover:text-white"
               }`}
             >
               <div className="relative z-10">
@@ -304,19 +417,27 @@ const Movies = () => {
         {/* Stats Dashboard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-black/40 backdrop-blur-sm border border-red-800/30 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-red-400">{stats.totalMovies}</div>
+            <div className="text-2xl font-bold text-red-400">
+              {stats.totalMovies}
+            </div>
             <div className="text-sm text-gray-400">Total Movies</div>
           </div>
           <div className="bg-black/40 backdrop-blur-sm border border-orange-800/30 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-orange-400">{stats.avgRating}</div>
+            <div className="text-2xl font-bold text-orange-400">
+              {stats.avgRating}
+            </div>
             <div className="text-sm text-gray-400">Avg Rating</div>
           </div>
           <div className="bg-black/40 backdrop-blur-sm border border-yellow-800/30 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-yellow-400">{stats.recentReleases}</div>
+            <div className="text-2xl font-bold text-yellow-400">
+              {stats.recentReleases}
+            </div>
             <div className="text-sm text-gray-400">Recent</div>
           </div>
           <div className="bg-black/40 backdrop-blur-sm border border-green-800/30 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-green-400">{stats.blockbusters}</div>
+            <div className="text-2xl font-bold text-green-400">
+              {stats.blockbusters}
+            </div>
             <div className="text-sm text-gray-400">Blockbusters</div>
           </div>
         </div>
@@ -327,13 +448,19 @@ const Movies = () => {
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {[...Array(12)].map((_, i) => (
-              <div key={i} className="aspect-[2/3] bg-gray-800 rounded-lg animate-pulse"></div>
+              <div
+                key={i}
+                className="aspect-[2/3] bg-gray-800 rounded-lg animate-pulse"
+              ></div>
             ))}
           </div>
         ) : moviesArray.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {moviesArray.map((movie, index) => (
-              <div key={movie.id} className="transition-all duration-300 hover:scale-105">
+              <div
+                key={movie.id}
+                className="transition-all duration-300 hover:scale-105"
+              >
                 <MovieCard
                   movie={movie}
                   onClick={handleMovieClick}
@@ -349,9 +476,31 @@ const Movies = () => {
               No Movies Found
             </h3>
             <p className="font-['JetBrains_Mono',monospace] text-gray-400">
-              {searchQuery ? `No results for "${searchQuery}"` : 'Unable to load movies from the quantum database'}
+              {searchQuery
+                ? `No results for "${searchQuery}"`
+                : "Unable to load movies from the quantum database"}
             </p>
           </div>
+        )}
+      </div>
+
+      {/* --- NEW: Load More Button Section --- */}
+      <div className="mt-12 text-center px-8">
+        {!loading && hasMore && (
+          <button
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            className="font-['JetBrains_Mono',monospace] bg-red-600/20 hover:bg-red-600/40 border-2 border-red-500 text-white font-bold py-3 px-8 rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
+          >
+            {loadingMore ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                <span>Loading...</span>
+              </>
+            ) : (
+              <span>Load More Movies</span>
+            )}
+          </button>
         )}
       </div>
 
@@ -364,16 +513,28 @@ const Movies = () => {
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="text-gray-300">
-                <span className="text-red-400 font-bold">{stats.totalMovies}</span> Movies Available
+                <span className="text-red-400 font-bold">
+                  {stats.totalMovies}
+                </span>{" "}
+                Movies Available
               </div>
               <div className="text-gray-300">
-                <span className="text-orange-400 font-bold">{stats.avgRating}</span> Average Rating
+                <span className="text-orange-400 font-bold">
+                  {stats.avgRating}
+                </span>{" "}
+                Average Rating
               </div>
               <div className="text-gray-300">
-                <span className="text-yellow-400 font-bold">{stats.recentReleases}</span> Recent Releases
+                <span className="text-yellow-400 font-bold">
+                  {stats.recentReleases}
+                </span>{" "}
+                Recent Releases
               </div>
               <div className="text-gray-300">
-                <span className="text-green-400 font-bold">{stats.blockbusters}</span> Blockbusters
+                <span className="text-green-400 font-bold">
+                  {stats.blockbusters}
+                </span>{" "}
+                Blockbusters
               </div>
             </div>
             <p className="text-gray-400 text-xs mt-4 font-['JetBrains_Mono',monospace]">
@@ -382,6 +543,31 @@ const Movies = () => {
           </div>
         </div>
       </div>
+
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className={`fixed bottom-6 right-6 z-[9999] p-3 rounded-full bg-nexus-red text-nexus-text-light shadow-lg hover:bg-nexus-red-light transition-all duration-300 ${
+          showBackToTop
+            ? "opacity-100 scale-100"
+            : "opacity-0 scale-0 pointer-events-none"
+        }`}
+        aria-label="Back to top"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5 15l7-7 7 7"
+          />
+        </svg>
+      </button>
     </div>
   );
 };

@@ -68,10 +68,10 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-theme text-theme">
       {/* Animated Background */}
       <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-black to-purple-900/20"></div>
+        <div className="absolute inset-0 bg-gradient-theme"></div>
         <div className="absolute inset-0 opacity-20 animate-pulse">
           <div className="w-full h-full" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff0000' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -119,12 +119,12 @@ const Profile = () => {
           
           {/* Left Side - User Profile (3 columns) */}
           <div className="lg:col-span-3">
-            <div className="bg-gradient-to-br from-red-900/30 to-black/60 backdrop-blur-xl border border-red-500/30 rounded-2xl p-4 sm:p-6 shadow-2xl shadow-red-500/10">
+            <div className="bg-theme-card backdrop-blur-xl border border-theme rounded-2xl p-4 sm:p-6 shadow-2xl">
               {/* Profile Header */}
               <div className="text-center mb-4 sm:mb-6">
                 <div className="relative inline-block mb-3 sm:mb-4">
                   <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-red-600 to-purple-700 rounded-full p-1 shadow-2xl shadow-red-500/50">
-                    <div className="w-full h-full bg-black rounded-full flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-full bg-theme-card rounded-full flex items-center justify-center overflow-hidden">
                       {profileImage ? (
                         <img src={profileImage} alt="Profile" className="w-full h-full object-cover rounded-full" />
                       ) : (
@@ -134,7 +134,7 @@ const Profile = () => {
                       )}
                     </div>
                   </div>
-                  <label htmlFor="profile-upload" className="absolute -bottom-1 -right-1 w-6 h-6 sm:w-7 sm:h-7 bg-red-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-red-500 transition-all duration-300 border-2 border-black shadow-lg">
+                  <label htmlFor="profile-upload" className="absolute -bottom-1 -right-1 w-6 h-6 sm:w-7 sm:h-7 bg-red-600 rounded-full flex items-center justify-center cursor-pointer hover:bg-red-500 transition-all duration-300 border-2 border-theme-card shadow-lg">
                     <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
@@ -151,21 +151,21 @@ const Profile = () => {
                 <h3 className="font-['Arvo',serif] text-red-400 text-lg sm:text-xl font-bold mb-1">
                   {user?.displayName || user?.name || 'User'}
                 </h3>
-                <p className="font-['Arvo',serif] text-gray-400 text-xs sm:text-sm mb-3 sm:mb-4 truncate">
+                <p className="font-['Arvo',serif] text-theme-muted text-xs sm:text-sm mb-3 sm:mb-4 truncate">
                   {user?.email || 'No email available'}
                 </p>
                 
                 {/* User Status */}
-                <div className="bg-black/40 rounded-lg p-2 sm:p-3 mb-3 sm:mb-4 border border-red-800/30">
+                <div className="bg-theme-card-hover rounded-lg p-2 sm:p-3 mb-3 sm:mb-4 border border-theme">
                   <div className="flex items-center justify-between text-xs font-['Arvo',serif]">
-                    <span className="text-gray-400">STATUS:</span>
+                    <span className="text-theme-muted">STATUS:</span>
                     <span className="text-green-400 flex items-center">
                       <div className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></div>
                       ONLINE
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-xs font-['Arvo',serif] mt-1">
-                    <span className="text-gray-400">PLAN:</span>
+                    <span className="text-theme-muted">PLAN:</span>
                     <span className="text-purple-400">PREMIUM</span>
                   </div>
                 </div>
@@ -173,29 +173,29 @@ const Profile = () => {
 
               {/* User Stats */}
               <div className="space-y-3 sm:space-y-4">
-                <h4 className="font-['Arvo',serif] text-red-400 text-sm font-bold mb-2 sm:mb-3 border-b border-red-800/30 pb-1">
+                <h4 className="font-['Arvo',serif] text-red-400 text-sm font-bold mb-2 sm:mb-3 border-b border-theme pb-1">
                   STATISTICS
                 </h4>
                 
                 <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                  <div className="bg-black/30 rounded-lg p-2 sm:p-3 border border-red-800/20">
+                  <div className="bg-theme-card-hover rounded-lg p-2 sm:p-3 border border-theme">
                     <div className="text-xl sm:text-2xl font-bold text-red-400 font-['Arvo',serif]">{stats.totalWatched}</div>
-                    <div className="text-xs text-gray-400 font-['Arvo',serif]">WATCHED</div>
+                    <div className="text-xs text-theme-muted font-['Arvo',serif]">WATCHED</div>
                   </div>
-                  <div className="bg-black/30 rounded-lg p-2 sm:p-3 border border-red-800/20">
+                  <div className="bg-theme-card-hover rounded-lg p-2 sm:p-3 border border-theme">
                     <div className="text-xl sm:text-2xl font-bold text-purple-400 font-['Arvo',serif]">{stats.totalVaultItems}</div>
-                    <div className="text-xs text-gray-400 font-['Arvo',serif]">SAVED</div>
+                    <div className="text-xs text-theme-muted font-['Arvo',serif]">SAVED</div>
                   </div>
                 </div>
                 
-                <div className="bg-black/30 rounded-lg p-2 sm:p-3 border border-red-800/20">
+                <div className="bg-theme-card-hover rounded-lg p-2 sm:p-3 border border-theme">
                   <div className="text-sm text-green-400 font-['Arvo',serif] mb-1">{stats.totalWatchTime}</div>
-                  <div className="text-xs text-gray-400 font-['Arvo',serif]">TOTAL WATCH TIME</div>
+                  <div className="text-xs text-theme-muted font-['Arvo',serif]">TOTAL WATCH TIME</div>
                 </div>
                 
-                <div className="bg-black/30 rounded-lg p-2 sm:p-3 border border-red-800/20">
+                <div className="bg-theme-card-hover rounded-lg p-2 sm:p-3 border border-theme">
                   <div className="text-sm text-blue-400 font-['Arvo',serif] mb-1">{stats.favoriteGenre}</div>
-                  <div className="text-xs text-gray-400 font-['Arvo',serif]">TOP GENRE</div>
+                  <div className="text-xs text-theme-muted font-['Arvo',serif]">TOP GENRE</div>
                 </div>
               </div>
 
@@ -209,7 +209,7 @@ const Profile = () => {
                 </button>
                 <button 
                   onClick={() => auth.signOut()}
-                  className="w-full bg-gray-600/20 hover:bg-gray-600/30 border border-gray-500/30 rounded-lg p-2 text-gray-400 font-['Arvo',serif] text-xs sm:text-sm transition-all duration-300 hover:scale-105"
+                  className="w-full bg-theme-card-hover hover:bg-theme-card border border-theme rounded-lg p-2 text-theme-muted font-['Arvo',serif] text-xs sm:text-sm transition-all duration-300 hover:scale-105"
                 >
                   LOGOUT
                 </button>
@@ -219,7 +219,7 @@ const Profile = () => {
 
           {/* Middle - Watch History (6 columns) */}
           <div className="lg:col-span-6 mt-6 lg:mt-0">
-            <div className="bg-gradient-to-br from-blue-900/20 to-black/60 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-4 sm:p-6 shadow-2xl shadow-blue-500/10 h-full">
+            <div className="bg-theme-card backdrop-blur-xl border border-theme rounded-2xl p-4 sm:p-6 shadow-2xl h-full">
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h4 className="font-['Arvo',serif] text-blue-400 text-lg sm:text-xl font-bold flex items-center">
                   <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -232,7 +232,7 @@ const Profile = () => {
                 </span>
               </div>
 
-              <div className="space-y-2 sm:space-y-3 max-h-[400px] sm:max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-track-black/20 scrollbar-thumb-blue-500/30">
+              <div className="space-y-2 sm:space-y-3 max-h-[400px] sm:max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-track-theme scrollbar-thumb-blue-500/30">
                 {watchHistory.length === 0 ? (
                   <div className="text-center py-8 sm:py-12">
                     <div className="text-2xl sm:text-4xl mb-2 sm:mb-4">📺</div>
@@ -241,9 +241,9 @@ const Profile = () => {
                   </div>
                 ) : (
                   watchHistory.map((item, index) => (
-                    <div key={index} className="bg-black/40 rounded-lg p-3 sm:p-4 border border-blue-800/20 hover:border-blue-500/40 transition-all duration-300 group hover:bg-black/60">
+                    <div key={index} className="bg-theme-card-hover rounded-lg p-3 sm:p-4 border border-theme hover:border-blue-500/40 transition-all duration-300 group hover:bg-theme-card">
                       <div className="flex items-center space-x-3 sm:space-x-4">
-                        <div className="w-12 h-18 sm:w-16 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 border border-blue-800/30">
+                        <div className="w-12 h-18 sm:w-16 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 border border-theme">
                           <img 
                             src={item.poster_path ? `https://image.tmdb.org/t/p/w200${item.poster_path}` : `https://via.placeholder.com/200x300/1a1a1a/3b82f6?text=${(item.title || item.name || 'Unknown').charAt(0)}`}
                             alt={item.title || item.name}
@@ -252,7 +252,7 @@ const Profile = () => {
                         </div>
                         
                         <div className="flex-1 min-w-0">
-                          <div className="font-['Arvo',serif] text-white font-semibold text-xs sm:text-sm truncate">
+                          <div className="font-['Arvo',serif] text-theme font-semibold text-xs sm:text-sm truncate">
                             {item.title || item.name}
                           </div>
                           <div className="font-['Arvo',serif] text-blue-400 text-xs mt-1">
@@ -261,11 +261,11 @@ const Profile = () => {
                           
                           {/* Progress Bar */}
                           <div className="mt-2">
-                            <div className="flex items-center justify-between text-xs text-gray-400 font-['Arvo',serif] mb-1">
+                            <div className="flex items-center justify-between text-xs text-theme-muted font-['Arvo',serif] mb-1">
                               <span>PROGRESS</span>
                               <span>{item.progress || 0}%</span>
                             </div>
-                            <div className="w-full h-1.5 sm:h-2 bg-gray-700/50 rounded-full overflow-hidden">
+                            <div className="w-full h-1.5 sm:h-2 bg-theme-card-hover rounded-full overflow-hidden">
                               <div 
                                 className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500"
                                 style={{width: `${item.progress || 0}%`}}
@@ -297,7 +297,7 @@ const Profile = () => {
 
           {/* Right Side - Vault (3 columns) */}
           <div className="lg:col-span-3 mt-6 lg:mt-0">
-            <div className="bg-gradient-to-br from-purple-900/30 to-black/60 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-4 sm:p-6 shadow-2xl shadow-purple-500/10 h-full">
+            <div className="bg-theme-card backdrop-blur-xl border border-theme rounded-2xl p-4 sm:p-6 shadow-2xl h-full">
               <div className="flex items-center justify-between mb-4 sm:mb-6">
                 <h4 className="font-['Arvo',serif] text-purple-400 text-lg sm:text-xl font-bold flex items-center">
                   <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,7 +310,7 @@ const Profile = () => {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 sm:gap-3 max-h-[400px] sm:max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-track-black/20 scrollbar-thumb-purple-500/30">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 max-h-[400px] sm:max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-track-theme scrollbar-thumb-purple-500/30">
                 {vaultItems.length === 0 ? (
                   <div className="col-span-2 text-center py-8 sm:py-12">
                     <div className="text-2xl sm:text-4xl mb-2 sm:mb-4">🔒</div>
@@ -320,7 +320,7 @@ const Profile = () => {
                 ) : (
                   vaultItems.map((item, index) => (
                     <div key={index} className="group relative">
-                      <div className="aspect-[2/3] rounded-lg overflow-hidden border border-purple-800/30 hover:border-purple-500/50 transition-all duration-300 hover:scale-105">
+                      <div className="aspect-[2/3] rounded-lg overflow-hidden border border-theme hover:border-purple-500/50 transition-all duration-300 hover:scale-105">
                         <img 
                           src={item.poster_path ? `https://image.tmdb.org/t/p/w300${item.poster_path}` : `https://via.placeholder.com/300x450/1a1a1a/a855f7?text=${(item.title || item.name || 'Unknown').charAt(0)}`}
                           alt={item.title || item.name}

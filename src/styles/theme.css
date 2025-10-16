@@ -1,0 +1,341 @@
+/* NEXUS Theme System */
+
+/* Light Theme Variables Override */
+:root.light {
+  --nexus-red: #dc2626;
+  --nexus-red-hover: #b91c1c;
+  --nexus-bg: #f8fafc;
+  --nexus-card: #ffffff;
+  --nexus-card-hover: #f1f5f9;
+  --nexus-border: rgba(0, 0, 0, 0.15);
+  --nexus-text: #1f2937;
+  --nexus-text-muted: #6b7280;
+  --nexus-gradient-from: #ffffff;
+  --nexus-gradient-via: #f8fafc;
+  --nexus-gradient-to: #f1f5f9;
+}
+
+/* Light theme body adjustments */
+body.light {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%) !important;
+  color: var(--nexus-text) !important;
+}
+
+.light {
+  --background: #ffffff;
+  --foreground: #1f2937;
+  --card: #ffffff;
+  --card-foreground: #1f2937;
+  --popover: #ffffff;
+  --popover-foreground: #1f2937;
+}
+
+/* Theme-aware utility classes */
+.bg-theme {
+  background-color: var(--nexus-bg);
+  transition: background-color 0.3s ease;
+}
+
+.text-theme {
+  color: var(--nexus-text);
+  transition: color 0.3s ease;
+}
+
+.text-theme-muted {
+  color: var(--nexus-text-muted);
+  transition: color 0.3s ease;
+}
+
+.bg-theme-card {
+  background-color: var(--nexus-card);
+  transition: background-color 0.3s ease;
+}
+
+.bg-theme-card-hover:hover {
+  background-color: var(--nexus-card-hover);
+  transition: background-color 0.3s ease;
+}
+
+.border-theme {
+  border-color: var(--nexus-border);
+  transition: border-color 0.3s ease;
+}
+
+.bg-gradient-theme {
+  background: linear-gradient(135deg, var(--nexus-gradient-from) 0%, var(--nexus-gradient-via) 50%, var(--nexus-gradient-to) 100%);
+  transition: background 0.3s ease;
+}
+
+/* Light theme comprehensive overrides */
+.light .min-h-screen {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%) !important;
+}
+
+/* Text color overrides for light theme */
+.light .text-white {
+  color: #1f2937 !important;
+}
+
+.light .text-gray-200,
+.light .text-gray-300,
+.light .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+.light .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+/* Background overrides for light theme */
+.light .bg-black {
+  background-color: #ffffff !important;
+}
+
+.light .bg-gray-800,
+.light .bg-gray-900 {
+  background-color: #f8fafc !important;
+}
+
+.light .bg-gray-700 {
+  background-color: #f1f5f9 !important;
+}
+
+/* Border overrides */
+.light .border-gray-700,
+.light .border-gray-600,
+.light .border-gray-800 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Backdrop and transparency adjustments */
+.light .bg-black\/95,
+.light .bg-black\/90,
+.light .bg-black\/80,
+.light .bg-black\/70,
+.light .bg-black\/60,
+.light .bg-black\/50,
+.light .bg-black\/40,
+.light .bg-black\/30 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Gradient overrides for light theme */
+.light .from-black,
+.light .via-black,
+.light .to-black {
+  --tw-gradient-from: #ffffff !important;
+  --tw-gradient-to: #f8fafc !important;
+  --tw-gradient-via: #f1f5f9 !important;
+}
+
+.light .from-gray-800,
+.light .from-gray-900 {
+  --tw-gradient-from: #f8fafc !important;
+}
+
+.light .to-gray-800,
+.light .to-gray-900 {
+  --tw-gradient-to: #f1f5f9 !important;
+}
+
+/* Backdrop blur adjustments for light theme */
+.light .backdrop-blur-xl,
+.light .backdrop-blur-lg,
+.light .backdrop-blur-md,
+.light .backdrop-blur-sm {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Red color theme adjustments */
+.light .border-red-500\/30,
+.light .border-red-800\/30,
+.light .border-red-700\/40,
+.light .border-red-900\/30 {
+  border-color: rgba(220, 38, 38, 0.3) !important;
+}
+
+.light .text-red-300,
+.light .text-red-400 {
+  color: #dc2626 !important;
+}
+
+.light .bg-red-600\/30,
+.light .bg-red-900\/30,
+.light .from-red-600\/30,
+.light .bg-red-900\/20 {
+  background-color: rgba(220, 38, 38, 0.1) !important;
+}
+
+/* Fixed background overlays for light theme */
+.light .fixed.inset-0.bg-gradient-to-t {
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.7), rgba(241, 245, 249, 0.8)) !important;
+}
+
+.light .fixed.inset-0.bg-gradient-to-br {
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.6), rgba(241, 245, 249, 0.8)) !important;
+}
+
+/* Specific page background adjustments */
+.light .relative.min-h-screen {
+  color: #1f2937 !important;
+}
+
+/* Card and panel styling for light theme */
+.light .bg-theme-card,
+.light .bg-white\/10,
+.light .bg-white\/20 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Input and form styling */
+.light input,
+.light textarea,
+.light select {
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+.light input::placeholder,
+.light textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Button styling adjustments */
+.light .bg-gray-600,
+.light .bg-gray-700 {
+  background-color: #e5e7eb !important;
+  color: #1f2937 !important;
+}
+
+.light .hover\\:bg-gray-700:hover,
+.light .hover\\:bg-gray-600:hover {
+  background-color: #d1d5db !important;
+}
+
+/* Theme toggle button styles */
+.theme-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background-color: var(--nexus-card);
+  border: 1px solid var(--nexus-border);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background-color: var(--nexus-card-hover);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background-color: var(--nexus-red);
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle.light .theme-toggle-slider {
+  transform: translateX(18px);
+}
+
+/* Light theme scroll bars */
+.light ::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #dc2626, #b91c1c);
+}
+
+.light ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Light theme specific animations and effects */
+.light .animate-pulse {
+  animation: light-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes light-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Light theme shadow adjustments */
+.light .shadow-xl,
+.light .shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.light .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Matrix and cyber effects adjustments for light theme */
+.light .animate-spin {
+  border-color: rgba(220, 38, 38, 0.3);
+  border-top-color: #dc2626;
+}
+
+/* Loading and spinner adjustments */
+.light .border-red-500 {
+  border-color: #dc2626 !important;
+}
+
+.light .border-b-2.border-red-500 {
+  border-bottom-color: #dc2626 !important;
+}
+
+/* Specific text color fixes */
+.light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
+  color: #1f2937 !important;
+}
+
+.light p {
+  color: #374151 !important;
+}
+
+/* Neural Chat and special pages */
+.light .bg-gradient-to-br.from-black {
+  background: linear-gradient(to bottom right, #ffffff, #f8fafc, #f1f5f9) !important;
+}
+
+/* Error and 404 page adjustments */
+.light .min-h-screen.bg-black {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%) !important;
+}
+
+/* MovieCard theme-specific adjustments */
+.light .movie-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.light .movie-card:hover {
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.15);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Profile and account page cards */
+.light .border-red-800\/30 {
+  border-color: rgba(220, 38, 38, 0.2) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
