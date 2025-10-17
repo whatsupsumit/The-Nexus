@@ -16,7 +16,11 @@ import { addUser, removeUser } from '../utils/userSlice';
 import Header from './header';
 import ProtectedRoute from './ProtectedRoute';
 import Header from './header';
+
+import Faq from './Faq';
+
 import Footer from './Footer';
+
 
 const Body = () => {
   const dispatch = useDispatch();
@@ -51,6 +55,7 @@ const Body = () => {
         <div>
           <Header />
           <Login />
+          <Faq/>
         </div>
       );
     }
