@@ -62,9 +62,14 @@ const Header = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target) &&
+        !event.target.closest("button[aria-label='Toggle Mobile Menu']")
+      ) {
         setMobileMenuOpen(false);
       }
+
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
@@ -196,7 +201,7 @@ const Header = () => {
           className="md:hidden flex items-center justify-center w-10 h-10 text-nexus-text hover:text-nexus-red transition-all duration-300 z-10 rounded-lg hover:bg-red-500/10"
           onClick={() => {
             setMobileMenuOpen(prev => !prev);
-            setDropdownOpen(false); 
+            setDropdownOpen(false);
           }}
           aria-label="Toggle Mobile Menu"
         >
@@ -359,8 +364,8 @@ const Header = () => {
                   setMobileMenuOpen(false);
                 }}
                 className={`px-4 py-4 text-left font-['Arvo',serif] transition-all duration-300 flex items-center space-x-3 hover:scale-105 transform ${isActive(item.path)
-                    ? `text-${item.color}-400 bg-black/80 border-l-4 border-${item.color}-400`
-                    : `text-nexus-text hover:text-${item.color}-400 hover:bg-black/60 hover:border-l-4 hover:border-${item.color}-400/50`
+                  ? `text-${item.color}-400 bg-black/80 border-l-4 border-${item.color}-400`
+                  : `text-nexus-text hover:text-${item.color}-400 hover:bg-black/60 hover:border-l-4 hover:border-${item.color}-400/50`
                   }`}
                 style={{
                   animationDelay: `${index * 0.1}s`,
