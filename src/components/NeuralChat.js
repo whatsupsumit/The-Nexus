@@ -339,7 +339,11 @@ Give them amazing movie suggestions that match what they want!`;
 
   const handleQuickPrompt = (prompt) => {
     setInput(prompt);
- 
+
+     if (window.innerWidth < 1024) {
+          setIsToggle(false);
+        }
+
     setTimeout(() => {
       handleSendMessage();
     }, 100);
