@@ -1,15 +1,22 @@
+// React aur hooks import - UI banane aur state manage karne ke liye
 import React, { useState, useEffect } from "react";
+// React Router - pages ke beech navigation ke liye
 import { useNavigate } from "react-router-dom";
+// TMDB API functions - movies fetch karne ke liye (popular, top rated, trending, search)
 import {
   fetchPopularMovies,
   fetchTopRatedMovies,
   fetchTrendingMovies,
   searchContent,
 } from "../utils/vidsrcApi";
+// Mobile device detection aur caching - mobile optimization ke liye
 import { detectDevice, mobileCache } from "../utils/mobileApiHelper";
+// MovieCard component - individual movie card dikhane ke liye
 import MovieCard from "./MovieCard";
+// VideoPlayer component - movie play karne ke liye
 import VideoPlayer from "./VideoPlayer";
 
+// Movies page component - saari movies list dikhaata hai filters aur search ke saath
 const Movies = () => {
   const navigate = useNavigate();
   const [movies, setMovies] = useState([]);

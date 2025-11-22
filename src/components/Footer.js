@@ -1,6 +1,7 @@
-// src/components/Footer.js
+// React import
 import React from "react";
 
+// Footer component - app ka bottom footer (copyright, links, contact info)
 export default function Footer() {
   return (
     <footer className="w-full relative z-50 bg-black/95 border-t border-gray-800 text-gray-300 text-sm py-8 select-none">

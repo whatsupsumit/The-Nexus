@@ -1,10 +1,12 @@
+// Firebase app initialization - Firebase setup karne ke liye
 import { initializeApp } from "firebase/app";
-// import { getAnalytics, isSupported } from "firebase/analytics"; // Disabled to prevent GTM conflicts
+// Analytics disabled hai kyunki Google Tag Manager ke saath conflict ho raha tha
+// import { getAnalytics, isSupported } from "firebase/analytics";
+// Firebase authentication - login/signup features ke liye
 import { getAuth } from "firebase/auth";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// Using environment variables for Firebase configuration for security
+// Firebase configuration - app ke credentials (.env file se aa rahe security ke liye)
+// Yeh settings batate hain ki Firebase project se kaise connect karna hai
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,

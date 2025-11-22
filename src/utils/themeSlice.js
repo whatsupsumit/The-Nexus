@@ -1,10 +1,14 @@
+// Redux Toolkit - Redux store ke liye
 import { createSlice } from "@reduxjs/toolkit";
 
+// Theme slice - app ki theme (dark/light mode) ko Redux mein manage karta hai
 const themeSlice = createSlice({
     name: "theme",
+    // Initial state - default dark mode se start hota hai
     initialState: {
-        mode: "dark", // default to dark mode
+        mode: "dark",
     },
+    // Reducers - theme change karne ke actions
     reducers: {
         toggleTheme: (state) => {
             state.mode = state.mode === "dark" ? "light" : "dark";

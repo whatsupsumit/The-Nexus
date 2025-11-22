@@ -1,4 +1,6 @@
+// React aur hooks - main app structure ke liye
 import React, { useEffect, useState } from 'react';
+// Saare page components import kar rahe - routes ke liye
 import Login from './Login';
 import Browse from './Browse';
 import Movies from './Movies';
@@ -8,15 +10,22 @@ import TVShowDetails from './TVShowDetails';
 import Vault from './Vault';
 import Profile from './Profile';
 import NeuralChat from './NeuralChat';
+// Redux - global user state ke liye
 import { useDispatch, useSelector } from 'react-redux';
+// React Router - pages ke beech routing setup ke liye
 import { createBrowserRouter, RouterProvider, Navigate, useLocation } from 'react-router-dom';
+// Firebase auth - user login status check karne ke liye
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '../utils/firebase';
+// Redux actions - user login/logout par state update karne ke liye
 import { addUser, removeUser } from '../utils/userSlice';
+// Header aur Footer components - layout ke liye
 import Header from './header';
+// ProtectedRoute - unauthorized access rokne ke liye
 import ProtectedRoute from './ProtectedRoute';
 import Footer from './Footer';
 
+// Body component - main app container, routing aur auth check karta hai
 const Body = () => {
   const dispatch = useDispatch();
   const user = useSelector(store => store.user.name);

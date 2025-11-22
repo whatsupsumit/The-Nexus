@@ -1,6 +1,10 @@
+// React aur hooks - UI aur state management ke liye
 import React, { useState, useEffect } from 'react';
+// React Router - URL se TV show ID lene aur navigation ke liye
 import { useParams, useNavigate } from 'react-router-dom';
+// VideoPlayer component - TV show episodes play karne ke liye
 import VideoPlayer from './VideoPlayer';
+// TMDB API functions - TV show images, backdrop, season details fetch karne ke liye
 import {
   getImageUrl,
   getBackdropUrl,
@@ -8,7 +12,7 @@ import {
   getTVDetails
 } from '../utils/vidsrcApi.js';
 
-// Enhanced Hero Section Component
+// HeroSection component - TV show ka main banner section (background image, title, buttons)
 const HeroSection = ({ 
   show, 
   isLoading, 

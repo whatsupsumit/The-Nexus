@@ -1,7 +1,11 @@
+// React aur hooks - UI aur state management ke liye
 import React, { useState, useEffect } from 'react';
+// Redux selector - Redux store se user data lene ke liye
 import { useSelector } from 'react-redux';
+// Firebase auth - current logged-in user ka reference
 import { auth } from '../utils/firebase';
 
+// Profile component - user ka profile page (watch history, vault, stats display karta hai)
 const Profile = () => {
   const user = useSelector(store => store.user);
   const [watchHistory, setWatchHistory] = useState([]);

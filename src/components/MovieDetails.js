@@ -1,9 +1,15 @@
+// React aur hooks - UI aur state management ke liye
 import React, { useState, useEffect } from 'react';
+// React Router - URL se movie ID lene aur navigation ke liye
 import { useParams, useNavigate } from 'react-router-dom';
+// TMDB API functions - movie details, cast, videos, recommendations fetch karne ke liye
 import { getMovieDetails, getMovieCredits, getMovieVideos, getMovieRecommendations } from '../utils/vidsrcApi';
+// Safe navigation utility - external links safely open karne ke liye
 import { safeOpenExternal } from '../utils/safeNavigation';
+// VideoPlayer component - movie play karne ke liye
 import VideoPlayer from './VideoPlayer';
 
+// MovieDetails component - single movie ki detailed info display karta hai (cast, trailers, etc)
 const MovieDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();

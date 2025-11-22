@@ -1,18 +1,26 @@
+// React aur hooks - UI aur form handling ke liye
 import React, { useRef, useState } from "react";
+// Redux - user data globally store karne ke liye
 import { useDispatch } from "react-redux";
+// Redux action - user login hone par Redux store mein save karne ke liye
 import { addUser } from "../utils/userSlice";
+// Validation function - email aur password check karne ke liye
 import { checkValidatedata } from "../utils/validate";
+// Firebase auth - authentication ke liye (login/signup)
 import { auth } from "../utils/firebase";
+// Lucide icons - password show/hide ke liye eye icons
 import { Eye, EyeOff } from "lucide-react";
 
+// Firebase auth functions - user create karna, login karna, profile update karna
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
+// React Router - page navigation aur previous location track karne ke liye
 import { useNavigate, useLocation } from "react-router-dom";
 
-// Enhanced Login component with better responsiveness and animations
+// Login component - user login aur signup ka page (authentication UI)
 const Login = () => {
   const [iseyeToggle, setIseyeToggle] = useState(false);
   const [isSignInForm, setIsSignInForm] = useState(true);

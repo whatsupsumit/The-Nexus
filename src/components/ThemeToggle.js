@@ -1,8 +1,13 @@
+// React import
 import React from 'react';
+// Redux - current theme access aur toggle karne ke liye
 import { useSelector, useDispatch } from 'react-redux';
+// Redux action - theme switch karne ke liye
 import { toggleTheme } from '../utils/themeSlice';
+// Lucide icons - sun aur moon icons (light/dark mode ke liye)
 import { Sun, Moon } from 'lucide-react';
 
+// ThemeToggle component - dark/light mode switch button (animated icon ke saath)
 const ThemeToggle = () => {
   const theme = useSelector(state => state.theme.mode);
   const dispatch = useDispatch();

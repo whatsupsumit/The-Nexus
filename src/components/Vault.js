@@ -1,7 +1,11 @@
+// React aur hooks - UI aur state management ke liye
 import React, { useState, useEffect } from 'react';
+// React Router - page navigation ke liye
 import { useNavigate } from 'react-router-dom';
+// MovieCard component - saved items display karne ke liye
 import MovieCard from './MovieCard';
 
+// Vault component - user ke saved/bookmarked movies aur TV shows (localStorage se fetch karta hai)
 const Vault = () => {
   const navigate = useNavigate();
   const [vaultItems, setVaultItems] = useState([]);

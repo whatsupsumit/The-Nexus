@@ -1,8 +1,10 @@
-// Mobile-Enhanced API Helper for The Nexus
-// Provides robust mobile compatibility, network detection, and fallback systems
+// Mobile API Helper - mobile devices ke liye optimized API calls
+// Network detection, caching aur fallback systems provide karta hai
 
-// Network and device detection utilities
+// Device detection function - check karta hai ki user mobile pe hai ya nahi
+// aur device ki capabilities kya hain (iOS, Android, low-end device, etc)
 export const detectDevice = () => {
+  // User agent string se device information nikalna
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
   
   return {

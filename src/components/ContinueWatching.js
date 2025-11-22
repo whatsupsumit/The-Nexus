@@ -1,6 +1,9 @@
+// React aur hooks - UI aur state management ke liye
 import React, { useState, useEffect } from 'react';
+// Utility functions - continue watching data fetch karne aur images ke liye
 import { getContinueWatching, getImageUrl } from '../utils/vidsrcApi';
 
+// ContinueWatching component - user ke incomplete movies/shows display karta hai progress ke saath
 const ContinueWatching = ({ onMovieClick }) => {
   const [continueItems, setContinueItems] = useState([]);
 

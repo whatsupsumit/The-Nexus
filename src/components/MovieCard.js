@@ -1,6 +1,10 @@
+// React aur memo import - memo performance optimize karta hai, unnecessary re-renders rokta hai
 import React, { memo } from 'react';
+// Utility functions - image URLs banane, year nikalne, backup images ke liye
 import { getImageUrl, getYear, getBackupImageUrl } from '../utils/vidsrcApi';
 
+// MovieCard component - single movie/TV show ka card display karta hai poster aur details ke saath
+// memo use kar rahe so jab props same ho toh re-render nahi hoga (optimization)
 const MovieCard = memo(({ movie, onClick, isTV = false, customBadge = null }) => {
   const title = isTV ? movie.name : movie.title;
   const releaseDate = isTV ? movie.first_air_date : movie.release_date;

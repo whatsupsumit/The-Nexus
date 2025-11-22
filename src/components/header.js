@@ -1,11 +1,19 @@
+// React aur hooks - UI, refs, aur state management ke liye
 import React, { useState, useRef, useEffect } from "react";
+// Firebase signOut function - user ko logout karne ke liye
 import { signOut } from "firebase/auth";
+// Firebase auth instance - authentication operations ke liye
 import { auth } from "../utils/firebase";
+// React Router - current page aur navigation ke liye
 import { useLocation, useNavigate } from "react-router-dom";
+// Redux - user data access aur Redux actions ke liye
 import { useSelector, useDispatch } from "react-redux";
+// Redux action - logout par user ko Redux store se remove karne ke liye
 import { removeUser } from "../utils/userSlice";
+// ThemeToggle component - dark/light mode switch ke liye
 import ThemeToggle from "./ThemeToggle";
 
+// Header component - top navigation bar (logo, nav links, profile, logout)
 const Header = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

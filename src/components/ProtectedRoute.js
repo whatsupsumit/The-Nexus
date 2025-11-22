@@ -1,9 +1,14 @@
+// React aur hooks - state management ke liye
 import React, { useEffect, useState } from 'react';
+// React Router - redirect aur current location ke liye
 import { Navigate, useLocation } from 'react-router-dom';
+// Redux selector - user login status check karne ke liye
 import { useSelector } from 'react-redux';
+// Firebase auth - real-time auth state tracking ke liye
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '../utils/firebase';
 
+// ProtectedRoute component - unauthorized users ko login page par redirect karta hai
 const ProtectedRoute = ({ children }) => {
   const user = useSelector((store) => store.user.name);
   const [authLoading, setAuthLoading] = useState(true);

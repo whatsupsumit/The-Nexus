@@ -1,8 +1,12 @@
-import React, { useRef, memo, useCallback, useEffect } from 'react'; // Import useEffect
-import { useInView } from 'react-intersection-observer'; // Import the hook
+// React aur hooks - refs, memoization, callbacks aur effects ke liye
+import React, { useRef, memo, useCallback, useEffect } from 'react';
+// Intersection Observer hook - scroll pe content load karne ke liye (lazy loading)
+import { useInView } from 'react-intersection-observer';
+// MovieCard component - carousel mein items display karne ke liye
 import MovieCard from './MovieCard';
 
-// --- MODIFICATION: Accept hasMore and loadMore props ---
+// ContentCarousel component - horizontal scrolling carousel (pagination support ke saath)
+// memo use kar rahe for performance - props same ho toh re-render nahi hoga
 const ContentCarousel = memo(({ title, content = [], onItemClick, isTV = false, loading = false, hasMore, loadMore }) => {
   const scrollRef = useRef(null);
 

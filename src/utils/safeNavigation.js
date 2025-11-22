@@ -1,7 +1,10 @@
-// Utility functions for safe navigation and error handling
+// Safe navigation utilities - external links safely open karne aur errors handle karne ke liye
+
+// External URL safely open karne ka function (YouTube links ke liye)
+// Security check karta hai ki URL allowed hai ya nahi
 export const safeOpenExternal = (url, options = {}) => {
   try {
-    // Validate URL
+    // URL validate kar rahe - sahi format mein hai ya nahi
     const urlObj = new URL(url);
     const allowedHosts = ['www.youtube.com', 'youtube.com', 'youtu.be'];
     

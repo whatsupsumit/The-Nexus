@@ -1,5 +1,8 @@
+// React aur hooks - UI, state aur optimized functions ke liye
 import React, { useEffect, useState, useCallback } from "react";
+// React Router - page navigation ke liye
 import { useNavigate } from "react-router-dom";
+// TMDB API functions - movies aur TV shows fetch karne ke liye (cached versions use kar rahe for performance)
 import {
   fetchTrendingMoviesCached,
   fetchPopularMoviesCached,
@@ -11,13 +14,13 @@ import {
   searchTVShows,
 } from "../utils/vidsrcApi";
 
-// --- NEW: We will create this new component in the next step ---
+// Component imports - carousel components (lazy loading optimization ke saath)
 import LazyLoadCarousel from "./LazyLoadCarousel";
 import ContentCarousel from "./ContentCarousel";
 import VideoPlayer from "./VideoPlayer";
 import ContinueWatching from "./ContinueWatching";
 
-// --- MODIFICATION: Added 'loaded' flag to track initial fetch ---
+// Helper function - content state initialize karta hai (pagination aur loading tracking ke liye)
 const createContentState = () => ({
   items: [],
   page: 1,

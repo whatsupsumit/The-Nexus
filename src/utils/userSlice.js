@@ -1,13 +1,19 @@
+// Redux Toolkit - Redux store setup simplify karne ke liye
 import { createSlice } from "@reduxjs/toolkit";
+
+// User slice - Redux mein user ki saari information store karta hai
+// Login, logout aur watch history track karne ke liye
 const userSlice = createSlice({
     name: "user",
+    // Initial state - jab app start hota hai tab user ki default values
     initialState: {
-        uid: null,
-        name: null,
-        email: null,
-        displayName: null,
-        recentlyWatched: [],
+        uid: null,              // User ID
+        name: null,             // User ka naam
+        email: null,            // User ki email
+        displayName: null,      // Display name
+        recentlyWatched: [],    // Recently dekhi hui movies/shows
     },
+    // Reducers - actions jo user state ko change karte hain
     reducers: {
         addUser: (state, action) => {
             state.uid = action.payload.uid;

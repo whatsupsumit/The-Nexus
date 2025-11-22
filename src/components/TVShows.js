@@ -1,15 +1,22 @@
+// React aur hooks import - UI banane aur state manage karne ke liye
 import React, { useState, useEffect } from "react";
+// React Router - pages ke beech navigation ke liye
 import { useNavigate } from "react-router-dom";
+// TMDB API functions - TV shows fetch karne ke liye (popular, top rated, trending, search)
 import {
   fetchPopularTV,
   fetchTopRatedTV,
   fetchTrendingTV,
   searchContent,
 } from "../utils/vidsrcApi";
+// Mobile device detection aur caching - mobile optimization ke liye
 import { detectDevice, mobileCache } from "../utils/mobileApiHelper";
+// MovieCard component - individual TV show card dikhane ke liye (movies aur TV dono ke liye)
 import MovieCard from "./MovieCard";
+// VideoPlayer component - TV show episodes play karne ke liye
 import VideoPlayer from "./VideoPlayer";
 
+// TV Shows page component - saare TV shows list dikhaata hai filters aur search ke saath
 const TVShows = () => {
   const navigate = useNavigate();
   const [shows, setShows] = useState([]);

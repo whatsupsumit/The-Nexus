@@ -1,5 +1,8 @@
+// Validation function - email aur password check karta hai ki sahi format mein hai ya nahi
+// Login aur signup forms mein use hota hai
 export const checkValidatedata = (email, password) => {
-    // Email validation
+    // Email validation - regex se check kar rahe ki email valid format mein hai
+    // Example: user@example.com (@ aur . hona chahiye)
     const isEmailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
     
     if (!isEmailValid) {

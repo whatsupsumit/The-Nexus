@@ -1,7 +1,11 @@
+// React aur useEffect hook - side effects handle karne ke liye
 import React, { useEffect } from 'react';
+// Redux - theme state access aur update karne ke liye
 import { useSelector, useDispatch } from 'react-redux';
+// Redux action - theme change karne ke liye
 import { setTheme } from '../utils/themeSlice';
 
+// ThemeProvider component - pura app ko theme (dark/light) apply karta hai
 const ThemeProvider = ({ children }) => {
   const theme = useSelector(state => state.theme.mode);
   const dispatch = useDispatch();
