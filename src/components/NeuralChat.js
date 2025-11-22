@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { X } from "lucide-react"
 import { ArrowRightToLine } from 'lucide-react';
+import { generateRecommendation } from '../utils/geminiApi';
 
 // Simple markdown parser component for chat messages
 const MarkdownRenderer = ({ content }) => {
@@ -101,42 +102,28 @@ const NeuralChat = () => {
   }, [messages]);
 
   useEffect(() => {
-    const welcomeMessage = {
-      text: `# 🎬 Welcome to NEXUS Movie AI!
-
-Hey there! I'm your **NEXUS movie buddy**! Tell me what you're in the mood for and I'll find you the perfect film.
-
-## What I can help with:
-- **Comedy** - Something to make you laugh 😂
-- **Action** - High-octane thrills 💥  
-- **Horror** - Spine-chilling scares 👻
-- **Romance** - Heart-warming stories 💕
-- **Sci-Fi** - Mind-bending adventures 🚀
-
-Just ask me anything like *"I want a good action movie"* or *"something to make me cry"* - I got you covered! 🍿`,
-      isBot: true,
-      timestamp: new Date().toLocaleTimeString(),
-      animated: true
-    };
-
-    setTimeout(() => {
-      setMessages([welcomeMessage]);
-    }, 500);
+    // start empty - responses will come from Gemini or the fallback
+    setMessages([]);
   }, []);
 
+  // Quick prompt buttons - User ko suggestions dene ke liye ready-made questions
+  // Yeh buttons sidebar mein dikhte hain, click karne par automatically message bhar jata hai
   const moviePrompts = [
-    "🌙 What should I watch tonight?",
-    "💕 Something romantic and sweet",
-    "👻 Scary movie that's actually good",
-    "😂 Make me laugh with a comedy",
-    "💥 High action and explosions",
-    "🧠 Smart movie that makes me think"
+    "🌙 What should I watch tonight?",  // General recommendation ke liye
+    "💕 Something romantic and sweet",  // Romantic movies ke liye
+    "👻 Scary movie that's actually good",  // Horror movies ke liye
+    "😂 Make me laugh with a comedy",  // Comedy movies ke liye
+    "💥 High action and explosions",  // Action movies ke liye
+    "🧠 Smart movie that makes me think"  // Intelligent/Thriller movies ke liye
   ];
 
+  // Fallback recommendation function - jab Gemini AI fail ho to yeh use hoga
+  // User ke message mein keywords dhoondhkar relevant movies suggest karta hai
   const getSmartMovieRecommendation = (userMessage) => {
+    // Message ko lowercase mein convert karte hain taki case-insensitive matching ho
     const message = userMessage.toLowerCase();
   
-    // Enhanced movie recommendations with more variety
+    // Enhanced movie recommendations - genre-wise movies ka collection
 
     if (message.includes('10') || message.includes('list') || message.includes('many')) {
       const categories = {
@@ -209,92 +196,32 @@ ${selectedMovies.map((movie, i) => `${i + 1}. **${movie}**`).join('\n')}
     return defaults[Math.floor(Math.random() * defaults.length)] + "\n\n🍿 **What genre excites you most?** I've got endless recommendations!";
   };
 
+  // Main API call function - pehle Gemini AI try karta hai, agar fail ho to fallback use karta hai
+  // User message ko process karke appropriate response deta hai
   const callMovieAPI = async (userMessage) => {
     try {
-      const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
-      if (!apiKey) {
-        console.log('❌ No Gemini API key found, using fallback');
-        return getSmartMovieRecommendation(userMessage);
-      }
-
-      console.log('🤖 Calling Gemini API for real AI recommendations...');
-
-      const moviePrompt = `You are the NEXUS Movie Recommendation AI, the coolest movie buddy on the planet! You LOVE movies and get super excited about helping people find their next favorite film.
-
-IMPORTANT RULES:
-- Always be enthusiastic and friendly, like talking to your best friend
-- Give 2-3 specific movie recommendations with years
-- Explain WHY each movie is perfect for what they asked
-- Use simple, fun language - no fancy film critic words
-- Add emojis to make it fun
-- Keep it under 150 words
-- If they ask about anything non-movie related, gently guide them back to movies
-
-User asked: "${userMessage}"
-
-Give them amazing movie suggestions that match what they want!`;
-
-      const apiAttempts = [
-        { url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, name: 'gemini-1.5-flash (v1beta)' },
-        { url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, name: 'gemini-1.5-pro (v1beta)' },
-        { url: `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, name: 'gemini-1.5-flash (v1)' },
-        { url: `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${apiKey}`, name: 'gemini-1.5-pro (v1)' },
-        { url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, name: 'gemini-pro (v1beta)' },
-        { url: `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`, name: 'gemini-pro (v1)' }
-      ];
-
-      for (const attempt of apiAttempts) {
-        try {
-          console.log(`🔄 Trying: ${attempt.name}`);
-
-          const response = await fetch(attempt.url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              contents: [{
-                parts: [{
-                  text: moviePrompt
-                }]
-              }],
-              generationConfig: {
-                temperature: 0.9,
-                topK: 40,
-                topP: 0.95,
-                maxOutputTokens: 200,
-              }
-            })
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
-              console.log(`✅ SUCCESS with: ${attempt.name}`);
-              return data.candidates[0].content.parts[0].text;
-            }
-          } else {
-            console.log(`❌ ${attempt.name} failed: ${response.status}`);
-          }
-        } catch (modelError) {
-          console.log(`❌ ${attempt.name} error:`, modelError.message);
-        }
-      }
-
-      console.log('🔄 All Gemini APIs failed, using intelligent fallback system');
+      // Pehle Gemini AI se try karte hain (geminiApi.js se)
+      const aiText = await generateRecommendation(userMessage);
+      // Agar AI ne response diya to usko return kar do
+      if (aiText) return aiText;
+      // Agar AI fail ho gaya to fallback recommendation use karo
       return getSmartMovieRecommendation(userMessage);
-
-    } catch (error) {
-      console.error("Movie AI Error:", error);
+    } catch (err) {
+      console.error('callMovieAPI error', err);
+      // Error aane par bhi fallback use karte hain
       return getSmartMovieRecommendation(userMessage);
     }
   };
 
+  // Message send karne ka main function - jab user Send button dabaye ya Enter press kare
   const handleSendMessage = async () => {
+    // Agar input empty hai to kuch mat karo
     if (!input.trim()) return;
 
+    // User ka message save kar lo aur input field clear kar do
     const userMessage = input.trim();
     setInput("");
+    // Loading state true kar do (animated dots dikhane ke liye)
     setIsLoading(true);
 
     const newUserMessage = {
@@ -337,38 +264,31 @@ Give them amazing movie suggestions that match what they want!`;
     }
   };
 
+  // Quick prompt button click hone par - input mein text bhar deta hai aur send kar deta hai
   const handleQuickPrompt = (prompt) => {
+    // Prompt text ko input field mein dal do
     setInput(prompt);
  
+    // 100ms baad automatically message send kar do (taki UI update ho sake)
     setTimeout(() => {
       handleSendMessage();
     }, 100);
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Background */}
-      <div 
-        className="fixed inset-0 bg-cover bg-center"
     <div className="h-screen relative text-white overflow-hidden flex flex-col">
+      {/* Background */}
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-
         style={{
           backgroundImage: `url("/astro.jpg")`,
           filter: "brightness(0.3)",
         }}
-
       />
       
-      <div className="fixed inset-0 bg-gradient-to-br from-black/80 via-red-900/20 to-black/80" />
-      
-      {/* Floating Icons */}
-
-      ></div>
-
       <div className="fixed inset-0 bg-gradient-to-br from-black/80 via-red-900/20 to-black/80"></div>
 
+      {/* Floating Icons */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {["🎬", "🍿", "🎭", "🎪", "🎨", "⭐"].map((icon, i) => (
           <div
@@ -386,17 +306,7 @@ Give them amazing movie suggestions that match what they want!`;
         ))}
       </div>
 
-
       {/* Main Content */}
-      <div className="relative z-10 pt-24 pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          
-          {/* Header */}
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center gap-3 bg-black/60 backdrop-blur-xl rounded-full px-6 py-3 border border-red-500/30">
-              <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-xl">🎬</span>
-
       <div className="relative z-10 h-full flex flex-col pt-16">
         <div className="container mx-auto px-4 max-w-7xl h-full flex flex-col">
 
@@ -405,7 +315,6 @@ Give them amazing movie suggestions that match what they want!`;
             <div className="inline-flex items-center gap-3 bg-black/60 backdrop-blur-lg rounded-full px-6 py-2 border border-red-500/30">
               <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-lg">🎬</span>
-
               </div>
               <div className="min-w-0">
                 <h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-red-400 to-purple-400 bg-clip-text text-transparent">
@@ -416,29 +325,15 @@ Give them amazing movie suggestions that match what they want!`;
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse flex-shrink-0" />
             </div>
           </div>
+          
           <button onClick={() => setIsToggle(true)} className={`${istoggle?"opacity-0":"opacity-100"} bg-white/30 backdrop-blur-sm mb-2 sm:hidden border w-8 px-4 py-2 flex flex-col justify-center items-center ml-4 rounded-lg`}>
-
             <ArrowRightToLine className="w-5 h-5"/>
           </button>
-
-
-          {/* Main Layout - Responsive Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
-            
-            {/* Sidebar - Quick Prompts */}
-            <div className="lg:col-span-3">
-              <div className="bg-black/60 backdrop-blur-xl rounded-2xl border border-red-500/30 p-4">
-                <h3 className="text-base font-semibold mb-3 text-red-300 text-center flex items-center justify-center gap-2">
-                  <span className="text-lg">🍿</span>
-                  <span>Quick Requests</span>
-                </h3>
-                <div className="space-y-2 max-h-[250px] lg:max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-red-500/50 scrollbar-track-transparent">
 
           {/* Main Layout - Left Sidebar + Right Chat */}
           <div className="flex gap-6 flex-1 min-h-0">
 
             {/* Left Sidebar - Movie Prompts */}
-
             <div className={` w-72 flex-shrink-0 ${istoggle ? "block" : "hidden"}`}>
               <div className="bg-black/50 backdrop-blur-lg rounded-2xl  border-red-500/30 p-4 h-full flex flex-col">
                 <div className="flex py-2 justify-between">
@@ -448,7 +343,6 @@ Give them amazing movie suggestions that match what they want!`;
                   <button className="sm:hidden" onClick={() => setIsToggle(false)}>
                     <X className="w-5 h-5" />
                   </button>
-
                 </div>
 
                 <div className="space-y-2 flex-1 overflow-y-auto">
@@ -465,31 +359,8 @@ Give them amazing movie suggestions that match what they want!`;
               </div>
             </div>
 
-
-            {/* Chat Area */}
-            <div className="lg:col-span-9">
-              <div 
-                className="bg-black/60 backdrop-blur-xl rounded-2xl border border-red-500/30 shadow-2xl flex flex-col"
-                style={{ height: 'calc(100vh - 240px)', minHeight: '500px' }}
-              >
-                
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 scrollbar-thin scrollbar-thumb-red-500/50 scrollbar-track-transparent">
-                  {messages.map((message, index) => (
-                    <div
-                      key={index}
-                      className={`flex ${message.isBot ? "justify-start" : "justify-end"} animate-fadeInUp`}
-                    >
-                      <div
-                        className={`max-w-[90%] md:max-w-[75%] lg:max-w-[70%] px-4 md:px-5 py-3 md:py-4 rounded-2xl ${
-                          message.isBot
-                            ? "bg-gradient-to-br from-red-600/30 to-purple-600/30 border border-red-500/40"
-                            : "bg-gray-800/80 border border-gray-600/40"
-                        }`}
-
             {/* Right Side - Chat Interface */}
             <div className="min-w-0 flex-1 ">
-
               <div className="bg-black/70 backdrop-blur-xl rounded-2xl border border-red-500/30 shadow-2xl h-full flex flex-col overflow-hidden">
 
                 {/* Chat Messages */}
@@ -523,10 +394,6 @@ Give them amazing movie suggestions that match what they want!`;
                           )}
                         </div>
                         <p className="text-xs opacity-70 mt-2">{message.timestamp}</p>
-                        <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
-                          {message.text}
-                        </p>
-                        <p className="text-xs opacity-60 mt-2">{message.timestamp}</p>
                       </div>
                     </div>
                   ))}
@@ -563,18 +430,11 @@ Give them amazing movie suggestions that match what they want!`;
                     <button
                       onClick={handleSendMessage}
                       disabled={isLoading || !input.trim()}
-
                       className={`px-6 md:px-7 py-3 md:py-3.5 rounded-xl font-semibold transition-all duration-300 flex-shrink-0 ${
                         isLoading || !input.trim()
                           ? "bg-gray-700/50 border border-gray-600/40 cursor-not-allowed" 
                           : "bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-600 border border-red-400/60 hover:shadow-lg hover:shadow-red-500/30 hover:scale-105"
                       }`}
-
-                      className={`px-5 py-2 rounded-xl font-semibold transition-all duration-300 ${isLoading
-                        ? "bg-gray-600/50 border border-gray-500/40"
-                        : "bg-gradient-to-r from-red-600 to-purple-600 border border-red-400/60 hover:shadow-lg hover:scale-105"
-                        }`}
-
                     >
                       {isLoading ? (
                         <div className="w-5 h-5 border-2 border-gray-300 border-t-red-400 rounded-full animate-spin" />

@@ -15,7 +15,6 @@ import { auth } from '../utils/firebase';
 import { addUser, removeUser } from '../utils/userSlice';
 import Header from './header';
 import ProtectedRoute from './ProtectedRoute';
-import Header from './header';
 import Footer from './Footer';
 
 const Body = () => {

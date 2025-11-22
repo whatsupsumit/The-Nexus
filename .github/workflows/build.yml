@@ -1,0 +1,85 @@
+# GitHub Actions Workflow - Build Verification Ke Liye
+# Yeh workflow check karega ki production build sahi se ban raha hai ya nahi
+
+# Workflow ka naam
+name: Build Check
+
+# Yeh workflow kab run hoga - har push aur pull request par
+on:
+  push:
+    branches: [ main, master ]  # Main ya master branch par push hone par
+  pull_request:
+    branches: [ main, master ]  # Main ya master ke liye PR open hone par
+
+# Jobs define karte hain
+jobs:
+  # Job ka naam "build"
+  build:
+    # Ubuntu latest virtual machine par run hoga
+    runs-on: ubuntu-latest
+    
+    # Strategy - Node.js version
+    strategy:
+      matrix:
+        node-version: [18.x]  # Node.js 18 use karenge
+    
+    # Steps - ek ek karke execute honge
+    steps:
+    # Step 1: Repository code checkout karo
+    - name: Repository code checkout karo
+      uses: actions/checkout@v3  # Code download karne ke liye
+    
+    # Step 2: Node.js setup karo
+    - name: Node.js ${{ matrix.node-version }} setup karo
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'  # npm cache enable
+    
+    # Step 3: Dependencies install karo
+    - name: Dependencies install karo (npm install)
+      run: npm ci  # npm ci fast aur reliable hai
+    
+    # Step 4: Production build banao
+    - name: Production build banao (npm run build)
+      run: npm run build
+      # npm run build se production build banega (build/ folder mein)
+      env:
+        CI: true  # CI mode enable
+        # API keys optional hain build ke liye (runtime par chahiye)
+        REACT_APP_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        REACT_APP_TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+        REACT_APP_TMDB_ACCESS_TOKEN: ${{ secrets.TMDB_ACCESS_TOKEN }}
+    
+    # Step 5: Build size check karo
+    - name: Build folder ka size check karo
+      run: |
+        echo "📦 Build folder ka size:"
+        du -sh build/
+        echo "📊 Build folder ke andar files:"
+        ls -lh build/
+      # du command se folder size dekhenge
+      # ls se files ki list aur size dekhenge
+    
+    # Step 6: Build artifacts upload karo (debugging ya deployment ke liye)
+    - name: Build artifacts upload karo
+      uses: actions/upload-artifact@v3
+      with:
+        name: production-build  # Artifact ka naam
+        path: build/  # Build folder upload hoga
+        retention-days: 7  # 7 din tak saved rahega
+    
+    # Step 7: Build success message
+    - name: Build success message
+      if: success()  # Sirf tab run hoga jab build successful ho
+      run: |
+        echo "✓ Production build successfully ban gaya!"
+        echo "✓ Build files build/ folder mein hain"
+        echo "✓ Yeh build Vercel par deploy karne ke liye ready hai"
+    
+    # Step 8: Build failure message
+    - name: Build failure message
+      if: failure()  # Sirf tab run hoga jab build fail ho
+      run: |
+        echo "✗ Build failed ho gaya"
+        echo "Errors check karo aur fix karo"

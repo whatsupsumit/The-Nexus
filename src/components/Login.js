@@ -301,22 +301,6 @@ const Login = () => {
                 </div>
               </div>
 
-
-              {/* Ultra Responsive Form Fields */}
-              <div className="relative z-10 flex flex-col gap-2 sm:gap-2.5 lg:gap-3">
-                {!isSignInForm && (
-                  <div className="relative group">
-                    <input
-                      ref={nameRef}
-                      type="text"
-                      placeholder="Full Name"
-                      className="w-full p-2 sm:p-2.5 lg:p-3 bg-gray-900/90 backdrop-blur-sm rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 border border-gray-700/50 focus:border-red-500/50 transition-all duration-300 text-sm sm:text-base group-hover:bg-gray-800/90"
-                    />
-                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                  </div>
-                )}
-
-
               {/* Ultra Responsive Form Fields - Scrollable Content */}
               <div className="relative z-10 flex flex-col gap-3 sm:gap-4 flex-grow">
                 {/* Full Name Field - Always reserve space for smooth transition */}
@@ -356,22 +340,12 @@ const Login = () => {
                   <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-red-600/10 to-red-800/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
 
-
-                {/* Password Requirements for Sign Up - Updated validation display */}
-                {!isSignInForm && (
-                  <div className="bg-gray-900/50 border border-gray-700/30 rounded-lg p-2 sm:p-3 backdrop-blur-sm">
-                    <p className="text-gray-400 text-xs sm:text-sm font-medium mb-1 sm:mb-2">Password Requirements:</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                      <div className="flex items-center space-x-1.5">
-
-                
                 {/* Password Requirements - Always reserve space for smooth transition */}
                 <div className={`transition-all duration-300 ${isSignInForm ? 'h-0 overflow-hidden opacity-0 pointer-events-none' : 'h-auto opacity-100'}`}>
                   <div className="bg-gray-900/50 border border-gray-700/30 rounded-lg p-3 sm:p-4 backdrop-blur-sm">
                     <p className="text-gray-400 text-xs sm:text-sm font-medium mb-2 sm:mb-3">Password Requirements:</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="flex items-center space-x-2">
-
                         <div className="w-1.5 h-1.5 bg-red-400 rounded-full"></div>
                         <span className="text-gray-400 text-xs">8-32 characters</span>
                       </div>
@@ -389,9 +363,6 @@ const Login = () => {
                       </div>
                     </div>
                   </div>
-
-                )}
-
                 </div>
 
                 {errorMessage && (

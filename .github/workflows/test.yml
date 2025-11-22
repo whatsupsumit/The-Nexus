@@ -1,0 +1,85 @@
+# GitHub Actions Workflow - Selenium Tests Run Karne Ke Liye
+# Yeh workflow har push aur pull request par tests ko run karega
+
+# Workflow ka naam
+name: Selenium Tests
+
+# Yeh workflow kab run hoga - har push aur pull request par main branch mein
+on:
+  push:
+    branches: [ main, master ]  # Main ya master branch par push hone par
+  pull_request:
+    branches: [ main, master ]  # Main ya master ke liye PR open hone par
+
+# Jobs define karte hain - yahan ek hi job hai "test"
+jobs:
+  # Job ka naam "test"
+  test:
+    # Ubuntu latest virtual machine par run hoga
+    runs-on: ubuntu-latest
+    
+    # Strategy define karte hain - Node.js version specify karna
+    strategy:
+      matrix:
+        node-version: [18.x]  # Node.js 18 use karenge (aap 20.x bhi use kar sakte ho)
+    
+    # Steps - ek ek karke execute honge
+    steps:
+    # Step 1: Repository code ko checkout karte hain (download karna)
+    - name: Repository code checkout karo
+      uses: actions/checkout@v3  # GitHub ka official action hai code download karne ke liye
+    
+    # Step 2: Node.js setup karte hain
+    - name: Node.js ${{ matrix.node-version }} setup karo
+      uses: actions/setup-node@v3  # GitHub ka official action hai Node.js install karne ke liye
+      with:
+        node-version: ${{ matrix.node-version }}  # Matrix se version lete hain
+        cache: 'npm'  # npm cache enable karte hain taki dependencies jaldi install ho
+    
+    # Step 3: Dependencies install karte hain
+    - name: Dependencies install karo (npm install)
+      run: npm ci  # npm ci fast aur reliable hai CI environment ke liye
+    
+    # Step 4: Chrome browser install karte hain Selenium ke liye
+    - name: Chrome browser install karo
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y chromium-browser chromium-chromedriver
+        chromium-browser --version
+      # Ubuntu mein chromium browser install kar rahe hain
+      # ChromeDriver bhi install ho jayega jo Selenium ke liye chahiye
+    
+    # Step 5: React app ko background mein start karte hain
+    - name: React app background mein start karo
+      run: |
+        npm start &
+        sleep 15
+      # npm start background mein run karega (&)
+      # 15 seconds wait karenge taki app fully load ho jaye
+      env:
+        CI: true  # CI mode enable karte hain
+        REACT_APP_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}  # GitHub Secrets se API key lete hain
+        REACT_APP_TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}  # TMDB API key
+        REACT_APP_TMDB_ACCESS_TOKEN: ${{ secrets.TMDB_ACCESS_TOKEN }}  # TMDB Access Token
+    
+    # Step 6: Selenium tests run karte hain
+    - name: Selenium tests run karo
+      run: npm test
+      # npm test command se Mocha tests run honge
+      # Tests fail hone par yeh step fail ho jayega
+    
+    # Step 7: Agar test fail ho to screenshots upload karo (debugging ke liye)
+    - name: Screenshots upload karo (agar tests fail ho)
+      if: failure()  # Sirf tab run hoga jab pichla step fail ho
+      uses: actions/upload-artifact@v3  # GitHub ka artifact upload action
+      with:
+        name: test-screenshots  # Artifact ka naam
+        path: screenshots/  # Screenshots folder upload hoga
+        retention-days: 7  # 7 din tak screenshots saved rahenge
+    
+    # Step 8: Test results summary
+    - name: Test results ka summary print karo
+      if: always()  # Hamesha run hoga chahe test pass ho ya fail
+      run: |
+        echo "✓ Selenium tests complete ho gaye"
+        echo "Check karo ki saare tests pass hue ya nahi"
