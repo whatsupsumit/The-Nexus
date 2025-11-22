@@ -43,19 +43,22 @@ jobs:
     # Step 4: Chrome browser install karte hain Selenium ke liye
     - name: Chrome browser install karo
       run: |
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
         sudo apt-get update
-        sudo apt-get install -y chromium-browser chromium-chromedriver
-        chromium-browser --version
-      # Ubuntu mein chromium browser install kar rahe hain
-      # ChromeDriver bhi install ho jayega jo Selenium ke liye chahiye
+        sudo apt-get install -y google-chrome-stable
+        google-chrome --version
+      # Ubuntu mein Chrome browser install kar rahe hain
+      # ChromeDriver package mein automatically aata hai
     
     # Step 5: React app ko background mein start karte hain
     - name: React app background mein start karo
       run: |
         npm start &
-        sleep 15
+        echo "Waiting for app to start..."
+        npx wait-on http://localhost:3000 -t 60000 || echo "App might not be ready"
       # npm start background mein run karega (&)
-      # 15 seconds wait karenge taki app fully load ho jaye
+      # wait-on command app ready hone ka wait karega (60 seconds max)
       env:
         CI: true  # CI mode enable karte hain
         REACT_APP_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}  # GitHub Secrets se API key lete hain
